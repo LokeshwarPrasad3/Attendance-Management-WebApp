@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-transition{
+    @apply transition-all duration-500;
+}
+.flex-3{
+    @apply flex justify-center items-center;
+}
