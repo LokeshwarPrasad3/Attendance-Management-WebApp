@@ -42,15 +42,15 @@ const Navbar = () => {
         className={`nav_container flex items-center justify-between px-60 h-16 bg-slate-100 min-w-full `}
       >
         {/* header section left part */}
-        <div className="header flex items-center justify-center gap-4">
+        <div className="header flex items-center justify-center relative md:left-0 left-[-0.6rem] md:gap-4 gap-1">
           <Link
-            to="/"
+            to="/home"
             className="menu_link flex rounded-full justify-center items-center custom-transition relative top-[-2px]"
           >
             <SchoolIcon className="" style={{ fontSize: "2rem" }} />
           </Link>
           <Link
-            to="/"
+            to="/home"
             className="user_name font-overpass text-[#113C7C] font-semibold text-2xl hover:opacity-90 flex justify-center items-center custom-transition "
           >
             Attendence Management
@@ -102,7 +102,7 @@ const Navbar = () => {
           {/* menu button which is visible when mobile screen */}
           {!isMobile ? (
             <Link
-              to="/"
+              to="/teacher"
               className={`menu_bar rounded-md flex custom-transtion relative left-1`}
             >
               <img

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import Navbar from "../Components/Navbar";
-import { Users } from "../Temp/Users";
+import Navbar from "../../Components/Navbar";
+import { Users } from "../../Temp/Users";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   // state which manage present/absent
@@ -29,16 +30,19 @@ const Home = () => {
           <h2 className=" font-semibold">Subject : </h2>
           <h3 className="">Discrete Matematics</h3>
         </div>
-        <button className="home_see_history w-28 text-lg bg-[#314EB5] hover:bg-blue-700 custom-transition text-white font-signika rounded-md">
+        <Link
+          to="/history"
+          className="home_see_history w-28 text-center text-lg bg-[#314EB5] hover:bg-blue-700 custom-transition text-white font-signika rounded-md"
+        >
           SEE HISTORY
-        </button>
+        </Link>
       </div>
       <hr className="text-gray-400 bg-gray-400" />
 
       {/* Set Leave Today Button part */}
-      <div className="set_leave_container w-full flex justify-center items-center pt-4">
-        <button className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-red-500 hover:red-blue-700 custom-transition text-white font-signika rounded-md">
-          Set Leave Today
+      <div className="set_leave_container w-10/12 flex justify-end items-center pt-4 ">
+        <button className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md">
+          Save Changes
         </button>
       </div>
 

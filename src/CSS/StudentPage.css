@@ -1,0 +1,21 @@
+@media (max-width: 863px) {
+  .student_page_container{
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 770px) {
+  .student_page_container{
+    flex-direction: column;
+    width: 100%;
+  }
+  .left_part{
+    min-width: 100%;
+  }
+  .right_part{
+    min-width: 100%;
+  }
+  .attendence_output_table{
+    min-width: 100%;
+  }
+}

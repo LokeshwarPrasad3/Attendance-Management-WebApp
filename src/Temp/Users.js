@@ -5,7 +5,25 @@ export const Users = [
         todayStatus : "Present",
         today : 1,
         Yesterday : 0,
-        total : 1
+        total : 1,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+        ]
     },
     {
         sno:2,
@@ -13,7 +31,25 @@ export const Users = [
         todayStatus : "Present",
         today : 1,
         Yesterday : 0,
-        total : 1
+        total : 1,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:3,
@@ -21,7 +57,25 @@ export const Users = [
         todayStatus : "Absent",
         today : 0,
         Yesterday : 0,
-        total : 0
+        total : 0,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:4,
@@ -29,7 +83,25 @@ export const Users = [
         todayStatus : "Absent",
         today : 0,
         Yesterday : 0,
-        total : 0
+        total : 0,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:5,
@@ -37,7 +109,25 @@ export const Users = [
         todayStatus : "Absent",
         today : 0,
         Yesterday : 0,
-        total : 0
+        total : 0,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:6,
@@ -45,7 +135,25 @@ export const Users = [
         todayStatus : "Present",
         today : 1,
         Yesterday : 0,
-        total : 1
+        total : 1,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:7,
@@ -53,7 +161,25 @@ export const Users = [
         todayStatus : "Present",
         today : 1,
         Yesterday : 0,
-        total : 1
+        total : 1,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:8,
@@ -61,7 +187,25 @@ export const Users = [
         todayStatus : "Absent",
         today : 0,
         Yesterday : 0,
-        total : 0
+        total : 0,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:9,
@@ -69,7 +213,25 @@ export const Users = [
         todayStatus : "Absent",
         today : 0,
         Yesterday : 0,
-        total : 0
+        total : 0,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
     {
         sno:10,
@@ -77,6 +239,24 @@ export const Users = [
         todayStatus : "Absent",
         today : 0,
         Yesterday : 0,
-        total : 0
+        total : 0,
+        all_attendence:[
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            },
+            {
+                date: new Date().toLocaleDateString(),
+                status: 'P'
+            }
+        ]
     },
 ]
