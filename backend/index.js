@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 // initialized secret variables file .env
 require('dotenv').config();
+app.use(express.json());
 // connection established
 require('./db/conn');
 // getting PORT no from secret .env file

@@ -1,9 +1,10 @@
 const express = require('express');
-const { createTeacher } = require('../controllers/teacherControllers');
+const { registerTeacher, loginTeacher } = require('../controllers/teacherControllers');
 const router = express.Router();
 
 
-router.post('/', createTeacher)
+router.route('/register').post(registerTeacher);
+router.route('/login').post(loginTeacher);
 
 
 module.exports = router;
