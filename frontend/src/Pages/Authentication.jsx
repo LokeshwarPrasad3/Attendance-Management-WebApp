@@ -1,5 +1,4 @@
 // used react-material components
-import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 // others Components
@@ -21,9 +20,11 @@ const Authentication = () => {
           className="login_contenet bg-slate-100 shadow-sm shadow-blue-400 border-[1px] rounded-md border-gray-300
                   xl:w-[35rem] md:w-[30rem] pt-5 py-3 flex justify-center items-center flex-col"
         >
-          <Tabs aria-label="icon label tabs example" className="">
-            <Tab icon={<LockOpenIcon />} className="w-full" label="LOGIN - ACCOUNT" />
-          </Tabs>
+          <Tab
+            icon={<LockOpenIcon />}
+            className="w-full"
+            label="LOGIN - ACCOUNT"
+          />
 
           <Login />
         </div>

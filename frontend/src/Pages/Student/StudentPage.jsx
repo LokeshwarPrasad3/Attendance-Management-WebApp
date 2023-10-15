@@ -8,7 +8,7 @@ import "../../CSS/StudentPage.css";
 const StudentPage = () => {
   return (
     <>
-      <Navbar />
+      <Navbar currentUser={"student"} />
 
       <div className="student_page_container font-overpass flex 2xl:gap-9 xl:gap-9 lg:gap-9 md:gap-9 gap-4 items-center mx-auto w-full 2xl:w-min xl:w-min lg:w-min md:px-9 md:py-10 p-5">
         <div className="left_part md:px-5 2xl:min-w-[16rem] xl:min-w-[16rem] lg:min-w-[16rem] w-full bg-[#f2f2f2] flex flex-col md:py-10 py-5 md:min-h-[45rem]">

@@ -4,7 +4,7 @@ import { dummyAssignClass } from "../../Temp/ClassAssign";
 const TeacherPage = () => {
   return (
     <>
-      <Navbar />
+      <Navbar currentUser={"teacher"} />
 
       <div className="teacher_page_container font-overpass flex flex-col 2xl:gap-6 xl:gap-6 lg:gap-6 md:gap-6 gap-4 items-center mx-auto w-full 2xl:w-min xl:w-min lg:w-min md:p-7 p-4">
         {/* upper part of page */}

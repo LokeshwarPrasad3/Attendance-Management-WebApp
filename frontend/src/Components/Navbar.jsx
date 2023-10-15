@@ -8,7 +8,9 @@ import SchoolIcon from "@mui/icons-material/School";
 // include css of navbar
 import "../CSS/Navbar.css";
 
-const Navbar = () => {
+// eslint-disable-next-line
+const Navbar = ({ currentUser }) => {
+  // HERE NEED LOGIC FOR if teacher navbar then what visible and student what visible , HOD what visible
 
   // When mobile size then toggle navbar using menu_bar button
   const [showMenu, setShowMenu] = useState(false);
@@ -61,60 +63,93 @@ const Navbar = () => {
           style={{ left: showMenu ? "0%" : "100%" }}
           className="menu_links flex gap-1 font-overpass"
         >
-          {/* upload project menu link */}
-          <li>
-            {!isMobile ? (
-              <Link
-                to="/history"
-                className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-              >
-                See-History
-              </Link>
-            ) : (
-              <Link
-                to="/history"
-                className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-              >
-                See-History
-              </Link>
-            )}
-          </li>
+          {/* if current user is admin then only show */}
+          {currentUser === "admin" && (
+            <>
+              <li>
+                  <Link
+                    to="/manage-teacher"
+                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  >
+                    Manage-Teacher
+                  </Link>
+              </li>
+              <li>
+                  <Link
+                    to="/manage-student"
+                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  >
+                    Manage-Student
+                  </Link>
+              </li>
+              <li>
+                  <Link
+                    to="/"
+                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  >
+                    Logout
+                  </Link>
+              </li>
+            </>
+          )}
 
-          {/* Logout icon menu link */}
-          <li>
-            {!isMobile ? (
-              <Link
-                to="/"
-                className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-              >
-                Logout
-              </Link>
-            ) : (
-              <Link
-                to="/"
-                className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-              >
-                Logout
-              </Link>
-            )}
-          </li>
+          {/* upload project menu link */}
+          {/* if current user is teacher then only show */}
+          {currentUser === "teacher" && (
+            <>
+              <li>
+                  <Link
+                    to="/history"
+                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  >
+                    See-History
+                  </Link>
+              </li>
+
+              {/* Logout icon menu link */}
+              <li>
+                  <Link
+                    to="/"
+                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  >
+                    Logout
+                  </Link>
+              </li>
+            </>
+          )}
+
+          {/* if user is student then only show */}
+          {currentUser === "student" && (
+            <>
+              <li>
+                  <Link
+                    to="/"
+                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  >
+                    Logout
+                  </Link>
+              </li>
+            </>
+          )}
 
           {/* menu button which is visible when mobile screen */}
-          {!isMobile ? (
+          <li>
             <Link
               to="/teacher"
               className={`menu_bar rounded-md flex custom-transtion relative left-1`}
             >
-              <img
-                src={`./Images/lokeshwar1.jpg`}
-                alt="user"
-                className="w-9 h-9 rounded-full border-[1px] border-gray-400"
-                srcSet=""
-              />
+              {!isMobile ? (
+                <img
+                  src={`./Images/lokeshwar1.jpg`}
+                  alt="user"
+                  className="w-9 h-9 rounded-full border-[1px] border-gray-400"
+                  srcSet=""
+                />
+              ) : (
+                "Profile"
+              )}
             </Link>
-          ) : (
-            ""
-          )}
+          </li>
         </ul>
         {/* when mobile size then show menu button which show menus */}
         {isMobile && (

@@ -17,7 +17,7 @@ const Home = () => {
   return (
     <>
       {/* Navbar components */}
-      <Navbar />
+      <Navbar currentUser={"teacher"} />
 
       {/* Another part of page */}
       <div className="home_heading font-overpass flex justify-center py-4 gap-4 flex-wrap items-center">

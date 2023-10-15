@@ -1,0 +1,15 @@
+/* doing changes when mobile size  */
+@media (max-width: 600px) {
+  /* when mobile size screen then decrease width */
+  .create_form,
+  .login_form,
+  .login_heading,
+  .login_contenet {
+    width: 25rem;
+  }
+  .create_form,
+  .login_form {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
