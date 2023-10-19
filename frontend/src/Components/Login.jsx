@@ -13,15 +13,15 @@ const SLogin = () => {
   // used for navigation page
   const navigate = useNavigate();
 
-  // getting login email
+  // GETTING LOGIN DETAILS INPUTS
   const [email, setEmail] = useState("");
-  // getting login password
   const [password, setPassword] = useState("");
+  const [whoLogged, setWhoLogged] = useState(""); //store who is user
 
-  // new state for loading to upload picture of user
+  // new state for loading circle visible
   const [loading, setLoading] = useState(false);
 
-  // toggle password value
+  // toggle show/hide password value
   const [showPass, setShowPass] = useState(false);
   const toggleShow = (event) => {
     event.preventDefault();
@@ -31,15 +31,27 @@ const SLogin = () => {
   // handle login when clicked login button
   const handleLogin = async (event) => {
     event.preventDefault();
-    setLoading(true); //Procesing circle
-    // check values empty is wrong
-    if (!email || !password) {
+    setLoading(true);
+    // check values cannot have empty
+    if (!email || !password || !whoLogged) {
       toast.warn("Please fill All Inputs", { autoClose: 1000 });
       setLoading(false);
       return;
     }
-    // if all values is filled
+    // If all values is filled
     try {
+
+      if(whoLogged==='hod'){
+        console.log("hode");
+      }
+      else if(whoLogged==='teacher'){
+        console.log("teacher");
+      }
+      else if(whoLogged==='student'){
+        console.log("teacher");
+      }
+
+
       // HERE IS MY POST REQUEST CODE --------------
       // const data = await axios.post(logInStudent, { email, password });
       const data = "";
@@ -115,19 +127,58 @@ const SLogin = () => {
             </button>
           </div>
           {/* Checkbox  if student/teacher */}
-          <div className="who_is flex items-center pl-1 my-2 gap-2">
-            <input
-              type="checkbox"
-              className="relative top-[-2px]"
-              name=""
-              id="login_input_checkbox"
-            />
-            <label
-              htmlFor="login_input_checkbox"
-              className="text-[1rem] selection:bg-white font-[600] opacity-70 cursor-pointer"
-            >
-              Are You Teacher
-            </label>
+          <div className="who_is flex items-center justify-start gap-6 pl-1 my-2 ">
+            {/* tick for student */}
+            <div className="is_student flex justify-center items-center gap-1">
+              <input
+                type="radio"
+                className="relative top-[-2px]"
+                id="is_student_checkbox"
+                name="who_is"
+                value={whoLogged}
+              />
+              <label
+                htmlFor="is_student_checkbox"
+                className="text-[1rem] selection:bg-white font-[600] opacity-70 cursor-pointer"
+                onClick={() => setWhoLogged("student")}
+              >
+                Student
+              </label>
+            </div>
+            {/* tick for teacher */}
+            <div className="is_teacher flex justify-center items-center gap-1">
+              <input
+                type="radio"
+                className="relative top-[-2px]"
+                id="is_teacher_checkbox"
+                name="who_is"
+                value={whoLogged}
+              />
+              <label
+                htmlFor="is_teacher_checkbox"
+                className="text-[1rem] selection:bg-white font-[600] opacity-70 cursor-pointer"
+                onClick={() => setWhoLogged("teacher")}
+              >
+                Teacher
+              </label>
+            </div>
+            {/* tick for head of department */}
+            <div className="is_hod flex justify-center items-center gap-1">
+              <input
+                type="radio"
+                className="relative top-[-2px]"
+                id="is_hod_checkbox"
+                name="who_is"
+                value={whoLogged}
+              />
+              <label
+                htmlFor="is_hod_checkbox"
+                className="text-[1rem] selection:bg-white font-[600] opacity-70 cursor-pointer"
+                onClick={() => setWhoLogged("hod")}
+              >
+                HOD
+              </label>
+            </div>
           </div>
         </div>
         {/* input button for login */}

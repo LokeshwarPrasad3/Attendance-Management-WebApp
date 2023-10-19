@@ -19,6 +19,7 @@ const teacherSchema = new mongoose.Schema({
         {
             sem: Number,
             branch: String,
+            subject:String,
         }
     ]
 });
@@ -31,7 +32,6 @@ teacherSchema.pre('save', async function(next){
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
     }
-
     next();
 })
 

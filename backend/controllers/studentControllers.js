@@ -1,5 +1,7 @@
 const { generateToken } = require('../context/generateAuthToken');
 const { studentModel } = require('../models/studentModel');
+const { AttendenceModel } = require('../models/AttendenceModel');
+
 
 // route method for registration of student
 const RegisterStudent = async (req, res) => {
@@ -75,19 +77,103 @@ const LoginStudent = async (req, res) => {
     }
 }
 
-const getStudentData = async (req, res) => {
-    try{
+const getLoggedStudentData = async (req, res) => {
+    try {
         const studentRes = req.student;
-        if(!studentRes){
+        if (!studentRes) {
             console.log("Invalid token getstudentdata");
-            res.status(401).json({message: "Unauthorized user invalid token"});
+            res.status(401).json({ message: "Unauthorized user invalid token" });
             return;
         }
         console.log(studentRes);
         res.status(200).json(studentRes);
-    }catch(error){
+    } catch (error) {
         console.log("catch error get student", error);
     }
 }
 
-module.exports = { RegisterStudent, LoginStudent, getStudentData }
+// Retrieve all students data by semester
+const getAllStudentData = async (req, res) => {
+    try {
+        const { sem } = req.body;
+        // Check if the 'sem' parameter is provided
+        if (!sem) {
+            console.log("Semester required");
+            return res.status(400).json({ message: "Semester required" });
+        }
+        // Query the database for students in the specified semester
+        const students = await studentModel.find({ sem: sem });
+        // Log the retrieved students (for debugging purposes)
+        console.log("getted all students " + students);
+        // Return the retrieved students as a JSON response
+        return res.status(201).json(students);
+    } catch (error) {
+        console.log("Error getting students", error);
+        return res.status(500).json({ message: "Error getting students" });
+    }
+}
+
+
+// when clicked saved attendence by teacher then changes in every student database
+const submitAttendance = async (req, res) => {
+    try {
+        const { sem, subject, presentStudentsIds, date, day } = req.body;
+
+        if (!sem || !subject || !presentStudentsIds || !date || !day) {
+            console.log("Missing required data");
+            return res.status(400).json({ message: "Semester, students, date, or day not provided." });
+        }
+
+        const attendanceRecord = {
+            subject,
+            date,
+            day,
+            status: true,
+        };
+
+        let data = [];
+
+        for (const student of presentStudentsIds) {
+            const studentId = student._id;
+            const studentName = student.name;
+
+            // Find the student by ID
+            const foundStudent = await studentModel.findById(studentId);
+            // student must be valid then
+            if (foundStudent && foundStudent.sem === sem) {
+                // Check if the attendance record exists for this student and semester
+                let attendanceDoc = await AttendenceModel.findOne({ studentId });
+
+                if (!attendanceDoc) {
+                    console.log("Tu nhi miila");
+                    // If the attendance record doesn't exist, create it
+                    attendanceDoc = new AttendenceModel({
+                        studentId,
+                        studentName,
+                        all_attendence: [attendanceRecord], // Note the correct field name here
+                    });
+                    await attendanceDoc.save();
+                } else {
+                    console.log("tu mil gya bro");
+                    // If the attendance record exists, push the attendance data
+                    attendanceDoc.all_attendence.push(attendanceRecord); // Note the correct field name here
+                    data.push(await attendanceDoc.save()); // Save the updated document
+                }
+            }
+        }
+
+        res.json({ message: "Attendance records updated successfully.", data: data });
+    } catch (error) {
+        console.log("Error in submit attendance:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
+
+
+
+
+
+module.exports = { RegisterStudent, LoginStudent, getLoggedStudentData,
+    submitAttendance, getAllStudentData }

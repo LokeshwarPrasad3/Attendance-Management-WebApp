@@ -41,25 +41,26 @@ const registerTeacher = async (req, res) => {
     }
 }
 
+// login teacher
 const loginTeacher = async (req, res) => {
-    try{
-        const {email, password} = req.body;
+    try {
+        const { email, password } = req.body;
         // check not empty
-        if(!email || !password){
+        if (!email || !password) {
             console.log("Fill all fields");
-            res.status(400).json({message: "Fill all fields"});
+            res.status(400).json({ message: "Fill all fields" });
             return;
         }
 
         // check user email registered
-        const teacherExist = await TeacherModel.findOne({email});
-        if(!teacherExist){
+        const teacherExist = await TeacherModel.findOne({ email });
+        if (!teacherExist) {
             console.log("Teacher email not exist");
-            res.status(404).json({message: "email not exist"});
+            res.status(404).json({ message: "email not exist" });
             return;
         }
         // then check password is right or not
-        if(teacherExist.matchPassword(teacherExist._id)){
+        if (await teacherExist.matchPassword(password)) {
             // means user is valid so generate token and send response
             const token = generateToken(teacherExist._id);
             teacherExist.token = token;
@@ -68,16 +69,64 @@ const loginTeacher = async (req, res) => {
             console.log(data);
             res.status(200).json(data);
             return;
-        }else{
+        } else {
             console.log("passowrd not matched");
-            res.status(401).json({message: "Invalid password"});
+            res.status(401).json({ message: "Invalid password" });
             return;
         }
-    }catch(error){
-        console.log("catch block login " , error);
-        res.status(500).json({message: "server failed"});
+    } catch (error) {
+        console.log("catch block login ", error);
+        res.status(500).json({ message: "server failed" });
         return;
     }
 }
 
-module.exports = { registerTeacher, loginTeacher }
+// taking attendence saved then store students
+const getTeachers = async (req, res) => {
+    try {
+        const teachers = await TeacherModel.find();
+        console.log(teachers);
+        res.status(200).json(teachers);
+    }
+    catch (error) {
+        console.log("Failed to get teachers");
+        res.status(500).json({ message: "Failed to get teachers" });
+        return;
+    }
+}
+
+// set subject of teacher which have they accessed
+const setAssignSubject = async (req, res) => {
+    try {
+        // get object form of sem and branch which teacher teach
+        const { teacherId, teacherTeachClassesData } = req.body;
+        // check cannot empty
+        if (!teacherId || !teacherTeachClassesData) {
+            console.log("Teacher assign data empty:");
+            res.status(400).json({ message: "Fill assign class for teacher" })
+            return;
+        }
+        // all done then change to teacher db
+        // search that teacher
+        const teacherExist = await TeacherModel.findOne({ _id: teacherId });
+        // if not exist then return
+        if (!teacherExist) {
+            console.log("TEacher not exist");
+            return res.status(404).json({ message: "Teacher not exist" });
+        }
+        console.log("teacher exist");
+        // if teacher exist
+        // teacherExist.updateById(teacherId, { $set: { teach: [teacherTeachClassesData] } });
+        teacherExist.teach = teacherTeachClassesData;
+        await teacherExist.save();
+        console.log( "classess assinged : " , teacherExist.teach);
+        res.status(201).json(teacherExist);
+
+    } catch (error) {
+        console.log("Cannot assign class", error);
+        res.status(500).json({ message: "Cannot assign class to teacher" });
+        return;
+    }
+}
+
+module.exports = { registerTeacher, loginTeacher, getTeachers, setAssignSubject }

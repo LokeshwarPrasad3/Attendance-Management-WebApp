@@ -1,26 +1,27 @@
-const { teacherModel } = require('../models/TeacherModel');
+const { TeacherModel } = require('../models/TeacherModel');
 const jwt = require('jsonwebtoken');
 
 const teacherProtect = async (req, res, next) => {
     let token;
-    // checkout that headers must contains 'Bearer token'
-    if (req.headers.autherization && req.headers.autherization.startWith('Bearer')) {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
-            token = req.headers.split(" ")[1];
+            token = req.headers.authorization.split(" ")[1];
+            console.log("token " , token);
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             console.log("deconded : ", decoded);
 
-            req.teacher = await teacherModel.findById(decoded.id).select("-password");
+            req.teacher = await TeacherModel.findById(decoded.id).select("-password");
+            console.log(req.teacher);
             next();
         } catch (error) {
             console.log("unauthorized user");
             res.status(401).json({ message: "Unauthorized User" });
             return;
         }
-    } if(!token){
+    } if (!token) {
         console.log("token not found");
-        res.tatus(401).json({message : "Unauthorized Usre"});
+        res.status(401).json({ message: req.headers.authorization });
     }
 }
 
-module.exports = {teacherProtect};
+module.exports = { teacherProtect };
