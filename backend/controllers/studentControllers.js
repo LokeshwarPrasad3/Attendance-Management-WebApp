@@ -82,8 +82,7 @@ const getLoggedStudentData = async (req, res) => {
         const studentRes = req.student;
         if (!studentRes) {
             console.log("Invalid token getstudentdata");
-            res.status(401).json({ message: "Unauthorized user invalid token" });
-            return;
+            return res.status(401).json({ message: "Unauthorized user invalid token" });
         }
         console.log(studentRes);
         res.status(200).json(studentRes);
@@ -175,5 +174,7 @@ const submitAttendance = async (req, res) => {
 
 
 
-module.exports = { RegisterStudent, LoginStudent, getLoggedStudentData,
-    submitAttendance, getAllStudentData }
+module.exports = {
+    RegisterStudent, LoginStudent, getLoggedStudentData,
+    submitAttendance, getAllStudentData
+}

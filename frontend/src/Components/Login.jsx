@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // we need component and css
 import { ToastContainer, toast } from "react-toastify";
-// import axios from 'axios';
+import axios from "axios";
 // circular progress
 import CircularProgress from "@mui/material/CircularProgress"; // button which round when process
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { host } from "../API/API";
+import Cookie from "js-cookie";
+import { GetLoggedUser } from "../Context/LoggedUserData";
 
 const SLogin = () => {
   // used for navigation page
@@ -28,6 +31,13 @@ const SLogin = () => {
     setShowPass(!showPass);
   };
 
+  // GETTING CONTEXT-API TO SET LoggedUser
+  const { loggedUser, setLoggedUser } = GetLoggedUser;
+
+  useEffect(() => {
+    console.log("printed userEffect " + loggedUser);
+  }, [loggedUser, setLoggedUser]);
+
   // handle login when clicked login button
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -40,31 +50,71 @@ const SLogin = () => {
     }
     // If all values is filled
     try {
-
-      if(whoLogged==='hod'){
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      // HANDLE LOGIN WHEN USER : HOD
+      if (whoLogged === "hod") {
         console.log("hode");
+        const { data } = await axios.post(
+          `${host}/hod/login`,
+          { email, password },
+          config
+        );
+        toast.success(`${whoLogged} Successfully Login!`, { autoClose: 1000 });
+        Cookie.set("_secure_user_", data.token, { expires: 3 });
+        Cookie.set("unique_key", data._id, { expires: 3 });
+        Cookie.set("user_type", data.type, { expires: 3 });
+        console.log(data);
+        // do empty inputs now
+        setEmail("");
+        setPassword("");
+        navigate("/admin");
+        setLoading(false);
       }
-      else if(whoLogged==='teacher'){
+      // HANDLE LOGIN WHEN USER : TEACHER
+      else if (whoLogged === "teacher") {
         console.log("teacher");
+        const { data } = await axios.post(
+          `${host}/teacher/login`,
+          { email, password },
+          config
+        );
+        toast.success(`${whoLogged} Successfully Login!`, { autoClose: 1000 });
+        Cookie.set("_secure_user_", data.token, { expires: 3 });
+        Cookie.set("unique_key", data._id, { expires: 3 });
+        Cookie.set("user_type", data.type, { expires: 3 });
+        console.log(data);
+
+        // do empty inputs now
+        setEmail("");
+        setPassword("");
+        navigate("/teacher");
+        setLoading(false);
       }
-      else if(whoLogged==='student'){
-        console.log("teacher");
+      // HANDLE LOGIN WHEN USER : STUDENT
+      else if (whoLogged === "student") {
+        console.log("student");
+        const { data } = await axios.post(
+          `${host}/student/login`,
+          { email, password },
+          config
+        );
+        toast.success(`${whoLogged} Successfully Login!`, { autoClose: 1000 });
+        Cookie.set("_secure_user_", data.token, { expires: 3 });
+        Cookie.set("unique_key", data._id, { expires: 3 });
+        Cookie.set("user_type", data.type, { expires: 3 });
+        console.log(data);
+        // do empty inputs now
+        setEmail("");
+        setPassword("");
+        navigate("/student");
+        setLoading(false);
       }
-
-
-      // HERE IS MY POST REQUEST CODE --------------
-      // const data = await axios.post(logInStudent, { email, password });
-      const data = "";
-
-      // if all done successfully then
-      if (data.data.success === true) {
-        toast.success("Successfully Login");
-        localStorage.setItem("studentId", data.data.student_id);
-        navigate("/profile");
-      } else toast.error(data.data.msg);
-      setLoading(false);
     } catch (error) {
-      toast.error("Invalid User");
+      toast.error("Invalid User", { autoClose: 1000 });
       setLoading(false);
     }
   };

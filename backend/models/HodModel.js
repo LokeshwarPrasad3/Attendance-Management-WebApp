@@ -14,7 +14,7 @@ const hodSchema = new mongoose.Schema({
         default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
     },
     token: { type: String },
-
+    type: { type: String, default: "hod" },
 })
 
 // when we craete user then automaticaly create hash and saved it
@@ -29,7 +29,7 @@ hodSchema.pre('save', async function (next) {
 })
 
 // check password entered rigt or not
-hodSchema.methods.matchPassword = function(enteredPassword){
+hodSchema.methods.matchPassword = function (enteredPassword) {
     return bcrypt.compare(enteredPassword, this.password);
 }
 

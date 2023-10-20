@@ -1,7 +1,13 @@
+import React, { useEffect } from "react";
 import Navbar from "../../Components/Navbar";
 import { adminDailyData } from "../../Temp/AdminMonitorData";
+import { GetLoggedUser } from "../../Context/LoggedUserData";
 
 const AdminPage = () => {
+  const { loggedUser } = GetLoggedUser;
+
+  useEffect(() => {}, [loggedUser]);
+
   return (
     <>
       {/* need pass what visible admin, student, teacher */}
@@ -64,8 +70,8 @@ const AdminPage = () => {
             {/* Getting data from Users Array */}
             {adminDailyData.map((attendence, index) => {
               return (
-                <>
-                  <tr key={index} className="text-lg h-10">
+                <React.Fragment key={index}>
+                  <tr className="text-lg h-10">
                     <td className=" border-[2px] border-gray-900 text-lg min-w-fit text-center">
                       {index + 1}
                     </td>
@@ -76,7 +82,7 @@ const AdminPage = () => {
                       {attendence.day}
                     </td>
                   </tr>
-                </>
+                </React.Fragment>
               );
             })}
           </tbody>

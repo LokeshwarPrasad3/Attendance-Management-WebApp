@@ -17,7 +17,6 @@ const hodRoutes = require('./routes/hodRoutes');
 
 
 // Making EndPoint of routes
-
 // for teacher
 app.use('/api/teacher', teacherRoutes);
 // for student 
@@ -26,9 +25,6 @@ app.use('/api/student', studentRoutes);
 app.use('/api/hod', hodRoutes);
 
 
-app.get("/", async (req, res) => {
-    res.send("Hello from home");
-});
 
 app.listen(PORT, () => {
     console.log(`Listen at ${PORT}`);

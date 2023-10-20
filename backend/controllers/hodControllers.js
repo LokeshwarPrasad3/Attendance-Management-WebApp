@@ -82,8 +82,23 @@ const loginHOD = async (req, res) => {
     }
 }
 
+const getLoggedHodData = async (req, res) => {
+    try {
+        const hodRes = req.student;
+        if (!hodRes) {
+            console.log("Invalid token getstudentdata");
+            return res.status(401).json({ message: "Unauthorized user invalid token" });
+        }
+        console.log(hodRes);
+        res.status(200).json(hodRes);
+    } catch (error) {
+        console.log("catch error get student", error);
+    }
+}
+
+
 const getAllAttendence = async () => {
 
 }
 
-module.exports = { getAllAttendence, registerHOD, loginHOD }
+module.exports = { getAllAttendence, registerHOD, loginHOD, getLoggedHodData }

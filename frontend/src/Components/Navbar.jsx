@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 // import LogoutIcon from '@mui/icons-material/Logout';
@@ -7,15 +7,24 @@ import SchoolIcon from "@mui/icons-material/School";
 
 // include css of navbar
 import "../CSS/Navbar.css";
+import Cookies from "js-cookie";
+import { GetLoggedUser } from "../Context/LoggedUserData";
+import { ToastContainer, toast } from "react-toastify";
 
 // eslint-disable-next-line
 const Navbar = ({ currentUser }) => {
+  // GETTING CONTEXT-API TO SET LoggedUser
+  // eslint-disable-next-line
+  const { loggedUser, setLoggedUser } = GetLoggedUser;
+
+  const navigate = useNavigate();
+
   // HERE NEED LOGIC FOR if teacher navbar then what visible and student what visible , HOD what visible
 
   // When mobile size then toggle navbar using menu_bar button
   const [showMenu, setShowMenu] = useState(false);
-  const toggleMenu = (e) => {
-    e.preventDefault();
+  const toggleMenu = () => {
+    // e.preventDefault();
     setShowMenu(!showMenu);
   };
 
@@ -35,6 +44,26 @@ const Navbar = ({ currentUser }) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      // Get Cookie and then remove it
+      Cookies.remove("user_type");
+      Cookies.remove("unique_key");
+      Cookies.remove("_secure_user_");
+
+      toast.success("Logout successfully!", { autoClose: 1000 });
+      // Update the loggedUser state and execute further actions in the callback
+      // setLoggedUser(null); // must make null
+      // Code to execute after state update
+      console.log("Logout successfully");
+      navigate("/");
+      toggleMenu();
+    } catch (error) {
+      console.log("Getting eeror to logut");
+      // setLoggedUser(null); // must make null
+    }
+  };
 
   return (
     <>
@@ -67,28 +96,28 @@ const Navbar = ({ currentUser }) => {
           {currentUser === "admin" && (
             <>
               <li>
-                  <Link
-                    to="/manage-teacher"
-                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  >
-                    Manage-Teacher
-                  </Link>
+                <Link
+                  to="/manage-teacher"
+                  className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                >
+                  Manage-Teacher
+                </Link>
               </li>
               <li>
-                  <Link
-                    to="/manage-student"
-                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  >
-                    Manage-Student
-                  </Link>
+                <Link
+                  to="/manage-student"
+                  className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                >
+                  Manage-Student
+                </Link>
               </li>
               <li>
-                  <Link
-                    to="/"
-                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  >
-                    Logout
-                  </Link>
+                <h2
+                  className="menu_link w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  onClick={handleLogout}
+                >
+                  Logout
+                </h2>
               </li>
             </>
           )}
@@ -98,22 +127,22 @@ const Navbar = ({ currentUser }) => {
           {currentUser === "teacher" && (
             <>
               <li>
-                  <Link
-                    to="/history"
-                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  >
-                    See-History
-                  </Link>
+                <Link
+                  to="/history"
+                  className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                >
+                  See-History
+                </Link>
               </li>
 
               {/* Logout icon menu link */}
               <li>
-                  <Link
-                    to="/"
-                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  >
-                    Logout
-                  </Link>
+                <h2
+                  className="menu_link w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  onClick={handleLogout}
+                >
+                  Logout
+                </h2>
               </li>
             </>
           )}
@@ -122,12 +151,12 @@ const Navbar = ({ currentUser }) => {
           {currentUser === "student" && (
             <>
               <li>
-                  <Link
-                    to="/"
-                    className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  >
-                    Logout
-                  </Link>
+                <h2
+                  className="menu_link w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  onClick={handleLogout}
+                >
+                  Logout
+                </h2>
               </li>
             </>
           )}
@@ -136,7 +165,8 @@ const Navbar = ({ currentUser }) => {
           <li>
             <Link
               to="/teacher"
-              className={`menu_bar rounded-md flex custom-transtion relative left-1`}
+              // className={`menu_bar rounded-md flex custom-transtion relative left-1`}
+              className="menu_link flex font-semibold ml-1 cursor-pointer text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
             >
               {!isMobile ? (
                 <img
@@ -173,6 +203,8 @@ const Navbar = ({ currentUser }) => {
           </div>
         )}
       </nav>
+
+      <ToastContainer />
     </>
   );
 };

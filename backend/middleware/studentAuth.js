@@ -25,7 +25,7 @@ const studentProtect = async (req, res, next) => {
         }
     }
     if (!token) {
-        console.log("Unathorized user", error);
+        console.log("Unathorized user no token");
         res.status(401).json({ message: "UnAuthorized User No token" });
         return;
     }

@@ -40,7 +40,8 @@ const studentSchema = new mongoose.Schema({
     attendence: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'AttendenceModel', // Reference to the 'Attendence' model
-    }
+    },
+    type: { type: String, default: "student" },
 },
     {
         timestamps: true // Automatically add createdAt and updatedAt fields

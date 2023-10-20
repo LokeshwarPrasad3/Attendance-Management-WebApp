@@ -19,16 +19,17 @@ const teacherSchema = new mongoose.Schema({
         {
             sem: Number,
             branch: String,
-            subject:String,
+            subject: String,
         }
-    ]
+    ],
+    type: { type: String, default: "teacher" },
 });
 
 
 // ONLY USED IN MODEL NAME
 // Before save document first hash their password
-teacherSchema.pre('save', async function(next){
-    if(this.isModified('password')){
+teacherSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
     }
@@ -37,7 +38,7 @@ teacherSchema.pre('save', async function(next){
 
 // ONLY USED IN CREATED DOCUMENT
 // check password is shimilar when login
-teacherSchema.methods.matchPassword = function(enteredPassword){
+teacherSchema.methods.matchPassword = function (enteredPassword) {
     return bcrypt.compare(enteredPassword, this.password);
 }
 

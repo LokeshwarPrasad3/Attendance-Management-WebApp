@@ -25,6 +25,9 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/manage-teacher" element={<ManageTeacher />} />
         <Route path="/manage-student" element={<ManageStudent />} />
+
+
+        <Route path="*" element={<Authentication />} />
       </Routes>
     </>
   );

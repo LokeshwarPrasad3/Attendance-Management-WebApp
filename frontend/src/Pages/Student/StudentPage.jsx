@@ -6,6 +6,12 @@ import { dummyAttendence } from "../../Temp/TempAttendence";
 import "../../CSS/StudentPage.css";
 
 const StudentPage = () => {
+  // const [loggedUser, setLoggedUser]= useState();
+
+  // useEffect(()=>{
+  //   getLoggedUser();
+  // },[])
+
   return (
     <>
       <Navbar currentUser={"student"} />
