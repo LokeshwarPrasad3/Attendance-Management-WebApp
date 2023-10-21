@@ -6,9 +6,9 @@ const { AttendenceModel } = require('../models/AttendenceModel');
 // route method for registration of student
 const RegisterStudent = async (req, res) => {
     try {
-        const { name, email, mono, pic, course, sem, branch, password } = req.body;
+        const { name, email, pic, course, sem, branch, password } = req.body;
         // check value is not empty
-        if (!name || !email || !mono || !pic || !course || !sem || !branch || !password) {
+        if (!name || !email || !course || !sem || !branch || !password) {
             console.log("Please fill all fields");
             res.status(400).json({ message: "Please fill all filds" });
             return;
@@ -23,7 +23,12 @@ const RegisterStudent = async (req, res) => {
         }
 
         // save to db
-        const student = await studentModel.create({ name, email, mono, pic, course, sem, branch, password });
+        let student;
+        if(!pic){
+            student = await studentModel.create({ name, email, course, sem, branch, password });
+        }else{
+            student = await studentModel.create({ name, email, course,pic, sem, branch, password });
+        }
         if (!student) {
             console.log("failed to store data");
             res.status(500).json({ message: "Failed to store Data" });
@@ -88,6 +93,30 @@ const getLoggedStudentData = async (req, res) => {
         res.status(200).json(studentRes);
     } catch (error) {
         console.log("catch error get student", error);
+    }
+}
+
+// Get student attendence by id
+const getStudentAttendeceById = async (req, res) => {
+    try {
+        const { _id } = req.body;
+        // check _id is not empty
+        if (!_id) {
+            console.log("Id is required");
+            return res.status(401).json({ message: "Id is required" });
+        }
+        // Search that student attendece by Id
+        const student = await AttendenceModel.findOne({ studentId: _id });
+        // check student is exist
+        if (!student) {
+            console.log("Student is not found");
+            return res.status(401).json({ message: "Student does not exist!" });
+        }
+        console.log("Student Attendence Found");
+        res.status(200).json(student);
+    } catch (error) {
+        console.log("Error during fetching attendence of student", error);
+        return res.status(500).json({ message: "Getting error to find Student attendence" })
     }
 }
 
@@ -175,6 +204,6 @@ const submitAttendance = async (req, res) => {
 
 
 module.exports = {
-    RegisterStudent, LoginStudent, getLoggedStudentData,
+    RegisterStudent, LoginStudent, getLoggedStudentData, getStudentAttendeceById,
     submitAttendance, getAllStudentData
 }

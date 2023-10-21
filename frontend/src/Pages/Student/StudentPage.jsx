@@ -1,16 +1,61 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import { dummyAttendence } from "../../Temp/TempAttendence";
+// import { dummyAttendence } from "../../Temp/TempAttendence";
 import "../../CSS/StudentPage.css";
+import { GetLoggedUser } from "../../Context/LoggedUserData";
+import axios from "axios";
+import { host } from "../../API/API";
+import Cookies from "js-cookie";
 
 const StudentPage = () => {
-  // const [loggedUser, setLoggedUser]= useState();
+  // Context-ApI data
+  const { loggedUser } = GetLoggedUser();
 
-  // useEffect(()=>{
-  //   getLoggedUser();
-  // },[])
+  // My Current Component Store data
+  const [currentUser, setCurrentUser] = useState({});
+  // If user student then store their all attendence
+  // eslint-disable-next-line
+  const [studentAttendence, setStudentAttedence] = useState({});
+
+  // Load student all attendence
+  const loadStudentAllAttendence = useCallback(async () => {
+    try {
+      const token = Cookies.get("_secure_user_");
+      console.log(token);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
+      const _id = currentUser._id;
+      const { data } = await axios.post(
+        `${host}/student/my-attendence`,
+        { _id },
+        config
+      );
+
+      // check data is right
+      if (!data) {
+        return console.log("Getting error to get attendence DAta");
+      }
+      // if data is successfully getted then set in state
+      setStudentAttedence(data);
+    } catch (error) {
+      console.log("Error during fetching attendence react");
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    setCurrentUser(loggedUser);
+
+    // Load student all attendence
+    if (currentUser?.type === "student") {
+      loadStudentAllAttendence();
+    }
+  }, [loggedUser, currentUser, loadStudentAllAttendence]);
 
   return (
     <>
@@ -22,11 +67,12 @@ const StudentPage = () => {
           <div className="profile flex flex-col gap-3 items-center">
             <img
               className="h-32 w-32 rounded-full"
-              src="./Images/lokeshwar1.jpg"
+              // src="./Images/lokeshwar1.jpg"
+              src={`${currentUser?.pic}`}
               alt=""
             />
             <h1 className="text-xl font-semibold text-center">
-              Lokeshwar Prasad Dewangan
+              {currentUser?.name}
             </h1>
           </div>
           {/* menu bar type */}
@@ -51,30 +97,35 @@ const StudentPage = () => {
           <div className="student_basic_details bg-white md:px-5 px-3 md:py-5 py-3 w-full">
             <div className="student_detail flex flex-wrap gap-1 items-center">
               <h2 className="font-semibold min-w-fit">Institute : </h2>
-              <h3>RSR Rungta College of Engineering College Bhilai</h3>
+              <h3>{currentUser?.college}</h3>
             </div>
             <div className="student_detail flex flex-wrap gap-1 items-center">
               <h2 className="font-semibold min-w-fit">Course : </h2>
-              <h3>BTech</h3>
+              <h3>{currentUser?.course}</h3>
             </div>
             <div className="student_detail flex flex-wrap gap-1 items-center ">
               <h2 className="font-semibold min-w-fit">Branch : </h2>
               <h3 className="max-w-full overflow-hidden">
-                Computer Science Engineering
+                {currentUser?.branch === "AIML"
+                  ? "Artificial Intelligence & Machine Learning"
+                  : ""}
+                {currentUser?.branch === "CSE"
+                  ? "Computer Science & Engineering"
+                  : ""}
               </h3>
             </div>
             <div className="student_detail flex flex-wrap gap-1 items-center">
               <h2 className="font-semibold min-w-fit">Sem : </h2>
-              <h3>5th Regular</h3>
+              <h3>{currentUser?.sem}th Regular</h3>
             </div>
             <div className="student_combine flex flex-wrap items-center gap-2">
               <div className="student_detail flex gap-1 items-center">
                 <h2 className="font-semibold min-w-fit">Total Attedence : </h2>
-                <h3>10</h3>
+                <h3>{studentAttendence?.all_attendence?.length}</h3>
               </div>
               <div className="student_detail flex flex-wrap gap-1 items-center">
                 <h2 className="font-semibold min-w-fit">Total Classess : </h2>
-                <h3>20</h3>
+                <h3>{studentAttendence?.all_attendence?.length}</h3>
               </div>
             </div>
           </div>
@@ -111,7 +162,10 @@ const StudentPage = () => {
                 </div>
                 <div className="total_attendence flex items-center justify-center">
                   <h2>Attendence : </h2>
-                  <h3>12/20</h3>
+                  <h3>
+                    {studentAttendence?.all_attendence?.length}/
+                    {studentAttendence?.all_attendence?.length}
+                  </h3>
                 </div>
               </div>
 
@@ -119,14 +173,14 @@ const StudentPage = () => {
               <div className="attendence_output_table md:min-w-[50vw] md:max-w-[56vw] overflow-x-auto ">
                 <table className="border-collapse ">
                   <tbody className="flex w-min ">
-                    {dummyAttendence.map((user, index) => {
+                    {studentAttendence?.all_attendence?.map((attendence, index) => {
                       return (
                         <React.Fragment key={index}>
-                          <tr className="flex flex-col px-[1px] border-[1px] border-slate-800">
+                          <tr className="flex flex-col px-[1px] border-[1px] border-slate-800 min-w-[5.7rem]">
                             <td className="border-b-[1px]">
-                              {new Date().toLocaleDateString()}
+                              {attendence.date.slice(0,10)}
                             </td>
-                            <td className="w-full text-center">P</td>
+                            <td className="w-full text-center">{attendence?.status?'P':'A'}</td>
                           </tr>
                         </React.Fragment>
                       );

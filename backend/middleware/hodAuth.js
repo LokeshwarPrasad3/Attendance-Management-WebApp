@@ -14,6 +14,7 @@ const hodProtect = async (req, res, next) => {
             console.log("decoded hod : " + decoded.id)
             req.hod = await HodModel.findById(decoded.id).select("-password");
             // console.log(req.hod);
+            console.log("Okoay hod token found");
             next();
         } catch (error) {
             console.log("UnAuthorized User", error);

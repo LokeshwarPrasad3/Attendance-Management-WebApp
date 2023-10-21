@@ -1,9 +1,8 @@
 import { useState } from "react";
-import Navbar from "../../Components/Navbar";
 import { Users } from "../../Temp/Users";
 import { Link } from "react-router-dom";
 
-const Home = () => {
+const Home = ({ setShowHomePage }) => {
   // state which manage present/absent
   const [isPresent, setIsPresent] = useState({});
   // when clicked to present/absent button
@@ -16,9 +15,6 @@ const Home = () => {
 
   return (
     <>
-      {/* Navbar components */}
-      <Navbar currentUser={"teacher"} />
-
       {/* Another part of page */}
       <div className="home_heading font-overpass flex justify-center py-4 gap-4 flex-wrap items-center">
         {/* Heading Part */}
@@ -40,7 +36,13 @@ const Home = () => {
       <hr className="text-gray-400 bg-gray-400" />
 
       {/* Set Leave Today Button part */}
-      <div className="set_leave_container w-10/12 flex justify-end items-center pt-4 ">
+      <div className="set_leave_container w-10/12 flex justify-end items-center pt-4 gap-3">
+        <button
+          onClick={() => setShowHomePage(false)}
+          className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md"
+        >
+          GoBack
+        </button>
         <button className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md">
           Save Changes
         </button>

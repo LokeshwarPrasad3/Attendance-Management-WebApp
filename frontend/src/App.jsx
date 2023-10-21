@@ -5,9 +5,9 @@ import Home from "./Pages/Teacher/Home";
 import HistoryAttendence from "./Pages/Teacher/HistoryAttendence";
 import StudentPage from "./Pages/Student/StudentPage";
 import TeacherPage from "./Pages/Teacher/TeacherPage";
-import AdminPage from "./Pages/HOD/AdminPage";
 import ManageTeacher from "./Pages/HOD/ManageTeacher";
 import ManageStudent from "./Pages/HOD/ManageStudent";
+import HodPage from "./Pages/HOD/HodPage";
 
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
         <Route path="/teacher" element={<TeacherPage />} />
         {/* Student Access Page */}
         <Route path="/student" element={<StudentPage />} />
-        {/* Admin page */}
-        <Route path="/admin" element={<AdminPage />} />
+        {/* HOD access page */}
+        <Route path="/hod" element={<HodPage />} />
         <Route path="/manage-teacher" element={<ManageTeacher />} />
         <Route path="/manage-student" element={<ManageStudent />} />
 

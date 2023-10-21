@@ -31,7 +31,7 @@ const LoggedUserData = ({ children }) => {
           const { data } = await axios.get(`${host}/${type}`, config);
           console.log("getted context API data", data);
           setLoggedUser(data);
-          navigate(`/${type}`);
+          if (type === "student") navigate(`/${type}`);
         } catch (error) {
           setLoggedUser(null);
           console.log(`Error getting context API data: ${error}`);

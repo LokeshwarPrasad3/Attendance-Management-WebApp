@@ -13,9 +13,12 @@ import { ToastContainer, toast } from "react-toastify";
 
 // eslint-disable-next-line
 const Navbar = ({ currentUser }) => {
+  // store navbar user-data
+  const [getUser, setGetUser] = useState({});
+
   // GETTING CONTEXT-API TO SET LoggedUser
   // eslint-disable-next-line
-  const { loggedUser, setLoggedUser } = GetLoggedUser;
+  const { loggedUser } = GetLoggedUser();
 
   const navigate = useNavigate();
 
@@ -32,6 +35,8 @@ const Navbar = ({ currentUser }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1100);
 
   useEffect(() => {
+    // set current user
+    setGetUser(loggedUser);
     // Update the isMobile state when the window is resized
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 1100);
@@ -43,7 +48,7 @@ const Navbar = ({ currentUser }) => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [loggedUser]);
 
   const handleLogout = async () => {
     try {
@@ -75,13 +80,13 @@ const Navbar = ({ currentUser }) => {
         {/* header section left part */}
         <div className="header flex items-center justify-center relative md:left-0 left-[-0.6rem] md:gap-4 gap-1">
           <Link
-            to="/home"
+            to={`/${getUser?.type}`}
             className="menu_link flex rounded-full justify-center items-center custom-transition relative top-[-2px]"
           >
             <SchoolIcon className="" style={{ fontSize: "2rem" }} />
           </Link>
           <Link
-            to="/home"
+            to={`/${getUser?.type}`}
             className="user_name font-overpass text-[#113C7C] font-semibold text-2xl hover:opacity-90 flex justify-center items-center custom-transition "
           >
             Attendence Management
@@ -90,7 +95,7 @@ const Navbar = ({ currentUser }) => {
         {/* right part */}
         <ul
           style={{ left: showMenu ? "0%" : "100%" }}
-          className="menu_links flex gap-1 font-overpass"
+          className="menu_links flex lg:justify-center lg:items-center gap-1 font-overpass"
         >
           {/* if current user is admin then only show */}
           {currentUser === "admin" && (
@@ -164,13 +169,17 @@ const Navbar = ({ currentUser }) => {
           {/* menu button which is visible when mobile screen */}
           <li>
             <Link
-              to="/teacher"
+              to={getUser?.type}
               // className={`menu_bar rounded-md flex custom-transtion relative left-1`}
-              className="menu_link flex font-semibold ml-1 cursor-pointer text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+              className={`menu_link flex font-semibold ml-1 cursor-pointer text-lg items-center justify-center ${
+                !isMobile ? "p-1" : "px-3 py-1"
+              } hover:bg-blue-200 custom-transition rounded-2xl `}
             >
               {!isMobile ? (
                 <img
-                  src={`./Images/lokeshwar1.jpg`}
+                  src={`${
+                    !getUser ? getUser?.pic : "./Images/default_user.jpg"
+                  }`}
                   alt="user"
                   className="w-9 h-9 rounded-full border-[1px] border-gray-400"
                   srcSet=""

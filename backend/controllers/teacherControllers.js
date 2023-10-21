@@ -81,8 +81,23 @@ const loginTeacher = async (req, res) => {
     }
 }
 
+// get only logged teacher data by teacher
+const getLoggedTeacherData = async (req, res) => {
+    try {
+        const teacherRes = req.teacher;
+        if (!teacherRes) {
+            console.log("Invalid token get teacher data");
+            return res.status(401).json({ message: "Unauthorized teacher invalid token" });
+        }
+        console.log(teacherRes);
+        res.status(200).json(teacherRes);
+    } catch (error) {
+        console.log("catch error get teacher", error);
+    }
+}
+
 // taking attendence saved then store students
-const getTeachers = async (req, res) => {
+const getAllTeachers = async (req, res) => {
     try {
         const teachers = await TeacherModel.find();
         console.log(teachers);
@@ -94,6 +109,8 @@ const getTeachers = async (req, res) => {
         return;
     }
 }
+
+
 
 // set subject of teacher which have they accessed
 const setAssignSubject = async (req, res) => {
@@ -129,4 +146,4 @@ const setAssignSubject = async (req, res) => {
     }
 }
 
-module.exports = { registerTeacher, loginTeacher, getTeachers, setAssignSubject }
+module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, getAllTeachers, setAssignSubject }

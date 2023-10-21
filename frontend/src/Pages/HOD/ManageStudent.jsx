@@ -10,20 +10,17 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Tab } from "@mui/material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Navbar from "../../Components/Navbar";
+import axios from "axios";
+import { host } from "../../API/API";
 
 const ManageStudent = () => {
-  // getting name
+  // Get filled student-data
   const [name, setName] = useState("");
-  // getting  email
   const [email, setEmail] = useState("");
-  // getting date of birth
-  const [DOB, setDOB] = useState("");
   const [branch, setBranch] = useState("");
   const [course, setCourse] = useState("");
   const [sem, setSem] = useState("");
-  // getting  password
   const [password, setPassword] = useState("");
-  // for picture data from cloudinary link
   const [pic, setPic] = useState();
 
   // new state for loading to upload picture of user
@@ -31,12 +28,10 @@ const ManageStudent = () => {
 
   // when clicked to choose file for image then handle that
   const postDetail = (pic) => {
-    // pics have all info of image (name,size,type)
-    // when upload picture then load button
     setLoading(true); // when loading starts
-    // if pics is undefined then popup error
     if (pic === undefined) {
       toast.warn("Please Select an Image", { autoClose: 1000 });
+      setLoading(false);
       return; // no move forward
     }
     // if type is jpeg and png only
@@ -55,7 +50,6 @@ const ManageStudent = () => {
 
       // upload that data in cloudinary api using post method
       fetch("https://api.cloudinary.com/v1_1/mernchatappcloud/image/upload", {
-        //adding body method in headers
         method: "post",
         body: data,
       })
@@ -102,20 +96,43 @@ const ManageStudent = () => {
     if (
       !name ||
       !email ||
-      !DOB ||
       !course ||
       !branch ||
       !sem ||
-      !password ||
-      !pic
+      !password 
     ) {
-      toast.warn("Please Fill All Fields!");
-      setLoading(false);
-      return;
+      toast.warn("Please Fill All Fields!",{autoClose:1000});
+      return setLoading(false);
     }
 
-    console.log(name, email, DOB, course, branch, sem, pic);
+    // If all right then post req student - register
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const { data } = await axios.post(
+      `${host}/student/register`,
+      { name, email, branch, course, sem, password, pic },
+      config
+    );
+    if(!data){
+      console.log("Student is not registed");
+      toast.error("Student is not registered",{autoClose:1000});
+      return;
+    }
+    toast.success("Student Successfully Created!",{autoClose:1000});
+    console.log(data);
     setLoading(false);
+
+
+    setName("");
+    setEmail("");
+    setPic("");
+    setSem("");
+    setBranch("");
+    setCourse("");
+    setPassword("");
   };
 
   return (
@@ -160,18 +177,6 @@ const ManageStudent = () => {
                 className="py-1 px-3 w-full bg-gray-200"
                 placeholder="Student Email "
                 autoComplete="on"
-              />
-            </div>
-
-            {/* for input date (dob) */}
-            <div className="email_box flex flex-col gap-2">
-              <input
-                value={DOB}
-                onChange={(e) => setDOB(e.target.value)} // set value when change
-                type="date"
-                name="create_input_dob"
-                id="create_input_dob"
-                className="py-1 px-3 w-full bg-gray-200"
               />
             </div>
 

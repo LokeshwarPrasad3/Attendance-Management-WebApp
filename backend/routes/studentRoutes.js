@@ -1,5 +1,5 @@
 const express = require('express');
-const { LoginStudent, RegisterStudent, getLoggedStudentData, submitAttendance, getAllStudentData } = require('../controllers/studentControllers');
+const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById, submitAttendance, getAllStudentData } = require('../controllers/studentControllers');
 const { studentProtect } = require('../middleware/studentAuth');
 const { teacherProtect } = require('../middleware/teacherAuth');
 const router = express.Router();
@@ -8,6 +8,7 @@ router.route('/register').post(RegisterStudent)
 router.route('/login').post(LoginStudent);
 // student can see own details
 router.route('/').get(studentProtect, getLoggedStudentData);
+router.route('/my-attendence').post(studentProtect, getStudentAttendeceById);
 
 
 // NEED OPTIMIZATION THAT TEACHER IS ONLY SEE NEEDED DETAILS NOT ALL

@@ -3,7 +3,7 @@ import Navbar from "../../Components/Navbar";
 import { adminDailyData } from "../../Temp/AdminMonitorData";
 import { GetLoggedUser } from "../../Context/LoggedUserData";
 
-const AdminPage = () => {
+const HodPage = () => {
   const { loggedUser } = GetLoggedUser;
 
   useEffect(() => {}, [loggedUser]);
@@ -125,4 +125,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+export default HodPage;

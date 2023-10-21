@@ -29,11 +29,6 @@ const ManageTeacher = () => {
 
       <div className="login_container font-overpass flex flex-col justify-center items-center pt-7 gap-4  ">
         {/* this includes heading part */}
-        {/* <div className="login_heading bg-white rounded-md w-[35rem]  py-3 flex justify-center items-center ">
-                    <h1 className=' text-3xl font-semibold  opacity-80 tracking-wide' >Your-Login-Page</h1>
-                </div> */}
-
-        {/*  this includes login content part */}
         <div className="login_contenet bg-[#f2f2f2] rounded-sm  lg:w-[35rem] md:w-[34rem] w-[23rem]  py-3 flex justify-center items-center flex-col ">
           <Tabs
             value={value}

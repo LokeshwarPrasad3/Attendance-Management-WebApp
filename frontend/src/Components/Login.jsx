@@ -71,7 +71,7 @@ const SLogin = () => {
         // do empty inputs now
         setEmail("");
         setPassword("");
-        navigate("/admin");
+        navigate("/hod");
         setLoading(false);
       }
       // HANDLE LOGIN WHEN USER : TEACHER

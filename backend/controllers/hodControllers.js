@@ -84,15 +84,15 @@ const loginHOD = async (req, res) => {
 
 const getLoggedHodData = async (req, res) => {
     try {
-        const hodRes = req.student;
+        const hodRes = req.hod;
         if (!hodRes) {
-            console.log("Invalid token getstudentdata");
-            return res.status(401).json({ message: "Unauthorized user invalid token" });
+            console.log("Invalid token get hod data");
+            return res.status(401).json({ message: "Unauthorized hod invalid token" });
         }
         console.log(hodRes);
         res.status(200).json(hodRes);
     } catch (error) {
-        console.log("catch error get student", error);
+        console.log("catch error get hod", error);
     }
 }
 
