@@ -1,17 +1,138 @@
-import { useState } from "react";
-import { Users } from "../../Temp/Users";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+import { host } from "../../API/API";
+import { Box, CircularProgress } from "@mui/material";
 
-const Home = ({ setShowHomePage }) => {
+const Home = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
+  const days = {
+    0: "Sunday",
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+  };
+ const customGetDay = (no) => {
+   return days[no]; // Use square brackets to access the property based on the variable 'no'
+ };
+
+
+  const [loading, setLoading] = useState(false);
+
+  // Store that particular sem and branch list when entered page
+  const [AllStudents, setAllStudents] = useState([]);
+
+  // Submit attendence then push that state in backend contains (_id, name)
+  const [presentStudentsIds, setPresentStudentsIds] = useState([]);
+
   // state which manage present/absent
   const [isPresent, setIsPresent] = useState({});
   // when clicked to present/absent button
-  const handleIsPresent = (sno) => {
-    setIsPresent((prev) => ({
-      ...prev,
-      [sno]: !isPresent[sno],
-    }));
+  const handleIsPresent = (sno, _id, name) => {
+    setIsPresent((prev) => {
+      const updatedIsPresent = { ...prev, [sno]: !prev[sno] };
+
+      if (updatedIsPresent[sno]) {
+        setPresentStudentsIds((prevPresentStudentsIds) => [
+          ...prevPresentStudentsIds,
+          { _id: _id, name: name },
+        ]);
+      } else {
+        setPresentStudentsIds((prevPresentStudentsIds) =>
+          prevPresentStudentsIds.filter((student) => student._id !== _id)
+        );
+      }
+
+      return updatedIsPresent;
+    });
   };
+
+  // save attendence to db when clicked to save changes
+  const saveAllStudentAttendence = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // get token from cookie
+      const token = Cookies.get("_secure_user_");
+      console.log("here is alltecher access token " + token);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
+      // Post requrest
+      const { data } = await axios.post(
+        `${host}/student`,
+        {
+          sem: takeSem,
+          branch: takeBranch,
+          presentStudentsIds: presentStudentsIds,
+          subject: takeSubject,
+          date: new Date().toLocaleDateString(),
+          day: customGetDay(new Date().getDay()),
+        },
+        config
+      );
+      // If data is not gettd
+      if (!data) {
+        console.log("Not data");
+        toast.warn("Not get data", { autoClose: 1000 });
+        setLoading(false);
+        return;
+      }
+      toast.success("Successfully Saved!", { autoClose: 1000 });
+      setLoading(false);
+
+      // RESET all data
+      setIsPresent({});
+      setPresentStudentsIds([]);
+    } catch (error) {
+      console.log("Student data not saved", error);
+      toast.error("Student data not getted", { autoClose: 1000 });
+      setLoading(false);
+      return;
+    }
+  };
+
+  // Get that particular semester and branch student list
+  const getAllStudents = useCallback(async () => {
+    try {
+      // Get token must teacher logged
+      const token = Cookies.get("_secure_user_");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      // get student use takeSem takeBranch props
+      const { data } = await axios.post(
+        `${host}/student/all-attedence`,
+        { sem: takeSem, branch: takeBranch },
+        config
+      );
+      if (data.status === 400) {
+        console.log("Data not getted");
+        toast.error("Students Not getted!", { autoClose: 1000 });
+        return;
+      }
+      // If data is successfully fouond then store in state
+      setAllStudents(data);
+    } catch (error) {
+      console.log("Error occured during fetching students", error);
+      toast.error("Student Not Found!", { autoClose: 1000 });
+      return;
+    }
+  }, [takeSem, takeBranch]);
+
+  // When page is Opened then render all students
+  useEffect(() => {
+    getAllStudents();
+  }, [getAllStudents]);
 
   return (
     <>
@@ -43,8 +164,23 @@ const Home = ({ setShowHomePage }) => {
         >
           GoBack
         </button>
-        <button className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md">
-          Save Changes
+        <button
+          onClick={saveAllStudentAttendence}
+          className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md"
+        >
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress color="inherit" size={28} />
+            </Box>
+          ) : (
+            "Save Changes"
+          )}
         </button>
       </div>
 
@@ -66,18 +202,18 @@ const Home = ({ setShowHomePage }) => {
           {/* Left-Table body part */}
           <tbody>
             {/* Getting data from Users Array */}
-            {Users.map((user) => {
+            {AllStudents?.map((user, index) => {
               return (
-                <>
-                  <tr key={user.sno} className="text-lg h-10">
+                <React.Fragment key={index}>
+                  <tr className="text-lg h-10">
                     <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
-                      {user.sno}
+                      {index}
                     </td>
-                    <td className=" border-[2px] border-gray-900 text-xl min-w-[11rem] overflow-hidden text-center">
-                      {user.name.slice(0, 15)}
+                    <td className=" border-[2px] border-gray-900 text-lg min-w-[11rem] overflow-hidden text-center">
+                      {user.studentName}
                     </td>
                   </tr>
-                </>
+                </React.Fragment>
               );
             })}
           </tbody>
@@ -93,9 +229,6 @@ const Home = ({ setShowHomePage }) => {
                   <span className="">{new Date().toLocaleDateString()}</span>
                 </th>
                 <th className=" border-[2px] border-gray-900  text-center px-2">
-                  Today
-                </th>
-                <th className=" border-[2px] border-gray-900  text-center px-2">
                   Yesterday
                 </th>
                 <th className=" border-[2px] border-gray-900  text-center px-2">
@@ -106,39 +239,44 @@ const Home = ({ setShowHomePage }) => {
             {/* Right-Table body part here */}
             <tbody>
               {/* Getting data from Users Array */}
-              {Users.map((user) => {
+              {AllStudents?.map((user, index) => {
                 return (
-                  <>
-                    <tr key={user.sno} className="text-lg h-10">
+                  <React.Fragment key={index}>
+                    <tr className="text-lg h-10">
                       <td className=" text-center border-[2px] border-gray-900">
                         <button
-                          onClick={() => handleIsPresent(user.sno)}
+                          onClick={() =>
+                            handleIsPresent(
+                              index,
+                              user?.studentId,
+                              user?.studentName
+                            )
+                          }
                           className={`home_set_leave ${
-                            isPresent[user.sno]
-                              ? "bg-[#038327]"
-                              : "bg-[#F20101]"
+                            isPresent[index] ? "bg-[#038327]" : "bg-[#F20101]"
                           } font-normal w-fit h-6 px-1 py-[2px] text-lg leading-none custom-transition text-white font-signika rounded-md`}
                         >
-                          {isPresent[user.sno] ? "Present" : "Absent"}
+                          {isPresent[index] ? "Present" : "Absent"}
                         </button>
-                      </td>
-                      <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
-                        {isPresent[user.sno] ? "1" : "0"}
                       </td>
                       <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
                         0
                       </td>
                       <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
-                        {isPresent[user.sno] ? "1" : "0"}
+                        {isPresent[index]
+                          ? user?.all_attendence.length + 1
+                          : user?.all_attendence.length}
                       </td>
                     </tr>
-                  </>
+                  </React.Fragment>
                 );
               })}
             </tbody>
           </table>
         </div>
       </div>
+
+      <ToastContainer />
     </>
   );
 };

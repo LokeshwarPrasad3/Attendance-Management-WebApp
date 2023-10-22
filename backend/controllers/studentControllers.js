@@ -24,10 +24,10 @@ const RegisterStudent = async (req, res) => {
 
         // save to db
         let student;
-        if(!pic){
+        if (!pic) {
             student = await studentModel.create({ name, email, course, sem, branch, password });
-        }else{
-            student = await studentModel.create({ name, email, course,pic, sem, branch, password });
+        } else {
+            student = await studentModel.create({ name, email, course, pic, sem, branch, password });
         }
         if (!student) {
             console.log("failed to store data");
@@ -123,14 +123,14 @@ const getStudentAttendeceById = async (req, res) => {
 // Retrieve all students data by semester
 const getAllStudentData = async (req, res) => {
     try {
-        const { sem } = req.body;
+        const { sem, branch } = req.body;
         // Check if the 'sem' parameter is provided
-        if (!sem) {
+        if (!sem || !branch) {
             console.log("Semester required");
-            return res.status(400).json({ message: "Semester required" });
+            return res.status(400).json({ message: "Semester, Branch required" });
         }
         // Query the database for students in the specified semester
-        const students = await studentModel.find({ sem: sem });
+        const students = await studentModel.find({ sem: sem, branch: branch });
         // Log the retrieved students (for debugging purposes)
         console.log("getted all students " + students);
         // Return the retrieved students as a JSON response
@@ -141,13 +141,35 @@ const getAllStudentData = async (req, res) => {
     }
 }
 
+// Retrieve all student attendence data by semester
+const getAllAttendence = async (req, res) => {
+    try {
+        const { sem, branch } = req.body;
+        // Check if the 'sem' parameter is provided
+        if (!sem || !branch) {
+            console.log("Semester required");
+            return res.status(400).json({ message: "Semester, Branch required" });
+        }
+        // Query the database for students in the specified semester
+        const attendence = await AttendenceModel.find({ sem: sem, branch: branch });
+        // Log the retrieved attendence (for debugging purposes)
+        console.log("getted all attendence " + attendence);
+        // Return the retrieved attendence as a JSON response
+        return res.status(201).json(attendence);
+    } catch (error) {
+        console.log("Error getting attendence", error);
+        return res.status(500).json({ message: "Error getting attendence" });
+        // Teacher access all attendence
+    }
+}
+
 
 // when clicked saved attendence by teacher then changes in every student database
 const submitAttendance = async (req, res) => {
     try {
-        const { sem, subject, presentStudentsIds, date, day } = req.body;
+        const { sem, branch, subject, presentStudentsIds, date, day } = req.body;
 
-        if (!sem || !subject || !presentStudentsIds || !date || !day) {
+        if (!sem || !branch, !subject || !presentStudentsIds || !date || !day) {
             console.log("Missing required data");
             return res.status(400).json({ message: "Semester, students, date, or day not provided." });
         }
@@ -178,6 +200,8 @@ const submitAttendance = async (req, res) => {
                     attendanceDoc = new AttendenceModel({
                         studentId,
                         studentName,
+                        sem,
+                        branch,
                         all_attendence: [attendanceRecord], // Note the correct field name here
                     });
                     await attendanceDoc.save();
@@ -205,5 +229,5 @@ const submitAttendance = async (req, res) => {
 
 module.exports = {
     RegisterStudent, LoginStudent, getLoggedStudentData, getStudentAttendeceById,
-    submitAttendance, getAllStudentData
+    submitAttendance, getAllAttendence, getAllStudentData
 }

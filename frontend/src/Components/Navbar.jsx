@@ -98,7 +98,7 @@ const Navbar = ({ currentUser }) => {
           className="menu_links flex lg:justify-center lg:items-center gap-1 font-overpass"
         >
           {/* if current user is admin then only show */}
-          {currentUser === "admin" && (
+          {getUser?.type === "hod" && (
             <>
               <li>
                 <Link
@@ -129,7 +129,7 @@ const Navbar = ({ currentUser }) => {
 
           {/* upload project menu link */}
           {/* if current user is teacher then only show */}
-          {currentUser === "teacher" && (
+          {getUser?.type === "teacher" && (
             <>
               <li>
                 <Link
@@ -153,7 +153,7 @@ const Navbar = ({ currentUser }) => {
           )}
 
           {/* if user is student then only show */}
-          {currentUser === "student" && (
+          {getUser?.type === "student" && (
             <>
               <li>
                 <h2
@@ -169,7 +169,7 @@ const Navbar = ({ currentUser }) => {
           {/* menu button which is visible when mobile screen */}
           <li>
             <Link
-              to={getUser?.type}
+              to={`/${getUser?.type}`}
               // className={`menu_bar rounded-md flex custom-transtion relative left-1`}
               className={`menu_link flex font-semibold ml-1 cursor-pointer text-lg items-center justify-center ${
                 !isMobile ? "p-1" : "px-3 py-1"

@@ -5,10 +5,12 @@ const attendenceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'studentModel'
     },
-    studentName : {type:String},
+    studentName: { type: String, require: true },
+    sem: { type: Number, require: true },
+    branch: { type: String, require: true },
     all_attendence: [
         {
-            subject:{
+            subject: {
                 type: String,
             },
             date: {

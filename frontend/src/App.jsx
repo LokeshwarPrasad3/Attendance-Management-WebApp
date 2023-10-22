@@ -8,6 +8,7 @@ import TeacherPage from "./Pages/Teacher/TeacherPage";
 import ManageTeacher from "./Pages/HOD/ManageTeacher";
 import ManageStudent from "./Pages/HOD/ManageStudent";
 import HodPage from "./Pages/HOD/HodPage";
+import HodProfilePage from "./Pages/HOD/HodProfilePage";
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
         {/* Student Access Page */}
         <Route path="/student" element={<StudentPage />} />
         {/* HOD access page */}
-        <Route path="/hod" element={<HodPage />} />
+        <Route path="/hod" element={<HodProfilePage />} />
+        <Route path="/data" element={<HodPage />} />
         <Route path="/manage-teacher" element={<ManageTeacher />} />
         <Route path="/manage-student" element={<ManageStudent />} />
 

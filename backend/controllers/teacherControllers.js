@@ -4,7 +4,7 @@ const { generateToken } = require('../context/generateAuthToken');
 const registerTeacher = async (req, res) => {
     try {
         const { name, email, specilization, pic, password } = req.body;
-        if (!name || !email || !specilization || !pic || !password) {
+        if (!name || !email || !specilization || !password) {
             console.log("Fill all fields");
             res.status(400).json({ message: "Fill all field" });
             return;
@@ -19,7 +19,12 @@ const registerTeacher = async (req, res) => {
         }
 
         // user not exist then create new teacher 
-        const teacher = await TeacherModel.create({ name, email, specilization, pic, password });
+        let teacher;
+        if (pic) {
+            teacher = await TeacherModel.create({ name, email, specilization, pic, password });
+        } else {
+            teacher = await TeacherModel.create({ name, email, specilization, password });
+        }
         // successfully not created
         if (!teacher) {
             console.log("Teacher accounot not created");
@@ -117,6 +122,9 @@ const setAssignSubject = async (req, res) => {
     try {
         // get object form of sem and branch which teacher teach
         const { teacherId, teacherTeachClassesData } = req.body;
+
+        console.log("TEacher details " + teacherId);
+        console.log("TEacher details " + teacherTeachClassesData);
         // check cannot empty
         if (!teacherId || !teacherTeachClassesData) {
             console.log("Teacher assign data empty:");
@@ -136,7 +144,7 @@ const setAssignSubject = async (req, res) => {
         // teacherExist.updateById(teacherId, { $set: { teach: [teacherTeachClassesData] } });
         teacherExist.teach = teacherTeachClassesData;
         await teacherExist.save();
-        console.log( "classess assinged : " , teacherExist.teach);
+        console.log("classess assinged : ", teacherExist.teach);
         res.status(201).json(teacherExist);
 
     } catch (error) {

@@ -7,17 +7,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import axios from "axios";
+import { host } from "../../API/API";
+import Cookies from "js-cookie";
 
 const CreateTeacher = () => {
-
-  // getting name
   const [name, setName] = useState("");
-  // getting  email
   const [email, setEmail] = useState("");
-  // getting  password
+  const [specilization, setSpecilization] = useState("");
   const [password, setPassword] = useState("");
-  // // getting  cpassword
-  // for picture data from cloudinary link
   const [pic, setPic] = useState();
 
   // new state for loading to upload picture of user
@@ -25,17 +23,14 @@ const CreateTeacher = () => {
 
   // when clicked to choose file for image then handle that
   const postDetail = (pic) => {
-    // pics have all info of image (name,size,type)
-    // when upload picture then load button
-    setLoading(true); // when loading starts
+    setLoading(true);
     // if pics is undefined then popup error
     if (pic === undefined) {
-      toast.warn("Please Select an Image",{autoClose:1000});
+      toast.warn("Please Select an Image", { autoClose: 1000 });
       return; // no move forward
     }
     // if type is jpeg and png only
     if (pic.type === "image/jpeg" || pic.type === "image/png") {
-      // we need data to send on cloudinary api using formData
       const data = new FormData();
 
       // FormData JS object used for data format when sending body in HTTP requests,
@@ -93,12 +88,36 @@ const CreateTeacher = () => {
     setLoading(true);
 
     // check all is valid  or not
-    if (!name || !email || !password || !pic) {
+    if (!name || !email || !password || !specilization) {
       toast.warn("Please Fill All Fields!");
       setLoading(false);
       return;
     }
 
+    // Post teacher details
+    // get current token
+    const token = Cookies.get("_secure_user_");
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data } = await axios.post(
+      `${host}/teacher/register`,
+      { name, email, specilization, password, pic },
+      config
+    );
+    // if data not found then
+    if (!data) {
+      console.log("Teacher is not created!");
+      toast.error("Teacher is not created!", { autoClose: 1000 });
+      setLoading(false);
+      return;
+    }
+    // Now data successfully Getted
+    setLoading(false);
+    toast.success("Teacher Succesfully Crated!", { autoClose: 1000 });
   };
 
   return (
@@ -107,7 +126,7 @@ const CreateTeacher = () => {
 
       <form
         action=""
-        className="create_form  w-[35rem]  px-16 flex flex-col gap-5 pt-7"
+        className="create_form lg:w-[35rem] md:w-[34rem] w-[23rem] lg:px-16 px-6 flex flex-col gap-5 pt-7"
       >
         {/* for input name */}
         <div className="name_box flex flex-col gap-2">
@@ -115,8 +134,6 @@ const CreateTeacher = () => {
             value={name}
             onChange={(e) => setName(e.target.value)} // set value when change
             type="text"
-            name="create_input_name"
-            id="create_input_name"
             className="py-1 px-3 w-full bg-gray-200"
             placeholder="Teacher Name"
           />
@@ -128,22 +145,6 @@ const CreateTeacher = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)} // set value when change
             type="email"
-            name="create_input_email"
-            id="create_input_email"
-            className="py-1 px-3 w-full bg-gray-200"
-            placeholder="Teacher Email "
-            autoComplete="on"
-          />
-        </div>
-
-        {/* for input date (dob) */}
-        <div className="email_box flex flex-col gap-2">
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)} // set value when change
-            type="date"
-            name="create_input_email"
-            id="create_input_email"
             className="py-1 px-3 w-full bg-gray-200"
             placeholder="Teacher Email "
             autoComplete="on"
@@ -153,11 +154,9 @@ const CreateTeacher = () => {
         {/* for input type email */}
         <div className="email_box flex flex-col gap-2">
           <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)} // set value when change
+            value={specilization}
+            onChange={(e) => setSpecilization(e.target.value)} // set value when change
             type="text"
-            name="create_input_email"
-            id="create_input_email"
             className="py-1 px-3 w-full bg-gray-200"
             placeholder="Specilization"
             autoComplete="on"
@@ -193,6 +192,7 @@ const CreateTeacher = () => {
           <input
             type="file"
             accept="image/*"
+            value={pic}
             // send image to db using cloudinary
             onChange={(e) => postDetail(e.target.files[0])}
             name="create_input_picture"

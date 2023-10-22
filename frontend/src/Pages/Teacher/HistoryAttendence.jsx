@@ -83,10 +83,10 @@ const HistoryAttendence = () => {
           {/* Left-Table body part */}
           <tbody>
             {/* Getting data from Users Array */}
-            {Users.map((user) => {
+            {Users.map((user, index) => {
               return (
-                <>
-                  <tr key={user.sno} className="text-lg h-10">
+                <React.Fragment key={index}>
+                  <tr className="text-lg h-10">
                     <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
                       {user.sno}
                     </td>
@@ -94,7 +94,7 @@ const HistoryAttendence = () => {
                       {user.name.slice(0, 15)}
                     </td>
                   </tr>
-                </>
+                </React.Fragment>
               );
             })}
           </tbody>
@@ -106,10 +106,10 @@ const HistoryAttendence = () => {
             {/* Right-Table heading part */}
             <thead>
               <tr className="text-xl h-12">
-                {Users[0].all_attendence.map((att) => {
+                {Users[0].all_attendence.map((att,index) => {
                   return (
                     <th
-                      key={att.date}
+                      key={index}
                       className="border-[2px] font-signika border-gray-900  text-center px-2"
                     >
                       {att.date}
@@ -121,13 +121,13 @@ const HistoryAttendence = () => {
             {/* Right-Table body part here */}
             <tbody>
               {/* Getting data from Users Array */}
-              {Users.flatMap((user) => {
+              {Users.flatMap((user,index) => {
                 return (
-                  <>
-                    <tr key={user.sno} className="text-lg h-10">
-                      {user.all_attendence.map((stu, index) => {
+                  <React.Fragment key={index}>
+                    <tr className="text-lg h-10">
+                      {user.all_attendence.map((stu, userIndex) => {
                         return (
-                          <React.Fragment key={index}>
+                          <React.Fragment key={userIndex}>
                             <td className="font-signika border-[2px] border-gray-900 text-xl min-w-fit text-center">
                               {stu.status}
                             </td>
@@ -135,7 +135,7 @@ const HistoryAttendence = () => {
                         );
                       })}
                     </tr>
-                  </>
+                  </React.Fragment>
                 );
               })}
             </tbody>

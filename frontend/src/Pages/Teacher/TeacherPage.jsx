@@ -13,9 +13,17 @@ const TeacherPage = () => {
   // When clicked to take attendence then show Home page
   const [showHomePage, setShowHomePage] = useState(false);
 
-   const takeAttendence = () =>{
+  // Take attendence Get data what show in attendence
+  const [takeSem, setTakeSem] = useState("");
+  const [takeBranch, setTakeBranch] = useState("");
+  const [takeSubject, setTakeSubject] = useState("");
+
+  const takeAttendence = (sem, branch, subject) => {
+    setTakeSem(sem);
+    setTakeBranch(branch);
+    setTakeSubject(subject);
     setShowHomePage(true);
-   }
+  };
 
   useEffect(() => {
     setCurrentUser(loggedUser);
@@ -24,7 +32,7 @@ const TeacherPage = () => {
 
   return (
     <>
-      <Navbar currentUser={"teacher"} />
+      <Navbar />
 
       {!showHomePage ? (
         <>
@@ -89,7 +97,13 @@ const TeacherPage = () => {
                             <td className="text-center border-[1px] border-gray-400">
                               <button
                                 className="bg-green-200 px-[2px]"
-                                onClick={takeAttendence}
+                                onClick={() =>
+                                  takeAttendence(
+                                    cls.sem,
+                                    cls.branch,
+                                    cls.subject
+                                  )
+                                }
                               >
                                 Take
                               </button>
@@ -125,7 +139,12 @@ const TeacherPage = () => {
           </div>
         </>
       ) : (
-        <Home setShowHomePage={setShowHomePage} />
+        <Home
+          setShowHomePage={setShowHomePage}
+          takeSem={takeSem}
+          takeBranch={takeBranch}
+          takeSubject={takeSubject}
+        />
       )}
     </>
   );
