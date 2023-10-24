@@ -7,6 +7,7 @@ const attendenceSchema = new mongoose.Schema({
     },
     studentName: { type: String, require: true },
     sem: { type: Number, require: true },
+    present: { type: Number },
     branch: { type: String, require: true },
     all_attendence: [
         {

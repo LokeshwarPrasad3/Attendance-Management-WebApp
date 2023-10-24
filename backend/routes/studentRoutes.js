@@ -1,5 +1,5 @@
 const express = require('express');
-const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,getAllAttendence, submitAttendance, getAllStudentData } = require('../controllers/studentControllers');
+const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,getAllAttendenceModel,getAllAttendence, submitAttendance, getAllStudentData } = require('../controllers/studentControllers');
 const { studentProtect } = require('../middleware/studentAuth');
 const { teacherProtect } = require('../middleware/teacherAuth');
 const router = express.Router();
@@ -19,6 +19,8 @@ router.route('/').post(teacherProtect, submitAttendance);
 router.route('/all-attedence').post(teacherProtect, getAllAttendence);
 // all student attendence gett
 router.route('/get-all-student').post(teacherProtect, getAllStudentData);
+// Get all attedenceModel
+router.route('/attendence-model').post(teacherProtect, getAllAttendenceModel);
 
 
 module.exports = router;

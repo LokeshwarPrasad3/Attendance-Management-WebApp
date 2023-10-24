@@ -26,3 +26,12 @@ const Authentication = () => {
 };
 
 export default Authentication;
+
+
+// {
+//   "name":"HOD-1",
+//   "email":"hod-1@gmail.com",
+//   "branch":"CSE",
+//   "password":"12345",
+//   "pic" : "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+// }

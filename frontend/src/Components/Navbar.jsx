@@ -62,8 +62,10 @@ const Navbar = ({ currentUser }) => {
       // setLoggedUser(null); // must make null
       // Code to execute after state update
       console.log("Logout successfully");
-      navigate("/");
-      toggleMenu();
+      setTimeout(() => {
+        toggleMenu();
+        navigate("/");
+      }, 1000);
     } catch (error) {
       console.log("Getting eeror to logut");
       // setLoggedUser(null); // must make null
@@ -116,14 +118,14 @@ const Navbar = ({ currentUser }) => {
                   Manage-Student
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <h2
-                  className="menu_link w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  className="menu_link selection:bg-none w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
                   onClick={handleLogout}
                 >
                   Logout
                 </h2>
-              </li>
+              </li> */}
             </>
           )}
 
@@ -141,33 +143,28 @@ const Navbar = ({ currentUser }) => {
               </li>
 
               {/* Logout icon menu link */}
-              <li>
+              {/* <li>
                 <h2
                   className="menu_link w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
                   onClick={handleLogout}
                 >
                   Logout
                 </h2>
-              </li>
+              </li> */}
             </>
           )}
 
           {/* if user is student then only show */}
-          {getUser?.type === "student" && (
-            <>
-              <li>
-                <h2
-                  className="menu_link w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  onClick={handleLogout}
-                >
-                  Logout
-                </h2>
-              </li>
-            </>
-          )}
+          {getUser?.type === "student" && <></>}
+
+          <li onClick={handleLogout}>
+            <h2 className="menu_link w-fit flex selection:bg-none font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl ">
+              Logout
+            </h2>
+          </li>
 
           {/* menu button which is visible when mobile screen */}
-          <li>
+          <li onClick={() => setShowMenu(!showMenu)}>
             <Link
               to={`/${getUser?.type}`}
               // className={`menu_bar rounded-md flex custom-transtion relative left-1`}

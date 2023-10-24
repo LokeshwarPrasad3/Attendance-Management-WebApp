@@ -34,6 +34,22 @@ const RegisterStudent = async (req, res) => {
             res.status(500).json({ message: "Failed to store Data" });
             return;
         }
+
+        // Create Empty attendence in attendenceModel
+        const createAttendence = await AttendenceModel.create({
+            studentId: student._id,
+            studentName: student.name,
+            sem: student.sem,
+            branch: student.branch,
+            present:0,
+        });
+
+        if (!createAttendence) {
+            console.log("Empty Attendence is not created");
+            return;
+        }
+        console.log("Successfullyt Empty attendence created " + createAttendence);
+
         const token = generateToken(student._id)
         student.token = token;
         const data = student;
@@ -164,6 +180,32 @@ const getAllAttendence = async (req, res) => {
 }
 
 
+// Get attendenceModel all data
+const getAllAttendenceModel = async (req, res) => {
+    try {
+        // Get sem and branch
+        const {sem, branch}  = req.body;
+        console.log("sem branch geeted", sem , branch);
+        // Query the database for students in the specified semester branch
+        const attendence = await AttendenceModel.find({sem, branch});
+        if (!attendence) {
+            console.log("Empty attendence");
+            return res.status(500).json({ message: "empty data" });
+        }
+        // Log the retrieved attendence (for debugging purposes)
+        console.log("getted all attendence " + attendence);
+        // Return the retrieved attendence as a JSON response
+        console.log("Done all");
+        return res.status(201).json(attendence);
+    } catch (error) {
+        console.log("Error getting attendence", error);
+        console.log("Error all");
+        return res.status(500).json({ message: "Error getting attendence" });
+        // Teacher access all attendence
+    }
+}
+
+
 // when clicked saved attendence by teacher then changes in every student database
 const submitAttendance = async (req, res) => {
     try {
@@ -174,47 +216,55 @@ const submitAttendance = async (req, res) => {
             return res.status(400).json({ message: "Semester, students, date, or day not provided." });
         }
 
-        const attendanceRecord = {
+        const presentStudentRecord = {
             subject,
             date,
             day,
             status: true,
         };
 
-        let data = [];
+        const absentStudentRecord = {
+            subject,
+            date,
+            day,
+            status: false,
+        };
 
-        for (const student of presentStudentsIds) {
-            const studentId = student._id;
-            const studentName = student.name;
+        const allStudents = await AttendenceModel.find({ sem, branch });
 
-            // Find the student by ID
-            const foundStudent = await studentModel.findById(studentId);
-            // student must be valid then
-            if (foundStudent && foundStudent.sem === sem) {
-                // Check if the attendance record exists for this student and semester
-                let attendanceDoc = await AttendenceModel.findOne({ studentId });
-
-                if (!attendanceDoc) {
-                    console.log("Tu nhi miila");
-                    // If the attendance record doesn't exist, create it
-                    attendanceDoc = new AttendenceModel({
-                        studentId,
-                        studentName,
-                        sem,
-                        branch,
-                        all_attendence: [attendanceRecord], // Note the correct field name here
-                    });
-                    await attendanceDoc.save();
-                } else {
-                    console.log("tu mil gya bro");
-                    // If the attendance record exists, push the attendance data
-                    attendanceDoc.all_attendence.push(attendanceRecord); // Note the correct field name here
-                    data.push(await attendanceDoc.save()); // Save the updated document
-                }
-            }
+        if (!allStudents || allStudents.length === 0) {
+            console.log("Data not found");
+            return res.status(404).json({ message: "Data not found" });
         }
 
-        res.json({ message: "Attendance records updated successfully.", data: data });
+        const updatedAttendances = [];
+
+        for (const student of allStudents) {
+            const studentId = student.studentId.toString(); // Convert to a string to ensure proper comparison
+
+            const presentStudent = presentStudentsIds.find((studentObj) => studentObj._id.toString() === studentId);
+
+            if (presentStudent) {
+                console.log(student.name + " is present.");
+
+                // logic for increase present of value
+                
+                student.all_attendence.unshift(presentStudentRecord);
+            } else {
+                console.log(student.name + " is absent.");
+                student.all_attendence.unshift(absentStudentRecord);
+            }
+
+            updatedAttendances.push(student.save());
+        }
+
+        await Promise.all(updatedAttendances);
+
+
+
+        // Return a response when all updates are completed
+        return res.status(200).json({ message: "Attendance records updated successfully" });
+
     } catch (error) {
         console.log("Error in submit attendance:", error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -229,5 +279,5 @@ const submitAttendance = async (req, res) => {
 
 module.exports = {
     RegisterStudent, LoginStudent, getLoggedStudentData, getStudentAttendeceById,
-    submitAttendance, getAllAttendence, getAllStudentData
+    submitAttendance, getAllAttendence, getAllAttendenceModel, getAllStudentData
 }

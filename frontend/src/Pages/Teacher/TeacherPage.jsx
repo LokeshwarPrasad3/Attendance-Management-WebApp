@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
 import { GetLoggedUser } from "../../Context/LoggedUserData";
 import Home from "./Home";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const TeacherPage = () => {
+  const navigate = useNavigate();
+
   // Get Current user by Context-api
   const { loggedUser } = GetLoggedUser();
 
@@ -26,9 +30,16 @@ const TeacherPage = () => {
   };
 
   useEffect(() => {
-    setCurrentUser(loggedUser);
-    console.log(currentUser);
-  }, [loggedUser, currentUser]);
+    const token = Cookies.get("_secure_user_");
+    const _id = Cookies.get("unique_key");
+    const type = Cookies.get("user_type");
+    if (!token || !_id || !type) {
+      navigate("/");
+    } else {
+      setCurrentUser(loggedUser);
+      console.log(currentUser);
+    }
+  }, [loggedUser, currentUser, navigate]);
 
   return (
     <>

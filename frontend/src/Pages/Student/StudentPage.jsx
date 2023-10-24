@@ -19,6 +19,15 @@ const StudentPage = () => {
   // eslint-disable-next-line
   const [studentAttendence, setStudentAttedence] = useState({});
 
+  const [presentDay, setPresentDay] = useState(0);
+  const getPresentDays = useCallback(() => {
+    let countDay = 0;
+    studentAttendence?.all_attendence?.map((att) => {
+      if (att.status) countDay++;
+    });
+    setPresentDay(countDay);
+  }, []);
+
   // Load student all attendence
   const loadStudentAllAttendence = useCallback(async () => {
     try {
@@ -41,8 +50,16 @@ const StudentPage = () => {
       if (!data) {
         return console.log("Getting error to get attendence DAta");
       }
+
       // if data is successfully getted then set in state
       setStudentAttedence(data);
+
+      // Set present count value
+      let countDay = 0;
+      data?.all_attendence?.map((att) => {
+        if (att.status) countDay++;
+      });
+      setPresentDay(countDay);
     } catch (error) {
       console.log("Error during fetching attendence react");
     }
@@ -55,7 +72,9 @@ const StudentPage = () => {
     if (currentUser?.type === "student") {
       loadStudentAllAttendence();
     }
-  }, [loggedUser, currentUser, loadStudentAllAttendence]);
+    // Get present Day
+    getPresentDays();
+  }, [loggedUser, currentUser, loadStudentAllAttendence, getPresentDays]);
 
   return (
     <>
@@ -78,17 +97,17 @@ const StudentPage = () => {
           {/* menu bar type */}
           <div className="student_show_menu flex flex-col md:gap-2 md:py-12 md:pt-20 pt-4 px-8">
             <button className="student_menu flex items-center bg-green-300 hover:bg-green-400 py-2 cursor-pointer px-5 gap-1">
-              <AssignmentTurnedInIcon className="text-green-500" />
-              <h3 className="text-green-600 font-signika selection:bg-none">
-                Attendence
-              </h3>
-            </button>
-            <button className="student_menu flex items-center hover:bg-green-300 py-2 cursor-pointer px-5 gap-1">
-              <PersonOutlineIcon className="text-gray-700" />
-              <h3 className="font-semibold text-gray-700 font-signika selection:bg-none">
+              <AssignmentTurnedInIcon className="text-gray-500" />
+              <h3 className="font-semibold text-gray-500 font-signika selection:bg-none">
                 Profile
               </h3>
             </button>
+            {/* <button className="student_menu flex items-center hover:bg-green-300 py-2 cursor-pointer px-5 gap-1">
+              <PersonOutlineIcon className="text-gray-700" />
+              <h3 className="font-semibold text-gray-700 font-signika selection:bg-none">
+                Attendence
+              </h3>
+            </button> */}
           </div>
         </div>
 
@@ -163,8 +182,7 @@ const StudentPage = () => {
                 <div className="total_attendence flex items-center justify-center">
                   <h2>Attendence : </h2>
                   <h3>
-                    {studentAttendence?.all_attendence?.length}/
-                    {studentAttendence?.all_attendence?.length}
+                    {presentDay}/{studentAttendence?.all_attendence?.length}
                   </h3>
                 </div>
               </div>
@@ -173,18 +191,22 @@ const StudentPage = () => {
               <div className="attendence_output_table md:min-w-[50vw] md:max-w-[56vw] overflow-x-auto ">
                 <table className="border-collapse ">
                   <tbody className="flex w-min ">
-                    {studentAttendence?.all_attendence?.map((attendence, index) => {
-                      return (
-                        <React.Fragment key={index}>
-                          <tr className="flex flex-col px-[1px] border-[1px] border-slate-800 min-w-[5.7rem]">
-                            <td className="border-b-[1px]">
-                              {attendence.date.slice(0,10)}
-                            </td>
-                            <td className="w-full text-center">{attendence?.status?'P':'A'}</td>
-                          </tr>
-                        </React.Fragment>
-                      );
-                    })}
+                    {studentAttendence?.all_attendence?.map(
+                      (attendence, index) => {
+                        return (
+                          <React.Fragment key={index}>
+                            <tr className="flex flex-col px-[1px] border-[1px] border-slate-800 min-w-[5.9rem]">
+                              <td className="border-b-[1px]">
+                                {attendence.date.slice(0, 10)}
+                              </td>
+                              <td className="w-full text-center">
+                                {attendence?.status ? "P" : "A"}
+                              </td>
+                            </tr>
+                          </React.Fragment>
+                        );
+                      }
+                    )}
                   </tbody>
                 </table>
               </div>
