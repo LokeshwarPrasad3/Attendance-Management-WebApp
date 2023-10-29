@@ -7,6 +7,7 @@ import { GetLoggedUser } from "../../Context/LoggedUserData";
 import axios from "axios";
 import { host } from "../../API/API";
 import Cookies from "js-cookie";
+import { subjectsMap } from "../../API/SubjectList";
 
 const StudentPage = () => {
   // Context-ApI data
@@ -157,22 +158,32 @@ const StudentPage = () => {
           {/* Here student can see their attendence */}
           <div className="student_attendence py-5">
             {/* user can search by subjects */}
-            <div className="search_bar flex justify-center items-center gap-3">
+            <div className="search_bar flex justify-center items-center gap-3 ">
               <h2 className="font-semibold">SELECT SUBJECT : </h2>
               <select
                 name=""
                 id=""
-                className="cursor-pointer px-1 font-semibold bg-white"
+                className="cursor-pointer px-1 font-semibold bg-white w-[45%] md:w-[8rem]"
               >
                 <option value="Select_Subject">Select_Subject</option>
-                <option value="Select_Subject">Maths</option>
-                <option value="Select_Subject">DAA</option>
+                {currentUser &&
+                  subjectsMap &&
+                  subjectsMap[`${currentUser?.branch}${currentUser?.sem}`] &&
+                  subjectsMap[`${currentUser?.branch}${currentUser?.sem}`].map(
+                    (sub, index) => {
+                      return (
+                        <React.Fragment key={index}>
+                          <option value={sub}>{sub}</option>
+                        </React.Fragment>
+                      );
+                    }
+                  )}
               </select>
             </div>
             {/* show table attendence */}
-            <div className="show_table_attendence flex flex-col pt-5 gap-1 ">
+            <div className="show_table_attendence flex flex-col pt-5 gap-3 ">
               {/* category */}
-              <div className="attendence_category flex items-center justify-between md:px-1">
+              <div className="attendence_category flex flex-wrap items-center justify-center gap-2 md:px-1">
                 <div className="category_buttons flex items-center md:gap-5 gap-2">
                   <button className="hover:bg-white custom-transition px-2 py-1 border-[1px] border-gray-300 w-fit font-semibold cursor-pointer">
                     Daily
@@ -187,10 +198,15 @@ const StudentPage = () => {
                 <div className="total_attendence flex items-center justify-center">
                   <h2>Attendence : </h2>
                   <h3>
-                    {presentDay}/{studentAttendence?.all_attendence?.length}
+                    <b>
+                      {" "}
+                      {presentDay}/{studentAttendence?.all_attendence?.length}{" "}
+                    </b>
                   </h3>
                   &nbsp;| &nbsp;
-                  <h3>Per : {Math.floor(percentage)}%</h3>
+                  <h3>
+                    Per : <b>{Math.floor(percentage ? percentage : 0)}%</b>{" "}
+                  </h3>
                 </div>
               </div>
 

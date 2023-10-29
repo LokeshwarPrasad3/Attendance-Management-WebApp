@@ -92,47 +92,47 @@ const ManageStudent = () => {
     // set loading is true
     setLoading(true);
 
-    // check all is valid  or not
-    if (
-      !name ||
-      !email ||
-      !course ||
-      !branch ||
-      !sem ||
-      !password 
-    ) {
-      toast.warn("Please Fill All Fields!",{autoClose:1000});
-      return setLoading(false);
-    }
+    try {
+      // check all is valid  or not
+      if (!name || !email || !course || !branch || !sem || !password) {
+        toast.warn("Please Fill All Fields!", { autoClose: 1000 });
+        return setLoading(false);
+      }
 
-    // If all right then post req student - register
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const { data } = await axios.post(
-      `${host}/student/register`,
-      { name, email, branch, course, sem, password, pic },
-      config
-    );
-    if(!data){
-      console.log("Student is not registed");
-      toast.error("Student is not registered",{autoClose:1000});
+      // If all right then post req student - register
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        `${host}/student/register`,
+        { name, email, branch, course, sem, password, pic },
+        config
+      );
+
+     if (data.existUser) {
+       console.log("User already exists");
+       toast.error("Student already registed", { autoClose: 1000 });
+       return;
+     }
+      toast.success("Student Successfully Created!", { autoClose: 1000 });
+      console.log(data);
+      setLoading(false);
+
+      setName("");
+      setEmail("");
+      setPic("");
+      setSem("");
+      setBranch("");
+      setCourse("");
+      setPassword("");
+    } catch (error) {
+      toast.success(error.response.data.message, { autoClose: 1000 });
+      console.log("Getting error to create account", error);
+      setLoading(false);
       return;
     }
-    toast.success("Student Successfully Created!",{autoClose:1000});
-    console.log(data);
-    setLoading(false);
-
-
-    setName("");
-    setEmail("");
-    setPic("");
-    setSem("");
-    setBranch("");
-    setCourse("");
-    setPassword("");
   };
 
   return (

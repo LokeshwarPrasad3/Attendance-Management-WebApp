@@ -10,8 +10,11 @@ import { host } from "../../API/API";
 import Cookies from "js-cookie";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddTaskIcon from "@mui/icons-material/AddTask";
+// PreDefined Subjects
+import { subjectsMap } from "../../API/SubjectList";
 
 const AssignTeacher = () => {
+
   const [sem, setSem] = useState("");
   const [branch, setBranch] = useState("");
   const [subject, setSubject] = useState("");
@@ -104,7 +107,7 @@ const AssignTeacher = () => {
       };
       const { data } = await axios.post(
         `${host}/teacher/get-all-teachers`,
-        { teacherId, teacherTeachClassesData:classessList },
+        { teacherId, teacherTeachClassesData: classessList },
         config
       );
       if (!data) {
@@ -196,9 +199,6 @@ const AssignTeacher = () => {
             <option className="text-center" value="5">
               sem-5
             </option>
-            <option className="text-center" value="7">
-              sem-7
-            </option>
           </select>
           {/* Select branch */}
           <select
@@ -217,22 +217,37 @@ const AssignTeacher = () => {
             className="h-8 text-lg md:min-w-[50%] w-[33%] bg-gray-200 text-center"
           >
             <option value="">Subject</option>
-            <option value="Principla of Programing">
-              Principla of Programing
+            {/* <option value="Data Analytics with python">
+              Data Analytics with python
             </option>
-            <option value="Data Analysis Algorithm">
-              Data Analysis Algorithm
-            </option>
-            <option value="Programming with Java">Programming with Java</option>
-            <option value="Python">Python</option>
-            <option value="Computer Networks">Computer Networks</option>
+            <option value="Computer Network">Computer Network</option>
+            <option value="Microprocessor & Interface">Microprocessor & Interface</option>
+            <option value="FLAT">FLAT</option>
+            <option value="Multimedia & VR">Multimedia & VR</option>
+            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="DAA">DAA</option>
+            <option value="Operating System">Operating System</option>
+            <option value="Discrete Maths">Discrete Maths</option>
+            <option value="PPL">PPL</option>
+            <option value="Digital Electronics">Digital Electronics</option>
+            <option value="Programming with C">Programming with C</option>
+            <option value="Funcdamentals of Computer">Funcdamentals of Computer</option> */}
+
+            {branch &&
+              sem &&
+              subjectsMap[`${branch}${sem}`].map((subject, index) => (
+                <React.Fragment key={index}>
+                  <option value={subject}>{subject}</option>
+                </React.Fragment>
+              ))}
           </select>
         </div>
         {/* add new selection for multiple classess assign */}
         <div className="add_button flex justify-end items-center px-2">
           <button
             onClick={addNewClass}
-            className="pr-2 pl-1 bg-green-500 flex justify-center items-center font-signika py-0 rounded shadow-sm shadow-blue-500 hover:bg-green-400 custom-transition gap-1 "
+            className="pr-2 mt-3 pl-1 bg-green-500 flex justify-center items-center font-signika py-0 rounded shadow-sm shadow-blue-500 hover:bg-green-400 custom-transition gap-1 "
           >
             <AddTaskIcon className="p-[3px]" />
             Add

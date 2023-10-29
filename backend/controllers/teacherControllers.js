@@ -165,14 +165,8 @@ const saveHodAccessAttendence = async (req, res) => {
             return res.status(400).json({ message: "Please fill all fields" });
         }
 
-        // '2023-10-23T18:30:00.000Z' Convert the date to dd-mm-yy format
-        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear() % 100}`;
-        // Format the time part after 'T'
-        const formattedTime = `${date.toISOString().split('T')[1].slice(0, 8)}`;
-        // Combine both formatted date and time
-        const formattedDateTime = `${formattedDate}T${formattedTime}`;
-
-        const attendance = await allAttedenceModel.create({ date: formattedDateTime, day, sem, branch, total });
+        
+        const attendance = await allAttedenceModel.create({ date, day, sem, branch, total });
 
         res.status(201).json(attendance);
         console.log("Successfully created in hod access");

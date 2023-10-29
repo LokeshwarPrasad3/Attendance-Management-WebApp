@@ -54,10 +54,10 @@ const HodProfilePage = () => {
                       Sno
                     </th>
                     <th className="text-center border-[1px] border-gray-400">
-                      Class
+                      Sem
                     </th>
                     <th className="text-center border-[1px] border-gray-400">
-                      Subject
+                      Branch
                     </th>
                     <th className="text-center border-[1px] border-gray-400">
                       Attendence

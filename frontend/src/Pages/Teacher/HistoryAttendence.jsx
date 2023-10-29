@@ -10,6 +10,7 @@ import { Box, CircularProgress } from "@mui/material";
 const HistoryAttendence = () => {
   const [searchSem, setSearchSem] = useState("");
   const [searchBranch, setSearchBranch] = useState("");
+  const [searchDate, setSearchDate] = useState("");
   const [allSearchedStudents, setAllSearchedStudents] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +38,7 @@ const HistoryAttendence = () => {
       event.preventDefault();
       try {
         setLoading(true);
-        if (!searchSem || !searchBranch) {
+        if (!searchSem || !searchBranch || !searchDate) {
           toast.warn("Please Fill Inputs", { autoClose: 1000 });
           setLoading(false);
           return;
@@ -53,7 +54,11 @@ const HistoryAttendence = () => {
         console.log("till done");
         const { data } = await axios.post(
           `${host}/student/attendence-model`,
-          { sem: searchSem, branch: searchBranch },
+          {
+            sem: Number(searchSem),
+            branch: searchBranch,
+            date: new Date(searchDate).toLocaleDateString("en-GB"),
+          },
           config
         );
         if (data.length === 0) {
@@ -71,7 +76,7 @@ const HistoryAttendence = () => {
         toast.error("Unable to fetch data!", { autoClose: 1000 });
       }
     },
-    [searchSem, searchBranch]
+    [searchSem, searchBranch, searchDate]
   );
 
   return (
@@ -120,10 +125,12 @@ const HistoryAttendence = () => {
                 {/* <CalendarTodayIcon className="" style={{fontSize:'1rem', display:'none'}}/> */}
               </div>
               <input
+                onChange={(e) => setSearchDate(e.target.value)}
                 id="history_date"
                 type="date"
                 className="bg-slate-200 text-[1rem] md:w-fit w-0 focus:outline-none"
                 placeholder="Date"
+                value={searchDate}
               />
             </div>
           </div>
@@ -231,7 +238,9 @@ const HistoryAttendence = () => {
                     return (
                       <React.Fragment key={index}>
                         <tr className="text-lg h-10">
-                          <td className="font-signika border-[2px] border-gray-900 text-xl min-w-fit text-center">
+                          <td
+                            className={`font-signika font-semibold border-[2px] border-gray-900 text-xl min-w-fit text-center ${user.all_attendence[0].status === true?'text-green-700':'text-red-500'}`}
+                          >
                             {user.all_attendence[0]
                               ? user.all_attendence[0].status === true
                                 ? "P"

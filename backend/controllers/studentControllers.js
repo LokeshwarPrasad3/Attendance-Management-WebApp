@@ -2,7 +2,6 @@ const { generateToken } = require('../context/generateAuthToken');
 const { studentModel } = require('../models/studentModel');
 const { AttendenceModel } = require('../models/AttendenceModel');
 
-
 // route method for registration of student
 const RegisterStudent = async (req, res) => {
     try {
@@ -56,6 +55,9 @@ const RegisterStudent = async (req, res) => {
         console.log(data);
         res.status(201).json(data);
     } catch (error) {
+        console.log(error.response)
+        console.log(error.response.data.message)
+        // toast.error(error.response.data);
         console.log(`Getting Error Catch Block ${error}`);
         res.status(500).json({ message: "Internal server error" });
     }
@@ -157,36 +159,9 @@ const getAllStudentData = async (req, res) => {
     }
 }
 
-// Retrieve all student attendence data by semester
+
+// For only teachers
 const getAllAttendence = async (req, res) => {
-    try {
-        const { sem, branch, date } = req.body;
-        // Check if the 'sem' parameter is provided
-        if (!sem || !branch) {
-            console.log("Semester required");
-            return res.status(400).json({ message: "Semester, Branch required" });
-        }
-        let attendence;
-        if (!date) {
-            // Query the database for students in the specified semester
-            attendence = await AttendenceModel.find({ sem, branch });
-        } else {
-            attendence = await AttendenceModel.find({ sem, branch, date });
-        }
-        // Log the retrieved attendence (for debugging purposes)
-        console.log("getted all attendence " + attendence);
-        // Return the retrieved attendence as a JSON response
-        return res.status(201).json(attendence);
-    } catch (error) {
-        console.log("Error getting attendence", error);
-        return res.status(500).json({ message: "Error getting attendence" });
-        // Teacher access all attendence
-    }
-}
-
-
-// Get attendenceModel all data
-const getAllAttendenceModel = async (req, res) => {
     try {
         // Get sem and branch
         const { sem, branch } = req.body;
@@ -210,6 +185,71 @@ const getAllAttendenceModel = async (req, res) => {
     }
 }
 
+// by Retrieve all student attendence data by semester
+// const getAttendenceModelForHOD = async (req, res) => {
+//     try {
+//         console.log("INside function");
+//         const { sem, branch, date } = req.body;
+//         console.log(sem, branch, date);
+//         // Check if the 'sem' parameter is provided
+//         if (!sem || !branch) {
+//             console.log("Semester required");
+//             return res.status(400).json({ message: "Semester, Branch required" });
+//         }
+//         let attendence;
+//         if (!date) {
+//             // Query the database for students in the specified semester
+//             attendence = await AttendenceModel.find({ sem, branch });
+//             console.log("date is not available");
+//         } else {
+//             attendence = await AttendenceModel.find({ sem: sem, branch: branch });
+
+//             attendence = attendence.filter(item =>
+//                 item.all_attendence.some(attendence => attendence.date === date)
+//             );
+
+//             console.log("date is available");
+//         }
+//         // Log the retrieved attendence (for debugging purposes)
+//         // console.log("getted all attendence " + attendence);
+//         // Return the retrieved attendence as a JSON response
+//         return res.status(201).json(attendence);
+//     } catch (error) {
+//         console.log("Error getting attendence", error);
+//         return res.status(500).json({ message: "Error getting attendence" });
+//         // Teacher access all attendence
+//     }
+// }
+
+const getAttendenceModelForHOD = async (req, res) => {
+    try {
+        const { sem, branch, date } = req.body;
+
+        if (!sem || !branch) {
+            console.log("Semester and Branch required");
+            return res.status(400).json({ message: "Semester and Branch required" });
+        }
+
+        let attendence = await AttendenceModel.find({ sem: sem, branch: branch });
+        if (date) {
+            attendence = attendence.reduce((acc, curr) => {
+                const filtered = curr.all_attendence.filter(a => a.date === date);
+                if (filtered.length > 0) {
+                    acc.push({ ...curr._doc, all_attendence: filtered });
+                }
+                return acc;
+            }, []);
+        }
+
+        console.log("Retrieved attendance for the date: ", attendence);
+        return res.status(200).json(attendence);
+    } catch (error) {
+        console.log("Error getting attendance: ", error);
+        return res.status(500).json({ message: "Error getting attendance" });
+    }
+};
+
+
 
 // when clicked saved attendence by teacher then changes in every student database
 const submitAttendance = async (req, res) => {
@@ -221,25 +261,16 @@ const submitAttendance = async (req, res) => {
             return res.status(400).json({ message: "Semester, students, date, or day not provided." });
         }
 
-        // '2023-10-23T18:30:00.000Z' Convert the date to dd-mm-yy format
-        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear() % 100}`;
-        // Format the time part after 'T'
-        const formattedTime = `${date.toISOString().split('T')[1].slice(0, 8)}`;
-        // Combine both formatted date and time
-        const formattedDateTime = `${formattedDate}T${formattedTime}`;
-
-
-
         const presentStudentRecord = {
             subject,
-            date: formattedDateTime,
+            date,
             day,
             status: true,
         };
 
         const absentStudentRecord = {
             subject,
-            date: formattedDateTime,
+            date,
             day,
             status: false,
         };
@@ -287,11 +318,7 @@ const submitAttendance = async (req, res) => {
 
 
 
-
-
-
-
 module.exports = {
     RegisterStudent, LoginStudent, getLoggedStudentData, getStudentAttendeceById,
-    submitAttendance, getAllAttendence, getAllAttendenceModel, getAllStudentData
+    submitAttendance, getAllAttendence, getAttendenceModelForHOD, getAllStudentData
 }

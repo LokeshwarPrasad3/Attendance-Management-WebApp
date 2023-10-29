@@ -9,7 +9,8 @@ import PropTypes from "prop-types";
 const StudentAttendence = (props) => {
   const {
     setShowStudentAttedenceComponent,
-    setSearchedStudentAttedence,showDate,
+    setSearchedStudentAttedence,
+    showDate,
     showSem,
     showBranch,
   } = props;
@@ -30,10 +31,11 @@ const StudentAttendence = (props) => {
           Authorization: `Bearer ${token}`,
         },
       };
+      console.log(showSem, showBranch, showDate);
       // get student use takeSem takeBranch props
       const { data } = await axios.post(
-        `${host}/student/all-attedence`,
-        { sem: showSem, branch: showBranch, date:showDate },
+        `${host}/student/attendence-model`,
+        { sem: showSem, branch: showBranch, date: showDate },
         config
       );
       if (data.status === 400) {
@@ -42,7 +44,7 @@ const StudentAttendence = (props) => {
         setLoading(false);
         return;
       }
-      console.log("Admin date" , data);
+      console.log("Admin date", data);
       // If data is successfully fouond then store in state
       setAllStudents(data);
       setLoading(false);
@@ -53,6 +55,7 @@ const StudentAttendence = (props) => {
       setLoading(false);
       return;
     }
+    // eslint-disable-next-line
   }, [showSem, showBranch, setSearchedStudentAttedence]);
 
   // When page is Opened then render all students
@@ -66,15 +69,20 @@ const StudentAttendence = (props) => {
       <div className="home_heading font-overpass flex justify-center py-4 gap-4 flex-wrap items-center">
         {/* Heading Part */}
         <div className="today text-xl flex justify-center items-center gap-1">
-          <h2 className=" font-semibold">Today Attendence : </h2>
-          <h3 className="font-signika">{new Date().toLocaleDateString()}</h3>
+          {/* <h2 className=" font-semibold">Today Attendence : </h2> */}
+          <h3 className="font-signika">
+            {AllStudents[0]?.all_attendence[0]?.date}
+          </h3>
         </div>
         <div className="today text-xl flex justify-center items-center gap-1">
           <h2 className=" font-semibold">Subject : </h2>
-          <h3 className="">Discrete Matematics</h3>
+          <h3 className="">{AllStudents[0]?.all_attendence[0]?.subject}</h3>
         </div>
         <button
-          onClick={() => setShowStudentAttedenceComponent(false)}
+          onClick={() => {
+            setShowStudentAttedenceComponent(false);
+            setAllStudents([]);
+          }}
           className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md"
         >
           GoBack
@@ -150,8 +158,12 @@ const StudentAttendence = (props) => {
                         <tr className="text-lg h-10 ">
                           <td className="w-full  border-[2px] border-gray-900">
                             <p
-                              className={`home_set_leave }
-                              font-normal w-fit h-6 px-1 py-[2px] text-center w-full  text-lg leading-none custom-transition font-signika rounded-md`}
+                              className={`home_set_leave ${
+                                user?.all_attendence[0]?.status === true
+                                  ? "text-green-800"
+                                  : "text-red-800"
+                              } 
+                              font-semibold h-6 px-1 py-[2px] text-center text-lg leading-none custom-transition font-signika rounded-md`}
                             >
                               {user?.all_attendence[0]?.status === true
                                 ? "Present"

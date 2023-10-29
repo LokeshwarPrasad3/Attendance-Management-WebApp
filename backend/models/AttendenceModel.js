@@ -13,12 +13,15 @@ const attendenceSchema = new mongoose.Schema({
         {
             subject: {
                 type: String,
+                require:true,
             },
             date: {
-                type: Date,
+                type: String,
+                require:true,
             },
             day: {
                 type: String,
+                require:true,
             },
             status: {
                 type: Boolean,

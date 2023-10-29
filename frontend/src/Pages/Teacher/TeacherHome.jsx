@@ -120,6 +120,14 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
     [takeBranch, takeSem, takeSubject, customGetDay, presentStudentsIds]
   );
 
+  // mehthod which return how many days present
+  const getPresentDays = (user) =>{
+    const filtered = user.all_attendence.filter((u)=>{
+      return (u.status===true);
+    })
+    return filtered.length;
+  }
+
   // Get that particular semester and branch student list
   const getAllStudents = useCallback(async () => {
     try {
@@ -305,9 +313,14 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
                             0
                           </td>
                           <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
-                            {isPresent[index]
+                            {/* {isPresent[index]
                               ? user?.all_attendence.length + 1
-                              : user?.all_attendence.length}
+                              : user?.all_attendence.length} */}
+                            {
+                            isPresent[index] && user
+                              ? getPresentDays(user) + 1
+                              : getPresentDays(user)
+                            }
                           </td>
                         </tr>
                       </React.Fragment>

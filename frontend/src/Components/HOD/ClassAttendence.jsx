@@ -58,7 +58,7 @@ const ClassAttendence = (props) => {
         );
         if (data.length === 0) {
           console.log("Student Empty");
-          toast.warn("Students not found !", { autoClose: 1000 });
+          toast.warn("Attedendence Empty!", { autoClose: 1000 });
           setLoading(false);
           return;
         }
