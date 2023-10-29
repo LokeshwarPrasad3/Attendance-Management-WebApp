@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
 import { GetLoggedUser } from "../../Context/LoggedUserData";
-import Home from "./Home";
+import TeacherHome from "./TeacherHome";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
@@ -150,7 +150,7 @@ const TeacherPage = () => {
           </div>
         </>
       ) : (
-        <Home
+        <TeacherHome
           setShowHomePage={setShowHomePage}
           takeSem={takeSem}
           takeBranch={takeBranch}

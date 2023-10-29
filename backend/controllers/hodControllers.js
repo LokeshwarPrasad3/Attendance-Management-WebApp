@@ -1,4 +1,5 @@
 const { generateToken } = require('../context/generateAuthToken');
+const { allAttedenceModel } = require('../models/AllAttendenceModel');
 const HodModel = require('../models/HodModel');
 
 
@@ -96,9 +97,23 @@ const getLoggedHodData = async (req, res) => {
     }
 }
 
-
-const getAllAttendence = async () => {
+// HOd can access via sem branch form
+const getClassDetails = async (req, res) =>{
+    try {
+        const {sem, branch} = req.body;
+        if(!sem || !branch)
+        {
+            console.log("Fill all fields");
+            return;
+        }
+        const attendence = await allAttedenceModel.find({sem, branch});
+        res.status(201).json(attendence);
+    } catch (error) {
+        console.log("Getting error", error);
+        return;
+    }
 
 }
 
-module.exports = { getAllAttendence, registerHOD, loginHOD, getLoggedHodData }
+
+module.exports = { registerHOD, loginHOD, getLoggedHodData, getClassDetails }

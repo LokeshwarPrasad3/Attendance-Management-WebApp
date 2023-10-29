@@ -14,13 +14,17 @@ const allAttedenceSchema = new mongoose.Schema({
         type: Number,
         require: true,
     },
+    branch: {
+        type: String,
+        require: true,
+    },
+    subject: {
+        type: String,
+        require: true,
+    },
     total: {
         type: Number,
         require: true,
-    },
-    attendence: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Attendence'
     }
 }, {
     timestamps: true

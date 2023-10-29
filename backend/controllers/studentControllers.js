@@ -41,7 +41,7 @@ const RegisterStudent = async (req, res) => {
             studentName: student.name,
             sem: student.sem,
             branch: student.branch,
-            present:0,
+            present: 0,
         });
 
         if (!createAttendence) {
@@ -160,14 +160,19 @@ const getAllStudentData = async (req, res) => {
 // Retrieve all student attendence data by semester
 const getAllAttendence = async (req, res) => {
     try {
-        const { sem, branch } = req.body;
+        const { sem, branch, date } = req.body;
         // Check if the 'sem' parameter is provided
         if (!sem || !branch) {
             console.log("Semester required");
             return res.status(400).json({ message: "Semester, Branch required" });
         }
-        // Query the database for students in the specified semester
-        const attendence = await AttendenceModel.find({ sem: sem, branch: branch });
+        let attendence;
+        if (!date) {
+            // Query the database for students in the specified semester
+            attendence = await AttendenceModel.find({ sem, branch });
+        } else {
+            attendence = await AttendenceModel.find({ sem, branch, date });
+        }
         // Log the retrieved attendence (for debugging purposes)
         console.log("getted all attendence " + attendence);
         // Return the retrieved attendence as a JSON response
@@ -184,10 +189,10 @@ const getAllAttendence = async (req, res) => {
 const getAllAttendenceModel = async (req, res) => {
     try {
         // Get sem and branch
-        const {sem, branch}  = req.body;
-        console.log("sem branch geeted", sem , branch);
+        const { sem, branch } = req.body;
+        console.log("sem branch geeted", sem, branch);
         // Query the database for students in the specified semester branch
-        const attendence = await AttendenceModel.find({sem, branch});
+        const attendence = await AttendenceModel.find({ sem, branch });
         if (!attendence) {
             console.log("Empty attendence");
             return res.status(500).json({ message: "empty data" });
@@ -216,16 +221,25 @@ const submitAttendance = async (req, res) => {
             return res.status(400).json({ message: "Semester, students, date, or day not provided." });
         }
 
+        // '2023-10-23T18:30:00.000Z' Convert the date to dd-mm-yy format
+        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear() % 100}`;
+        // Format the time part after 'T'
+        const formattedTime = `${date.toISOString().split('T')[1].slice(0, 8)}`;
+        // Combine both formatted date and time
+        const formattedDateTime = `${formattedDate}T${formattedTime}`;
+
+
+
         const presentStudentRecord = {
             subject,
-            date,
+            date: formattedDateTime,
             day,
             status: true,
         };
 
         const absentStudentRecord = {
             subject,
-            date,
+            date: formattedDateTime,
             day,
             status: false,
         };
@@ -248,7 +262,7 @@ const submitAttendance = async (req, res) => {
                 console.log(student.name + " is present.");
 
                 // logic for increase present of value
-                
+
                 student.all_attendence.unshift(presentStudentRecord);
             } else {
                 console.log(student.name + " is absent.");

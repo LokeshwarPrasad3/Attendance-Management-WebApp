@@ -1,5 +1,6 @@
 const { TeacherModel } = require("../models/TeacherModel");
 const { generateToken } = require('../context/generateAuthToken');
+const { allAttedenceModel } = require("../models/AllAttendenceModel");
 
 const registerTeacher = async (req, res) => {
     try {
@@ -154,4 +155,31 @@ const setAssignSubject = async (req, res) => {
     }
 }
 
-module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, getAllTeachers, setAssignSubject }
+
+// after student attendence saved that details in hod access db
+const saveHodAccessAttendence = async (req, res) => {
+    try {
+        const { date, day, sem, branch, total } = req.body;
+
+        if (!date || !day || !sem || !branch || !total) {
+            return res.status(400).json({ message: "Please fill all fields" });
+        }
+
+        // '2023-10-23T18:30:00.000Z' Convert the date to dd-mm-yy format
+        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear() % 100}`;
+        // Format the time part after 'T'
+        const formattedTime = `${date.toISOString().split('T')[1].slice(0, 8)}`;
+        // Combine both formatted date and time
+        const formattedDateTime = `${formattedDate}T${formattedTime}`;
+
+        const attendance = await allAttedenceModel.create({ date: formattedDateTime, day, sem, branch, total });
+
+        res.status(201).json(attendance);
+        console.log("Successfully created in hod access");
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ message: "Error occurred", error: error.message });
+    }
+}
+
+module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, saveHodAccessAttendence, getAllTeachers, setAssignSubject }

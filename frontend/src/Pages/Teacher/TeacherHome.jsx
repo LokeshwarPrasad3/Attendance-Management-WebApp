@@ -5,8 +5,9 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { host } from "../../API/API";
 import { Box, CircularProgress } from "@mui/material";
+import PropTypes from "prop-types";
 
-const Home = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
+const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   const customGetDay = useCallback((no) => {
     const days = {
       0: "Sunday",
@@ -85,6 +86,24 @@ const Home = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
           setLoading(false);
           return;
         }
+
+        // POST IN HOD - ALL DB
+        const { HodData } = await axios.post(
+          `${host}/teacher/hod-saved`,
+          {
+            date: new Date().toLocaleDateString(),
+            day: customGetDay(new Date().getDay()),
+            sem: takeSem,
+            branch: takeBranch,
+            total: presentStudentsIds.length,
+            subject: takeSubject,
+          },
+          config
+        );
+        console.log("HOd db saved", HodData);
+
+        // If successful then saved in hod database
+
         toast.success("Successfully Saved!", { autoClose: 1000 });
         setLoading(false);
 
@@ -198,7 +217,7 @@ const Home = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              height:'40vh'
+              height: "40vh",
             }}
           >
             <CircularProgress color="inherit" size={42} />
@@ -306,4 +325,12 @@ const Home = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   );
 };
 
-export default Home;
+// Validating props what is their types
+TeacherHome.propTypes = {
+  setShowHomePage: PropTypes.func,
+  takeSem: PropTypes.number,
+  takeBranch: PropTypes.string,
+  takeSubject: PropTypes.string,
+};
+
+export default TeacherHome;

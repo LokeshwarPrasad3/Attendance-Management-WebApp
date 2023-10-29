@@ -65,7 +65,7 @@ const Navbar = ({ currentUser }) => {
       setTimeout(() => {
         toggleMenu();
         navigate("/");
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.log("Getting eeror to logut");
       // setLoggedUser(null); // must make null

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 // import { dummyAttendence } from "../../Temp/TempAttendence";
 import "../../CSS/StudentPage.css";
 import { GetLoggedUser } from "../../Context/LoggedUserData";
@@ -20,12 +19,14 @@ const StudentPage = () => {
   const [studentAttendence, setStudentAttedence] = useState({});
 
   const [presentDay, setPresentDay] = useState(0);
+  const [percentage, setPercentage] = useState(0);
   const getPresentDays = useCallback(() => {
     let countDay = 0;
     studentAttendence?.all_attendence?.map((att) => {
       if (att.status) countDay++;
     });
     setPresentDay(countDay);
+    // eslint-disable-next-line
   }, []);
 
   // Load student all attendence
@@ -60,10 +61,14 @@ const StudentPage = () => {
         if (att.status) countDay++;
       });
       setPresentDay(countDay);
+      // set percentage
+      setPercentage(
+        (presentDay / studentAttendence?.all_attendence?.length) * 100
+      );
     } catch (error) {
       console.log("Error during fetching attendence react");
     }
-  }, [currentUser]);
+  }, [currentUser, studentAttendence?.all_attendence?.length, presentDay]);
 
   useEffect(() => {
     setCurrentUser(loggedUser);
@@ -184,6 +189,8 @@ const StudentPage = () => {
                   <h3>
                     {presentDay}/{studentAttendence?.all_attendence?.length}
                   </h3>
+                  &nbsp;| &nbsp;
+                  <h3>Per : {Math.floor(percentage)}%</h3>
                 </div>
               </div>
 
