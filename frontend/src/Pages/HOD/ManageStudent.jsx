@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // we need component and css
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,8 +12,11 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Navbar from "../../Components/Navbar";
 import axios from "axios";
 import { host } from "../../API/API";
+import { GetLoggedUser } from "../../Context/LoggedUserData";
+import { useNavigate } from "react-router-dom";
 
 const ManageStudent = () => {
+  const navigate = useNavigate();
   // Get filled student-data
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,6 +25,8 @@ const ManageStudent = () => {
   const [sem, setSem] = useState("");
   const [password, setPassword] = useState("");
   const [pic, setPic] = useState();
+
+  const {loggedUser} = GetLoggedUser();
 
   // new state for loading to upload picture of user
   const [loading, setLoading] = useState(false);
@@ -134,6 +139,12 @@ const ManageStudent = () => {
       return;
     }
   };
+
+  useEffect(()=>{
+    if(loggedUser?.type!=='hod'){
+      navigate("/");
+    }
+  },[navigate, loggedUser])
 
   return (
     <>

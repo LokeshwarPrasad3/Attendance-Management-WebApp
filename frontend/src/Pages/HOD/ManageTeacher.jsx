@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // used react-material components
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -11,9 +11,12 @@ import CreateTeacher from "../../Components/HOD/CreateTeacher";
 // import Login from "../Components/Login";
 // import Signup from "../Components/SignUp";
 import "../../CSS/Style.css";
-
+import { useNavigate } from "react-router-dom";
+import { GetLoggedUser } from "../../Context/LoggedUserData";
 
 const ManageTeacher = () => {
+  const navigate = useNavigate();
+  const { loggedUser } = GetLoggedUser();
   // Show login and create user when user toggle
   const [toggleMode, setToggleMode] = useState(true);
 
@@ -22,6 +25,12 @@ const ManageTeacher = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if (loggedUser?.type !== "hod") {
+      navigate("/");
+    }
+  }, [navigate, loggedUser]);
 
   return (
     <>
@@ -59,6 +68,6 @@ const ManageTeacher = () => {
       </div>
     </>
   );
-}
+};
 
-export default ManageTeacher
+export default ManageTeacher;
