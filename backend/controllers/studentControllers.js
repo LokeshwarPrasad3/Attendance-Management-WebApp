@@ -261,16 +261,22 @@ const submitAttendance = async (req, res) => {
             return res.status(400).json({ message: "Semester, students, date, or day not provided." });
         }
 
+        // Convert date to dd/mm/yy 
+        // Split the date string by '/'
+        let parts = date.split('/');
+        // Rearrange the date parts in the desired format (dd/mm/yyyy)
+        let newDateFormat = parts[1] + '/' + parts[0] + '/' + parts[2];
+
         const presentStudentRecord = {
             subject,
-            date,
+            date:newDateFormat,
             day,
             status: true,
         };
 
         const absentStudentRecord = {
             subject,
-            date,
+            date:newDateFormat,
             day,
             status: false,
         };

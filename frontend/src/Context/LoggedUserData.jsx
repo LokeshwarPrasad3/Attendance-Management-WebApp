@@ -32,7 +32,13 @@ const LoggedUserData = ({ children }) => {
           console.log("getted context API data", data);
           setLoggedUser(data);
           if (type === "student") navigate(`/${type}`);
-
+          if (
+            (type === "hod" || type === "teacher") &&
+            window.location.pathname === "/"
+          ) {
+            console.log("yes ", type);
+            navigate(`/${type}`);
+          }
         } catch (error) {
           setLoggedUser(null);
           console.log(`Error getting context API data: ${error}`);

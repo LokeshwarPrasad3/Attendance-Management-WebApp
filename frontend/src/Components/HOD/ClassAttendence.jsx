@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { host } from "../../API/API";
 import { Box, CircularProgress } from "@mui/material";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const ClassAttendence = (props) => {
   const {
@@ -22,12 +22,12 @@ const ClassAttendence = (props) => {
   // set semester which hod want to search
   const [searchSem, setSearchSem] = useState(0);
   const [searchBranch, setSearchBranch] = useState("");
-//   const [searchedStudentAttendence, setSearchedStudentAttedence] = useState([]);
+  //   const [searchedStudentAttendence, setSearchedStudentAttedence] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const gotoStudentAttedence = (date, sem, branch) => {
     console.log(sem, branch, date);
-      setShowDate(date);
+    setShowDate(date);
     setShowSem(sem);
     setShowBranch(branch);
     setShowStudentAttedenceComponent(true);
@@ -58,6 +58,7 @@ const ClassAttendence = (props) => {
         );
         if (data.length === 0) {
           console.log("Student Empty");
+          setSearchedStudentAttedence([]);
           toast.warn("Attedendence Empty!", { autoClose: 1000 });
           setLoading(false);
           return;

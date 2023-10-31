@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
 import { GetLoggedUser } from "../../Context/LoggedUserData";
 import TeacherHome from "./TeacherHome";
@@ -141,8 +141,18 @@ const TeacherPage = () => {
                     className="cursor-pointer px-1 font-semibold bg-white"
                   >
                     <option value="Select_Subject">Select_Subject</option>
-                    <option value="Select_Subject">Maths</option>
-                    <option value="Select_Subject">DAA</option>
+                    {currentUser &&
+                      currentUser.teach &&
+                      currentUser.teach.map((cls, index) => {
+                        return (
+                          <React.Fragment key={index}>
+                            <option value={cls.subject}>{cls.subject}</option>
+                          </React.Fragment>
+                        );
+                      })}
+
+                    {/* <option value="Select_Subject">Maths</option>
+                    <option value="Select_Subject">DAA</option> */}
                   </select>
                 </div>
               </div>

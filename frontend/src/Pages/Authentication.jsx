@@ -7,10 +7,12 @@ import Login from "../Components/Login";
 const Authentication = () => {
   return (
     <>
-      <div className="login_container  font-overpass flex flex-col justify-center items-center mt-20 pt-7 gap-4  ">
+      {/* width: 100%; margin: auto; height: 100%; display: flex; justify-content:
+      center; align-items: center; height: 100vh; */}
+      <div className="login_container bg-slate-800 font-overpass flex flex-col pt-28 items-center w-full m-auto h-screen">
         <div
           className="login_contenet bg-slate-100 shadow-sm shadow-blue-400 border-[1px] rounded-md border-gray-300
-                  xl:w-[35rem] md:w-[30rem] pt-5 py-3 flex justify-center items-center flex-col"
+                  xl:w-[30rem] pt-5 py-3 flex justify-center items-center flex-col"
         >
           <Tab
             icon={<LockOpenIcon />}

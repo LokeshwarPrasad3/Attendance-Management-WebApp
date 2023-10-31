@@ -98,15 +98,19 @@ const getLoggedHodData = async (req, res) => {
 }
 
 // HOd can access via sem branch form
-const getClassDetails = async (req, res) =>{
+const getClassDetails = async (req, res) => {
     try {
-        const {sem, branch} = req.body;
-        if(!sem || !branch)
-        {
+        const { sem, branch, date } = req.body;
+        if (!sem || !branch) {
             console.log("Fill all fields");
             return;
         }
-        const attendence = await allAttedenceModel.find({sem, branch});
+        let attendence
+        if (date) {
+            attendence = await allAttedenceModel.find({ sem, branch, date });
+        } else {
+            attendence = await allAttedenceModel.find({ sem, branch });
+        }
         res.status(201).json(attendence);
     } catch (error) {
         console.log("Getting error", error);

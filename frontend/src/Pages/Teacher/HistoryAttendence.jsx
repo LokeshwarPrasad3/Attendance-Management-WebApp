@@ -239,7 +239,11 @@ const HistoryAttendence = () => {
                       <React.Fragment key={index}>
                         <tr className="text-lg h-10">
                           <td
-                            className={`font-signika font-semibold border-[2px] border-gray-900 text-xl min-w-fit text-center ${user.all_attendence[0].status === true?'text-green-700':'text-red-500'}`}
+                            className={`font-signika font-semibold border-[2px] border-gray-900 text-xl min-w-fit text-center ${
+                              user.all_attendence[0].status === true
+                                ? "text-green-700"
+                                : "text-red-500"
+                            }`}
                           >
                             {user.all_attendence[0]
                               ? user.all_attendence[0].status === true

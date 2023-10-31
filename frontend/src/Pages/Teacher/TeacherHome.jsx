@@ -25,6 +25,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
 
   // Store that particular sem and branch list when entered page
   const [AllStudents, setAllStudents] = useState([]);
+  const [todayTotalAttedenceCount, setTodayTotalAttedenceCount] = useState(0);
 
   // Submit attendence then push that state in backend contains (_id, name)
   const [presentStudentsIds, setPresentStudentsIds] = useState([]);
@@ -121,12 +122,12 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   );
 
   // mehthod which return how many days present
-  const getPresentDays = (user) =>{
-    const filtered = user.all_attendence.filter((u)=>{
-      return (u.status===true);
-    })
+  const getPresentDays = (user) => {
+    const filtered = user.all_attendence.filter((u) => {
+      return u.status === true;
+    });
     return filtered.length;
-  }
+  };
 
   // Get that particular semester and branch student list
   const getAllStudents = useCallback(async () => {
@@ -151,6 +152,25 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         setLoading(false);
         return;
       }
+
+      // Logic get number of attedence today already taken
+      const getTodayDate = new Date().toLocaleDateString().split("/");
+      const formatDate =
+        getTodayDate[1] + "/" + getTodayDate[0] + "/" + getTodayDate[2];
+
+      let todayTotalAttedenceCount = 0;
+
+      data[0].all_attendence.some((att) => {
+        if (formatDate !== att.date) {
+          return true; // Exit the loop if the date doesn't match
+        }
+        todayTotalAttedenceCount++;
+        return false;
+      });
+
+      setTodayTotalAttedenceCount(todayTotalAttedenceCount);
+      console.log(todayTotalAttedenceCount);
+
       // If data is successfully fouond then store in state
       setAllStudents(data);
       setLoading(false);
@@ -160,6 +180,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       setLoading(false);
       return;
     }
+    // eslint-disable-next-line
   }, [takeSem, takeBranch]);
 
   // When page is Opened then render all students
@@ -191,6 +212,9 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
 
       {/* Set Leave Today Button part */}
       <div className="set_leave_container w-10/12 flex justify-end items-center pt-4 gap-3">
+        <p className="font-lg font-overpass font-semibold bg-pink-200 cursor-pointer px-2 rounded-sm">
+           <span className="font-bold text-green-900" >{todayTotalAttedenceCount}</span> Attedence Saved
+        </p>
         <button
           onClick={() => setShowHomePage(false)}
           className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md"
@@ -316,11 +340,9 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
                             {/* {isPresent[index]
                               ? user?.all_attendence.length + 1
                               : user?.all_attendence.length} */}
-                            {
-                            isPresent[index] && user
+                            {isPresent[index] && user
                               ? getPresentDays(user) + 1
-                              : getPresentDays(user)
-                            }
+                              : getPresentDays(user)}
                           </td>
                         </tr>
                       </React.Fragment>

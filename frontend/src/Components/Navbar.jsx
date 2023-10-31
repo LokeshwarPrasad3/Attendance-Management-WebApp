@@ -118,14 +118,6 @@ const Navbar = ({ currentUser }) => {
                   Manage-Student
                 </Link>
               </li>
-              {/* <li>
-                <h2
-                  className="menu_link selection:bg-none w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  onClick={handleLogout}
-                >
-                  Logout
-                </h2>
-              </li> */}
             </>
           )}
 
@@ -141,16 +133,6 @@ const Navbar = ({ currentUser }) => {
                   See-History
                 </Link>
               </li>
-
-              {/* Logout icon menu link */}
-              {/* <li>
-                <h2
-                  className="menu_link w-fit flex font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
-                  onClick={handleLogout}
-                >
-                  Logout
-                </h2>
-              </li> */}
             </>
           )}
 
@@ -175,7 +157,7 @@ const Navbar = ({ currentUser }) => {
               {!isMobile ? (
                 <img
                   src={`${
-                    !getUser ? getUser?.pic : "./Images/default_user.jpg"
+                    getUser ? getUser?.pic : "./Images/default_user.jpg"
                   }`}
                   alt="user"
                   className="w-9 h-9 rounded-full border-[1px] border-gray-400"

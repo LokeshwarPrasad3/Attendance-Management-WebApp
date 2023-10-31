@@ -108,12 +108,6 @@ const StudentPage = () => {
                 Profile
               </h3>
             </button>
-            {/* <button className="student_menu flex items-center hover:bg-green-300 py-2 cursor-pointer px-5 gap-1">
-              <PersonOutlineIcon className="text-gray-700" />
-              <h3 className="font-semibold text-gray-700 font-signika selection:bg-none">
-                Attendence
-              </h3>
-            </button> */}
           </div>
         </div>
 
@@ -146,7 +140,7 @@ const StudentPage = () => {
             <div className="student_combine flex flex-wrap items-center gap-2">
               <div className="student_detail flex gap-1 items-center">
                 <h2 className="font-semibold min-w-fit">Total Attedence : </h2>
-                <h3>{studentAttendence?.all_attendence?.length}</h3>
+                <h3>{presentDay}</h3>
               </div>
               <div className="student_detail flex flex-wrap gap-1 items-center">
                 <h2 className="font-semibold min-w-fit">Total Classess : </h2>

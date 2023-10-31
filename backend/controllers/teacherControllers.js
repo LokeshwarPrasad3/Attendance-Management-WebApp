@@ -165,8 +165,14 @@ const saveHodAccessAttendence = async (req, res) => {
             return res.status(400).json({ message: "Please fill all fields" });
         }
 
+        // Convert date to dd/mm/yy 
+        // Split the date string by '/'
+        let parts = date.split('/');
+        // Rearrange the date parts in the desired format (dd/mm/yyyy)
+        let newDateFormat = parts[1] + '/' + parts[0] + '/' + parts[2];
+
         
-        const attendance = await allAttedenceModel.create({ date, day, sem, branch, total });
+        const attendance = await allAttedenceModel.create({ date: newDateFormat, day, sem, branch, total });
 
         res.status(201).json(attendance);
         console.log("Successfully created in hod access");

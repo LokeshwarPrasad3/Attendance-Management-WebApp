@@ -35,8 +35,13 @@ const SLogin = () => {
   const { loggedUser, setLoggedUser } = GetLoggedUser;
 
   useEffect(() => {
+    if(loggedUser){
+      console.log("user exist", loggedUser.type)
+      navigate(`/${loggedUser.type}`)
+    }
+
     console.log("printed userEffect " + loggedUser);
-  }, [loggedUser, setLoggedUser]);
+  }, [loggedUser, setLoggedUser,navigate]);
 
   // handle login when clicked login button
   const handleLogin = async (event) => {
@@ -124,7 +129,7 @@ const SLogin = () => {
       {/*👉 LOGIN FOROM of login user */}
       <form
         action=""
-        className="login_form xl:w-[35rem] md:w-[30rem] w-[24rem] sm:px-16 px-10 flex flex-col gap-5 py-9"
+        className="login_form xl:w-[30rem] w-[24rem] sm:px-16 px-10 flex flex-col gap-5 py-9 mt-[-2rem]"
       >
         {/* for input type email */}
         <div className="email_box flex flex-col gap-2">
@@ -235,7 +240,7 @@ const SLogin = () => {
         <div className="button_box flex flex-col justify-center items-center gap-4">
           <button
             onClick={handleLogin}
-            className="bg-blue-600 w-full py-[5px] rounded opacity-90 text-white text-xl hover:bg-blue-700 text-opacity-90 "
+            className="bg-green-700 w-full py-[5px] rounded opacity-90 text-white text-xl hover:bg-green-600 hover:text-slate-100 custom-transition text-opacity-90 "
           >
             {/* button content is changing to circular progress when clicked to login */}
             {loading ? (
