@@ -258,7 +258,8 @@ const submitAttendance = async (req, res) => {
 
         if (!sem || !branch, !subject || !presentStudentsIds || !date || !day) {
             console.log("Missing required data");
-            return res.status(400).json({ message: "Semester, students, date, or day not provided." });
+            res.status(400).json({ message: "Semester, students, date, or day not provided." });
+            return;
         }
 
         // Convert date to dd/mm/yy 

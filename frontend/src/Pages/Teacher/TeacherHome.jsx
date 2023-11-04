@@ -6,6 +6,10 @@ import axios from "axios";
 import { host } from "../../API/API";
 import { Box, CircularProgress } from "@mui/material";
 import PropTypes from "prop-types";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import DownloadDoneIcon from "@mui/icons-material/DownloadDone";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import * as XLSX from "xlsx";
 
 const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   const customGetDay = useCallback((no) => {
@@ -22,6 +26,8 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   }, []);
 
   const [loading, setLoading] = useState(false);
+  const [showDownloadButton, setShowDownloadButton] = useState(false);
+  const [changeButtonIcon, setChangeButtonIcon] = useState(false);
 
   // Store that particular sem and branch list when entered page
   const [AllStudents, setAllStudents] = useState([]);
@@ -52,9 +58,93 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
     });
   };
 
+  // Download Attedence when saved
+  const downloadTablesAsXLSX = useCallback(() => {
+    setChangeButtonIcon(true);
+    const leftTable = document.querySelector(".left-table");
+    const rightTable = document.querySelector(".right-table");
+
+    if (leftTable && rightTable) {
+      const combinedTable = document.createElement("table");
+      const tbody = document.createElement("tbody");
+
+      // First row - Today's Attendance
+      const todayAttendanceRow = document.createElement("tr");
+      const todayAttendanceCell = document.createElement("td");
+      todayAttendanceCell.colSpan = 100;
+      todayAttendanceCell.innerHTML = `<h1>Today's Attendance: ${new Date().toLocaleDateString()}</h1>`;
+      todayAttendanceRow.appendChild(todayAttendanceCell);
+      tbody.appendChild(todayAttendanceRow);
+
+      // Second row - Date and Subject
+      const dateAndSubjectRow = document.createElement("tr");
+      const dateAndSubjectCell = document.createElement("td");
+      dateAndSubjectCell.colSpan = 100;
+      dateAndSubjectCell.innerHTML = `<h2>Subject: ${takeSubject} </h2>`;
+      dateAndSubjectRow.appendChild(dateAndSubjectCell);
+      tbody.appendChild(dateAndSubjectRow);
+
+      // Get rows from both left and right tables
+      const leftRows = leftTable.rows;
+      const rightRows = rightTable.rows;
+
+      const maxRows = Math.max(leftRows.length, rightRows.length);
+
+      for (let i = 0; i < maxRows; i++) {
+        const newRow = document.createElement("tr");
+
+        // Left table row content
+        if (i < leftRows.length) {
+          const leftCells = leftRows[i].cells;
+          for (let j = 0; j < leftCells.length; j++) {
+            const newCell = document.createElement("td");
+            newCell.innerHTML = leftCells[j].innerHTML;
+            newRow.appendChild(newCell);
+          }
+        }
+
+        // Right table row content
+        if (i < rightRows.length) {
+          const rightCells = rightRows[i].cells;
+          for (let j = 0; j < rightCells.length; j++) {
+            const newCell = document.createElement("td");
+            newCell.innerHTML = rightCells[j].innerHTML;
+            newRow.appendChild(newCell);
+          }
+        }
+
+        tbody.appendChild(newRow);
+      }
+
+      // Append the combined content to the table
+      combinedTable.appendChild(tbody);
+
+      // Convert combined HTML content to XLSX
+      const wb = XLSX.utils.table_to_book(combinedTable);
+      XLSX.writeFile(
+        wb,
+        `${takeSem}-${takeBranch}-${takeSubject}-${new Date().toLocaleDateString()}.xlsx`
+      );
+
+      // Change download iconf or 3s
+      setTimeout(() => {
+        setChangeButtonIcon(false);
+      }, 4000);
+    } else {
+      console.error("Left or right table not found.");
+    }
+  }, [takeBranch, takeSem, takeSubject]);
+
   // save attendence to db when clicked to save changes
   const saveAllStudentAttendence = useCallback(
     async (e) => {
+      if (presentStudentsIds.length == 0) {
+        toast.warn("Oops! Please take Attedence", { autoClose: 2000 });
+        console.log("Empty presentStudentIds ", presentStudentsIds);
+        return;
+      }
+      downloadTablesAsXLSX();
+
       e.preventDefault();
       setLoading(true);
       try {
@@ -83,7 +173,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         // If data is not gettd
         if (!data) {
           console.log("Not data");
-          toast.warn("Not get data", { autoClose: 1000 });
+          toast.warn("Not get data", { autoClose: 2000 });
           setLoading(false);
           return;
         }
@@ -105,20 +195,32 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
 
         // If successful then saved in hod database
 
-        toast.success("Successfully Saved!", { autoClose: 1000 });
+        toast.success("Successfully Saved!", { autoClose: 2000 });
         setLoading(false);
+        setShowDownloadButton(true);
+
+        let count = todayTotalAttedenceCount + 1;
+        setTodayTotalAttedenceCount(count);
 
         // RESET all data
-        setIsPresent({});
-        setPresentStudentsIds([]);
+        // setIsPresent({});
+        // setPresentStudentsIds([]);
       } catch (error) {
         console.log("Student data not saved", error);
-        toast.error("Student Not Found", { autoClose: 1000 });
+        toast.error("Student Not Found", { autoClose: 2000 });
         setLoading(false);
         return;
       }
     },
-    [takeBranch, takeSem, takeSubject, customGetDay, presentStudentsIds]
+    [
+      takeBranch,
+      takeSem,
+      takeSubject,
+      customGetDay,
+      presentStudentsIds,
+      downloadTablesAsXLSX,
+      todayTotalAttedenceCount,
+    ]
   );
 
   // mehthod which return how many days present
@@ -127,6 +229,40 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       return u.status === true;
     });
     return filtered.length;
+  };
+
+  // get yesterday attedence
+  const yesterdayAttedence = (user) => {
+    // first get yesterday date
+    const today = new Date();
+    const yesterday = new Date(today); // copy
+    yesterday.setDate(today.getDate() - 1);
+    // format date as localeDateString mm/dd/yy
+    const formatYesterday = yesterday
+      .toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "numeric",
+      })
+      .split("/");
+    const actualYesterday =
+      formatYesterday[1].replace(/^0/, "") +
+      "/" +
+      formatYesterday[0] +
+      "/" +
+      formatYesterday[2];
+    console.log(actualYesterday);
+
+    // Get attedence of that date
+    let yesterdayCount = 0;
+    user.all_attendence.forEach((att) => {
+      if (actualYesterday === att.date && att.subject === takeSubject) {
+        yesterdayCount++;
+        console.log(yesterdayCount);
+        console.log("geted");
+      }
+    });
+    return yesterdayCount;
   };
 
   // Get that particular semester and branch student list
@@ -148,35 +284,36 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       );
       if (data.status === 400) {
         console.log("Data not getted");
-        toast.error("Students Not getted!", { autoClose: 1000 });
+        toast.error("Students Not getted!", { autoClose: 2000 });
         setLoading(false);
         return;
       }
 
       // Logic get number of attedence today already taken
       const getTodayDate = new Date().toLocaleDateString().split("/");
-      const formatDate =
+      const todayFormatDate =
         getTodayDate[1] + "/" + getTodayDate[0] + "/" + getTodayDate[2];
 
+      // Set total Attedence for all students
       let todayTotalAttedenceCount = 0;
-
       data[0].all_attendence.some((att) => {
-        if (formatDate !== att.date) {
+        if (todayFormatDate !== att.date) {
           return true; // Exit the loop if the date doesn't match
         }
         todayTotalAttedenceCount++;
         return false;
       });
-
       setTodayTotalAttedenceCount(todayTotalAttedenceCount);
       console.log(todayTotalAttedenceCount);
+
+      // Get yesterday attedence for all students
 
       // If data is successfully fouond then store in state
       setAllStudents(data);
       setLoading(false);
     } catch (error) {
       console.log("Error occured during fetching students", error);
-      toast.error("Student Not Found!", { autoClose: 1000 });
+      toast.error("Student Not Found!", { autoClose: 2000 });
       setLoading(false);
       return;
     }
@@ -191,7 +328,10 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   return (
     <>
       {/* Another part of page */}
-      <div className="home_heading font-overpass flex justify-center py-4 gap-4 flex-wrap items-center">
+      <div
+        id="attedence_container"
+        className="home_heading font-overpass flex justify-center py-4 gap-4 flex-wrap items-center"
+      >
         {/* Heading Part */}
         <div className="today text-xl flex justify-center items-center gap-1">
           <h2 className=" font-semibold">Today Attendence : </h2>
@@ -199,7 +339,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         </div>
         <div className="today text-xl flex justify-center items-center gap-1">
           <h2 className=" font-semibold">Subject : </h2>
-          <h3 className="">Discrete Matematics</h3>
+          <h3 className="">{takeSubject}</h3>
         </div>
         <Link
           to="/history"
@@ -211,15 +351,19 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       <hr className="text-gray-400 bg-gray-400" />
 
       {/* Set Leave Today Button part */}
-      <div className="set_leave_container w-10/12 flex justify-end items-center pt-4 gap-3">
+      <div className="set_leave_container  flex justify-center items-center pt-4 gap-3">
         <p className="font-lg font-overpass font-semibold bg-pink-200 cursor-pointer px-2 rounded-sm">
-           <span className="font-bold text-green-900" >{todayTotalAttedenceCount}</span> Attedence Saved
+          <span className="font-bold text-green-900">
+            {todayTotalAttedenceCount}
+          </span>
+          Attedence Saved
         </p>
         <button
           onClick={() => setShowHomePage(false)}
-          className="home_set_leave cursor-pointer font-normal px-2 py-1 text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md"
+          className="home_set_leave cursor-pointer font-normal px-1 py-[2px] text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-full"
         >
-          GoBack
+          {/* GoBack */}
+          <ArrowBackIcon />
         </button>
         <button
           onClick={saveAllStudentAttendence}
@@ -239,10 +383,26 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
             "Save Changes"
           )}
         </button>
+        {/* show download button when only saved attedence */}
+        {showDownloadButton && (
+          <button
+            onClick={downloadTablesAsXLSX}
+            className="home_set_leave cursor-pointer font-normal px-2 py-[3px] text-lg leading-none bg-green-700 hover:bg-green-600 custom-transition text-white font-signika rounded-md"
+          >
+            {changeButtonIcon ? (
+              <DownloadDoneIcon style={{ fontSize: "1.3rem" }} />
+            ) : (
+              <FileDownloadIcon style={{ fontSize: "1.3rem" }} />
+            )}
+          </button>
+        )}
       </div>
 
       {/* Main part where table is visible */}
-      <div className="take_attendence_table font-overpass 2xl:w-[50%] lg:w-[70%] md:w-full sm:w-full  max-w-full overflow-x-auto flex justify-center items-center m-auto py-4">
+      <div
+        id="parent_div_id"
+        className="take_attendence_table font-overpass 2xl:w-[50%] lg:w-[70%] md:w-full sm:w-full  max-w-full overflow-x-auto flex justify-center items-center m-auto py-4"
+      >
         {loading ? (
           <Box
             sx={{
@@ -257,7 +417,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         ) : (
           <>
             {/* Left part of table including sno,name */}
-            <table className="border-collapse w-full">
+            <table className="left-table table border-collapse w-full">
               {/* Left-Table heading part */}
               <thead>
                 <tr className="text-xl h-12">
@@ -277,7 +437,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
                     <React.Fragment key={index}>
                       <tr className="text-lg h-10">
                         <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
-                          {index}
+                          {index + 1}
                         </td>
                         <td className=" border-[2px] border-gray-900 text-lg min-w-[11rem] overflow-hidden text-center">
                           {user.studentName}
@@ -291,7 +451,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
 
             {/* Right part of Table which is create scroll */}
             <div className="scroll_table w-full max-w-full overflow-x-auto">
-              <table className="border-collapse ml-[-2px] w-full">
+              <table className="right-table table border-collapse ml-[-2px] w-full">
                 {/* Right-Table heading part */}
                 <thead>
                   <tr className="text-xl h-12">
@@ -334,12 +494,9 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
                             </button>
                           </td>
                           <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
-                            0
+                            {user && yesterdayAttedence(user) === 0 ? "A" : "P"}
                           </td>
                           <td className=" border-[2px] border-gray-900 text-xl min-w-fit text-center">
-                            {/* {isPresent[index]
-                              ? user?.all_attendence.length + 1
-                              : user?.all_attendence.length} */}
                             {isPresent[index] && user
                               ? getPresentDays(user) + 1
                               : getPresentDays(user)}

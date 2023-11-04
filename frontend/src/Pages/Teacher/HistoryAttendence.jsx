@@ -6,6 +6,7 @@ import { host } from "../../API/API";
 import axios from "axios";
 import { Box, CircularProgress } from "@mui/material";
 // import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import SearchIcon from "@mui/icons-material/Search";
 
 const HistoryAttendence = () => {
   const [searchSem, setSearchSem] = useState("");
@@ -37,12 +38,26 @@ const HistoryAttendence = () => {
     async (event) => {
       event.preventDefault();
       try {
+        console.log(searchSem, searchBranch, searchDate);
+
         setLoading(true);
         if (!searchSem || !searchBranch || !searchDate) {
           toast.warn("Please Fill Inputs", { autoClose: 1000 });
           setLoading(false);
           return;
         }
+
+        // change date to dd/mm/yy
+        let formattedDate = searchDate.split("-");
+        formattedDate =
+          formattedDate[2].replace(/^0/, "") +
+          "/" +
+          formattedDate[1] +
+          "/" +
+          formattedDate[0];
+
+        console.log(searchSem, searchBranch, formattedDate);
+
         // Post requrest to get students
         const token = Cookies.get("_secure_user_");
         const config = {
@@ -57,13 +72,17 @@ const HistoryAttendence = () => {
           {
             sem: Number(searchSem),
             branch: searchBranch,
-            date: new Date(searchDate).toLocaleDateString("en-GB"),
+            date: formattedDate,
           },
           config
         );
         if (data.length === 0) {
           console.log("Student Empty");
-          toast.warn("Students not found !", { autoClose: 1000 });
+          toast.warn("Students not found !", {
+            autoClose: 2000,
+            position: "top-center",
+          });
+          setAllSearchedStudents([]);
           setLoading(false);
           return;
         }
@@ -136,7 +155,7 @@ const HistoryAttendence = () => {
           </div>
           <button
             onClick={searchStudentAttendence}
-            className="home_set_leave cursor-pointer min-w-[5rem] font-normal px-2 py-1 text-lg text-black leading-none bg-blue-400 hover:bg-blue-200 custom-transition font-signika rounded-md"
+            className="home_set_leave cursor-pointer min-w-[3rem] font-normal px-1 py-1 text-lg text-black leading-none bg-blue-400 hover:bg-blue-200 custom-transition font-signika rounded-md"
           >
             {loading ? (
               <Box
@@ -149,7 +168,8 @@ const HistoryAttendence = () => {
                 <CircularProgress color="inherit" size={21} />
               </Box>
             ) : (
-              "SEARCH"
+              // "SEARCH"
+              <SearchIcon />
             )}
           </button>
         </div>
