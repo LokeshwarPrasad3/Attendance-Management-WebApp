@@ -10,8 +10,12 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DownloadDoneIcon from "@mui/icons-material/DownloadDone";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import * as XLSX from "xlsx";
+import { getTodayFormattedDate } from "../../Utils/ManageDate";
 
 const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
+  const todayDate = new Date().toLocaleDateString().split("/");
+  const formattedDate = todayDate[1] + "/" + todayDate[0] + "/" + todayDate[2];
+
   const customGetDay = useCallback((no) => {
     const days = {
       0: "Sunday",
@@ -147,6 +151,9 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
 
       e.preventDefault();
       setLoading(true);
+
+
+
       try {
         // get token from cookie
         const token = Cookies.get("_secure_user_");
@@ -165,7 +172,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
             branch: takeBranch,
             presentStudentsIds: presentStudentsIds,
             subject: takeSubject,
-            date: new Date().toLocaleDateString(),
+            date: getTodayFormattedDate(),
             day: customGetDay(new Date().getDay()),
           },
           config
@@ -182,7 +189,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         const { HodData } = await axios.post(
           `${host}/teacher/hod-saved`,
           {
-            date: new Date().toLocaleDateString(),
+            date: getTodayFormattedDate(),
             day: customGetDay(new Date().getDay()),
             sem: takeSem,
             branch: takeBranch,
@@ -290,19 +297,18 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       }
 
       // Logic get number of attedence today already taken
-      const getTodayDate = new Date().toLocaleDateString().split("/");
-      const todayFormatDate =
-        getTodayDate[1] + "/" + getTodayDate[0] + "/" + getTodayDate[2];
-
       // Set total Attedence for all students
       let todayTotalAttedenceCount = 0;
       data[0].all_attendence.some((att) => {
-        if (todayFormatDate !== att.date) {
+        console.log(att.date)
+        console.log("get " + getTodayFormattedDate())
+        if (getTodayFormattedDate() !== att.date) {
           return true; // Exit the loop if the date doesn't match
         }
         todayTotalAttedenceCount++;
         return false;
       });
+      console.log(todayTotalAttedenceCount)
       setTodayTotalAttedenceCount(todayTotalAttedenceCount);
       console.log(todayTotalAttedenceCount);
 
@@ -320,6 +326,9 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
     // eslint-disable-next-line
   }, [takeSem, takeBranch]);
 
+  // Method gives today how many attendance already taken
+
+
   // When page is Opened then render all students
   useEffect(() => {
     getAllStudents();
@@ -335,7 +344,10 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         {/* Heading Part */}
         <div className="today text-xl flex justify-center items-center gap-1">
           <h2 className=" font-semibold">Today Attendence : </h2>
-          <h3 className="font-signika">{new Date().toLocaleDateString()}</h3>
+          <h3 className="font-signika">
+            {/* {new Date().toLocaleDateString()} */}
+            {formattedDate}
+          </h3>
         </div>
         <div className="today text-xl flex justify-center items-center gap-1">
           <h2 className=" font-semibold">Subject : </h2>
@@ -359,13 +371,6 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
           Attedence Saved
         </p>
         <button
-          onClick={() => setShowHomePage(false)}
-          className="home_set_leave cursor-pointer font-normal px-1 py-[2px] text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-full"
-        >
-          {/* GoBack */}
-          <ArrowBackIcon />
-        </button>
-        <button
           onClick={saveAllStudentAttendence}
           className="home_set_leave cursor-pointer font-normal px-2 py-1 min-w-[8rem] text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-md"
         >
@@ -382,6 +387,13 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
           ) : (
             "Save Changes"
           )}
+        </button>
+        <button
+          onClick={() => setShowHomePage(false)}
+          className="home_set_leave cursor-pointer font-normal px-1 py-[2px] text-lg leading-none bg-green-700 hover:bg-green-500 custom-transition text-white font-signika rounded-full"
+        >
+          {/* GoBack */}
+          <ArrowBackIcon />
         </button>
         {/* show download button when only saved attedence */}
         {showDownloadButton && (
@@ -457,7 +469,8 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
                   <tr className="text-xl h-12">
                     <th className="font-signika border-[2px] border-gray-900 px-2">
                       <span className="">
-                        {new Date().toLocaleDateString()}
+                        {/* {new Date().toLocaleDateString()} */}
+                        {formattedDate}
                       </span>
                     </th>
                     <th className=" border-[2px] border-gray-900  text-center px-2">

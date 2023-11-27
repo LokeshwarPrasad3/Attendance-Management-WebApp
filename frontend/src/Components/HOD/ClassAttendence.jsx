@@ -64,7 +64,8 @@ const ClassAttendence = (props) => {
           return;
         }
         console.log(data);
-        setSearchedStudentAttedence(data);
+        const reversedData = data.reverse();
+        setSearchedStudentAttedence(reversedData);
         setLoading(false);
       } catch (error) {
         setSearchedStudentAttedence([]);

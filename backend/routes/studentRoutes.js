@@ -1,9 +1,13 @@
 const express = require('express');
-const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,getAttendenceModelForHOD,getAllAttendence, submitAttendance, getAllStudentData } = require('../controllers/studentControllers');
+// getting router for better customization
+const router = express.Router();
+// required all controllers related to Student
+const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,
+    getAttendenceModelForHOD, getAllAttendence, submitAttendance, getAllStudentData } = require('../controllers/studentControllers');
+// middlewares manages layer security
 const { studentProtect } = require('../middleware/studentAuth');
 const { teacherProtect } = require('../middleware/teacherAuth');
 const { hodProtect } = require('../middleware/hodAuth');
-const router = express.Router();
 
 router.route('/register').post(RegisterStudent)
 router.route('/login').post(LoginStudent);

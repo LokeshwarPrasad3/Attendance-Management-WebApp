@@ -165,14 +165,9 @@ const saveHodAccessAttendence = async (req, res) => {
             return res.status(400).json({ message: "Please fill all fields" });
         }
 
-        // Convert date to dd/mm/yy 
-        // Split the date string by '/'
-        let parts = date.split('/');
-        // Rearrange the date parts in the desired format (dd/mm/yyyy)
-        let newDateFormat = parts[1] + '/' + parts[0] + '/' + parts[2];
+        console.log("hod get date : " + date)
 
-        
-        const attendance = await allAttedenceModel.create({ date: newDateFormat, day, sem, branch, total });
+        const attendance = await allAttedenceModel.create({ date, day, sem, branch, total });
 
         res.status(201).json(attendance);
         console.log("Successfully created in hod access");
@@ -182,4 +177,30 @@ const saveHodAccessAttendence = async (req, res) => {
     }
 }
 
-module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, saveHodAccessAttendence, getAllTeachers, setAssignSubject }
+
+// -------------- Testing Purpose Controller ---------
+const reverseModel = async (req, res) => {
+    try {
+
+        // Fetch all documents
+        const allDocuments = await allAttedenceModel.find();
+
+        // Reverse the order of documents
+        const reversedDocuments = allDocuments.reverse();
+
+        // Clear existing documents
+        await allAttedenceModel.deleteMany();
+
+        // Save the reversed documents
+        await allAttedenceModel.insertMany(reversedDocuments);
+
+        res.json({ success: true, message: 'Documents reversed and saved successfully.' });
+
+    } catch (error) {
+        console.log("Error", error);
+        res.status(500).json({ message: "Error occured ", error })
+    }
+}
+
+
+module.exports = { registerTeacher, loginTeacher, reverseModel, getLoggedTeacherData, saveHodAccessAttendence, getAllTeachers, setAssignSubject }

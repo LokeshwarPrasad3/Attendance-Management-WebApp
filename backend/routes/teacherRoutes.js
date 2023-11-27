@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerTeacher, loginTeacher, getLoggedTeacherData, saveHodAccessAttendence, getAllTeachers, setAssignSubject } = require('../controllers/teacherControllers');
+const { registerTeacher, loginTeacher, getLoggedTeacherData, reverseModel, saveHodAccessAttendence, getAllTeachers, setAssignSubject } = require('../controllers/teacherControllers');
 const { hodProtect } = require('../middleware/hodAuth');
 const { teacherProtect } = require('../middleware/teacherAuth');
 const router = express.Router();
@@ -12,6 +12,7 @@ router.route('/').get(teacherProtect, getLoggedTeacherData);
 router.route('/hod-saved').post(teacherProtect, saveHodAccessAttendence)
 
 // taking attendence of student
-router.route('/get-all-teachers').get(hodProtect, getAllTeachers).post(hodProtect,setAssignSubject);
+router.route('/get-all-teachers').get(hodProtect, getAllTeachers).post(hodProtect, setAssignSubject);
+
 
 module.exports = router;

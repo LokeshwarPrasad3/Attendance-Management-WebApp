@@ -8,5 +8,6 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:5000', // Configure your proxy here
     },
+    host: '0.0.0.0',
   },
 });

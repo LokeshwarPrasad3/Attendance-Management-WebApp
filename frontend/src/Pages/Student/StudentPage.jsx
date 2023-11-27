@@ -93,9 +93,10 @@ const StudentPage = () => {
             <img
               className="h-32 w-32 rounded-full"
               // src="./Images/lokeshwar1.jpg"
-              src={`${currentUser?.pic}`}
-              alt=""
+              src={currentUser?.pic}
+              alt={currentUser?.name}
             />
+
             <h1 className="text-xl font-semibold text-center">
               {currentUser?.name}
             </h1>
