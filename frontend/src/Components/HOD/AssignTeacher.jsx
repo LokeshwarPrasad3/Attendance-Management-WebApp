@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 // PreDefined Subjects
-import { subjectsMap } from "../../API/SubjectList";
+import { subjectsMap } from "../../Utils/SubjectList";
 
 const AssignTeacher = () => {
 

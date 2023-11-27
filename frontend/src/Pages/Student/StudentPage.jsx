@@ -1,17 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
-import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-// import { dummyAttendence } from "../../Temp/TempAttendence";
 import "../../CSS/StudentPage.css";
 import { GetLoggedUser } from "../../Context/LoggedUserData";
 import axios from "axios";
 import { host } from "../../API/API";
 import Cookies from "js-cookie";
-import { subjectsMap } from "../../API/SubjectList";
+import { subjectsMap } from "../../Utils/SubjectList";
+import MenuBar from "../../Components/MenuBar";
+import { Box, CircularProgress } from "@mui/material";
 
 const StudentPage = () => {
   // Context-ApI data
   const { loggedUser } = GetLoggedUser();
+
+  // when picture is loading then load
+  const [picLoading, setPicLoading] = useState(false);
 
   // My Current Component Store data
   const [currentUser, setCurrentUser] = useState({});
@@ -34,7 +37,6 @@ const StudentPage = () => {
   const loadStudentAllAttendence = useCallback(async () => {
     try {
       const token = Cookies.get("_secure_user_");
-      console.log(token);
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,7 +82,13 @@ const StudentPage = () => {
     }
     // Get present Day
     getPresentDays();
-  }, [loggedUser, currentUser, loadStudentAllAttendence, getPresentDays]);
+  }, [
+    loggedUser,
+    currentUser,
+    setCurrentUser,
+    loadStudentAllAttendence,
+    getPresentDays,
+  ]);
 
   return (
     <>
@@ -90,26 +98,35 @@ const StudentPage = () => {
         <div className="left_part md:px-5 2xl:min-w-[16rem] xl:min-w-[16rem] lg:min-w-[16rem] w-full bg-[#f2f2f2] flex flex-col md:py-10 py-5 md:min-h-[45rem]">
           {/* profile picture and name */}
           <div className="profile flex flex-col gap-3 items-center">
-            <img
-              className="h-32 w-32 rounded-full"
-              // src="./Images/lokeshwar1.jpg"
-              src={currentUser?.pic}
-              alt={currentUser?.name}
-            />
+            <div className="image-container border-2 border-indigo-100 rounded-full">
+              {picLoading ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "8rem",
+                    height: "8rem",
+                  }}
+                >
+                  <CircularProgress color="inherit" size={32} />
+                </Box>
+              ) : (
+                <img
+                  className="h-32 w-32 rounded-full"
+                  // src="./Images/lokeshwar1.jpg"
+                  src={currentUser?.pic}
+                  alt={currentUser?.name}
+                />
+              )}
+            </div>
 
             <h1 className="text-xl font-semibold text-center">
               {currentUser?.name}
             </h1>
           </div>
-          {/* menu bar type */}
-          <div className="student_show_menu flex flex-col md:gap-2 md:py-12 md:pt-20 pt-4 px-8">
-            <button className="student_menu flex items-center bg-green-300 hover:bg-green-400 py-2 cursor-pointer px-5 gap-1">
-              <AssignmentTurnedInIcon className="text-gray-500" />
-              <h3 className="font-semibold text-gray-500 font-signika selection:bg-none">
-                Profile
-              </h3>
-            </button>
-          </div>
+          {/* Menu Bar Navigator component */}
+          <MenuBar currentUser={currentUser} setCurrentUser={setCurrentUser} setPicLoading={setPicLoading} />
         </div>
 
         <div className="right_part 2xl:min-w-[60vw] xl:min-w-[60vw] lg:min-w-[60vw] md:min-w-[60vw] w-full bg-[#f2f2f2] min-h-[45rem] 2xl:px-9 xl:px-9 md:px-9 md:py-9 p-5">

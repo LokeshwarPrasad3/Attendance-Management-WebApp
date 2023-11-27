@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 // required all controllers related to Student
 const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,
-    getAttendenceModelForHOD, getAllAttendence, submitAttendance, getAllStudentData } = require('../controllers/studentControllers');
+    getAttendenceModelForHOD, getAllAttendence, submitAttendance, getAllStudentData, changeStudentAvatar } = require('../controllers/studentControllers');
 // middlewares manages layer security
 const { studentProtect } = require('../middleware/studentAuth');
 const { teacherProtect } = require('../middleware/teacherAuth');
@@ -14,7 +14,8 @@ router.route('/login').post(LoginStudent);
 // student can see own details
 router.route('/').get(studentProtect, getLoggedStudentData);
 router.route('/my-attendence').post(studentProtect, getStudentAttendeceById);
-
+// change profile picture by user
+router.route('/change-avatar').put(studentProtect, changeStudentAvatar);
 
 // NEED OPTIMIZATION THAT TEACHER IS ONLY SEE NEEDED DETAILS NOT ALL
 // future feature : use populate method for that

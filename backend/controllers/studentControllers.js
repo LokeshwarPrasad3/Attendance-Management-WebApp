@@ -159,6 +159,31 @@ const getAllStudentData = async (req, res) => {
     }
 }
 
+// change profile avatar by student
+const changeStudentAvatar = async (req, res) => {
+    try {
+        const { _id, type, avatarURL } = req.body;
+        if (!_id || !type || !avatarURL) {
+            console.log("Some fillled is empty", _id, type, avatarURL);
+            res.status(400).json({ message: "Empty filled found" });
+            return;
+        }
+
+        const updatedStudent = await studentModel.findByIdAndUpdate({ _id }, { $set: { pic: avatarURL } }, { new: true });
+        if (!updatedStudent) {
+            console.log("Student not found");
+            return res.status(404).json({ message: "Student not found" });
+        }
+        console.log("Student avatar updated successfully");
+        console.log(updatedStudent);
+        res.status(201).json(updatedStudent);
+
+    } catch (error) {
+        console.log("Error during set new avtar picture", error);
+        res.status(500).json({ "message": "Internal Server Error" });
+        return;
+    }
+}
 
 // For only teachers
 const getAllAttendence = async (req, res) => {
@@ -184,42 +209,6 @@ const getAllAttendence = async (req, res) => {
         // Teacher access all attendence
     }
 }
-
-// by Retrieve all student attendence data by semester
-// const getAttendenceModelForHOD = async (req, res) => {
-//     try {
-//         console.log("INside function");
-//         const { sem, branch, date } = req.body;
-//         console.log(sem, branch, date);
-//         // Check if the 'sem' parameter is provided
-//         if (!sem || !branch) {
-//             console.log("Semester required");
-//             return res.status(400).json({ message: "Semester, Branch required" });
-//         }
-//         let attendence;
-//         if (!date) {
-//             // Query the database for students in the specified semester
-//             attendence = await AttendenceModel.find({ sem, branch });
-//             console.log("date is not available");
-//         } else {
-//             attendence = await AttendenceModel.find({ sem: sem, branch: branch });
-
-//             attendence = attendence.filter(item =>
-//                 item.all_attendence.some(attendence => attendence.date === date)
-//             );
-
-//             console.log("date is available");
-//         }
-//         // Log the retrieved attendence (for debugging purposes)
-//         // console.log("getted all attendence " + attendence);
-//         // Return the retrieved attendence as a JSON response
-//         return res.status(201).json(attendence);
-//     } catch (error) {
-//         console.log("Error getting attendence", error);
-//         return res.status(500).json({ message: "Error getting attendence" });
-//         // Teacher access all attendence
-//     }
-// }
 
 const getAttendenceModelForHOD = async (req, res) => {
     try {
@@ -321,5 +310,5 @@ const submitAttendance = async (req, res) => {
 
 module.exports = {
     RegisterStudent, LoginStudent, getLoggedStudentData, getStudentAttendeceById,
-    submitAttendance, getAllAttendence, getAttendenceModelForHOD, getAllStudentData
+    submitAttendance, getAllAttendence, getAttendenceModelForHOD, getAllStudentData, changeStudentAvatar
 }
