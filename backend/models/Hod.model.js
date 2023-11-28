@@ -35,4 +35,4 @@ hodSchema.methods.matchPassword = function (enteredPassword) {
 
 const HodModel = mongoose.model("HodModel", hodSchema);
 
-module.exports = HodModel
+module.exports = HodModel;

@@ -1,12 +1,18 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
 
-// https://vitejs.dev/config/
+// Your backend host URL
+const backendHost = 'http://localhost:5000';
+// const backendHost = 'lokeshwar-attendance-backend.onrender.com';
+
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:5000', // Configure your proxy here
+      '/api': {
+        target: backendHost,
+        changeOrigin: true,
+      },
     },
     host: '0.0.0.0',
   },

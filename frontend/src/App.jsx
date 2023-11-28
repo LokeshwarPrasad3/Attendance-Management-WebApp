@@ -9,6 +9,7 @@ import ManageTeacher from "./Pages/HOD/ManageTeacher";
 import ManageStudent from "./Pages/HOD/ManageStudent";
 import HodPage from "./Pages/HOD/HodPage";
 import HodProfilePage from "./Pages/HOD/HodProfilePage";
+import ErrorPage from "./Pages/Error/ErrorPage";
 
 function App() {
   return (
@@ -28,7 +29,8 @@ function App() {
         <Route path="/manage-teacher" element={<ManageTeacher />} />
         <Route path="/manage-student" element={<ManageStudent />} />
 
-        <Route path="*" element={<Authentication />} />
+        {/* Error Page show when not exist page */}
+        <Route path="/*" element={<ErrorPage />} />
       </Routes>
     </>
   );

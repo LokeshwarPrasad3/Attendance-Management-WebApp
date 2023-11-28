@@ -1,4 +1,4 @@
-const { TeacherModel } = require('../models/TeacherModel');
+const TeacherModel = require('../models/Teacher.model');
 const jwt = require('jsonwebtoken');
 
 const teacherProtect = async (req, res, next) => {
@@ -24,4 +24,4 @@ const teacherProtect = async (req, res, next) => {
     }
 }
 
-module.exports = { teacherProtect };
+module.exports =  teacherProtect ;

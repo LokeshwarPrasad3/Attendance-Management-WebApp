@@ -1,6 +1,6 @@
-const { generateToken } = require('../context/generateAuthToken');
-const { studentModel } = require('../models/studentModel');
-const { AttendenceModel } = require('../models/AttendenceModel');
+const generateToken = require('../context/generateAuthToken');
+const StudentModel = require('../models/Student.model');
+const AttendanceModel = require('../models/Attendance.model');
 
 // route method for registration of student
 const RegisterStudent = async (req, res) => {
@@ -14,7 +14,7 @@ const RegisterStudent = async (req, res) => {
         }
 
         // if user is already exist 
-        const existUser = await studentModel.findOne({ email });
+        const existUser = await StudentModel.findOne({ email });
         if (existUser) {
             console.log("User already exist");
             res.status(400).json({ message: "User already exist" });
@@ -24,9 +24,9 @@ const RegisterStudent = async (req, res) => {
         // save to db
         let student;
         if (!pic) {
-            student = await studentModel.create({ name, email, course, sem, branch, password });
+            student = await StudentModel.create({ name, email, course, sem, branch, password });
         } else {
-            student = await studentModel.create({ name, email, course, pic, sem, branch, password });
+            student = await StudentModel.create({ name, email, course, pic, sem, branch, password });
         }
         if (!student) {
             console.log("failed to store data");
@@ -34,8 +34,8 @@ const RegisterStudent = async (req, res) => {
             return;
         }
 
-        // Create Empty attendence in attendenceModel
-        const createAttendence = await AttendenceModel.create({
+        // Create Empty attendence in AttendanceModel
+        const createAttendence = await AttendanceModel.create({
             studentId: student._id,
             studentName: student.name,
             sem: student.sem,
@@ -75,7 +75,7 @@ const LoginStudent = async (req, res) => {
         }
 
         // if filled then check if user exist or not
-        const studentExist = await studentModel.findOne({ email });
+        const studentExist = await StudentModel.findOne({ email });
         if (!studentExist) {
             console.log("User not exist");
             res.status(404).json({ message: "User not exist" });
@@ -111,6 +111,7 @@ const getLoggedStudentData = async (req, res) => {
         res.status(200).json(studentRes);
     } catch (error) {
         console.log("catch error get student", error);
+        return;
     }
 }
 
@@ -118,16 +119,17 @@ const getLoggedStudentData = async (req, res) => {
 const getStudentAttendeceById = async (req, res) => {
     try {
         const { _id } = req.body;
+        console.log(_id)
         // check _id is not empty
         if (!_id) {
             console.log("Id is required");
             return res.status(401).json({ message: "Id is required" });
         }
         // Search that student attendece by Id
-        const student = await AttendenceModel.findOne({ studentId: _id });
+        const student = await AttendanceModel.findOne({ studentId: _id });
         // check student is exist
         if (!student) {
-            console.log("Student is not found");
+            console.log("Student Attendence is not found : ", student);
             return res.status(401).json({ message: "Student does not exist!" });
         }
         console.log("Student Attendence Found");
@@ -148,7 +150,7 @@ const getAllStudentData = async (req, res) => {
             return res.status(400).json({ message: "Semester, Branch required" });
         }
         // Query the database for students in the specified semester
-        const students = await studentModel.find({ sem: sem, branch: branch });
+        const students = await StudentModel.find({ sem: sem, branch: branch });
         // Log the retrieved students (for debugging purposes)
         console.log("getted all students " + students);
         // Return the retrieved students as a JSON response
@@ -169,7 +171,7 @@ const changeStudentAvatar = async (req, res) => {
             return;
         }
 
-        const updatedStudent = await studentModel.findByIdAndUpdate({ _id }, { $set: { pic: avatarURL } }, { new: true });
+        const updatedStudent = await StudentModel.findByIdAndUpdate({ _id }, { $set: { pic: avatarURL } }, { new: true });
         if (!updatedStudent) {
             console.log("Student not found");
             return res.status(404).json({ message: "Student not found" });
@@ -186,13 +188,13 @@ const changeStudentAvatar = async (req, res) => {
 }
 
 // For only teachers
-const getAllAttendence = async (req, res) => {
+const getStudentsForAttendance = async (req, res) => {
     try {
         // Get sem and branch
         const { sem, branch } = req.body;
         console.log("sem branch geeted", sem, branch);
         // Query the database for students in the specified semester branch
-        const attendence = await AttendenceModel.find({ sem, branch });
+        const attendence = await AttendanceModel.find({ sem, branch });
         if (!attendence) {
             console.log("Empty attendence");
             return res.status(500).json({ message: "empty data" });
@@ -209,8 +211,34 @@ const getAllAttendence = async (req, res) => {
         // Teacher access all attendence
     }
 }
+// Teacher/HOD can access student attedance of each class
+const getStudentsAttendanceHistoryByTeacher = async (req, res) => {
+    try {
+        const { sem, branch, date, subject } = req.body;
+        console.log(sem, branch, date, subject);
+        if (!sem || !branch || !date || !subject) {
+            console.log("Semester and Branch required");
+            return res.status(400).json({ message: "Semester and Branch required" });
+        }
 
-const getAttendenceModelForHOD = async (req, res) => {
+        let attendence = await AttendanceModel.find({ sem: sem, branch: branch });
+        attendence = attendence.reduce((acc, curr) => {
+            const filtered = curr.all_attendence.filter(a => (a.date === date && a.subject === subject ));
+            if (filtered.length > 0) {
+                acc.push({ ...curr._doc, all_attendence: filtered });
+            }
+            return acc;
+        }, []);
+
+        console.log("Retrieved attendance for the date: ", attendence);
+        return res.status(200).json(attendence);
+    } catch (error) {
+        console.log("Error getting attendance: ", error);
+        return res.status(500).json({ message: "Error getting attendance" });
+    }
+};
+// Teacher/HOD can access student attedance of each class
+const getStudentsAttendanceHistoryByHod = async (req, res) => {
     try {
         const { sem, branch, date } = req.body;
 
@@ -219,7 +247,7 @@ const getAttendenceModelForHOD = async (req, res) => {
             return res.status(400).json({ message: "Semester and Branch required" });
         }
 
-        let attendence = await AttendenceModel.find({ sem: sem, branch: branch });
+        let attendence = await AttendanceModel.find({ sem: sem, branch: branch });
         if (date) {
             attendence = attendence.reduce((acc, curr) => {
                 const filtered = curr.all_attendence.filter(a => a.date === date);
@@ -238,10 +266,8 @@ const getAttendenceModelForHOD = async (req, res) => {
     }
 };
 
-
-
 // when clicked saved attendence by teacher then changes in every student database
-const submitAttendance = async (req, res) => {
+const submitClassAttendance = async (req, res) => {
     try {
         const { sem, branch, subject, presentStudentsIds, date, day } = req.body;
 
@@ -265,7 +291,7 @@ const submitAttendance = async (req, res) => {
             status: false,
         };
 
-        const allStudents = await AttendenceModel.find({ sem, branch });
+        const allStudents = await AttendanceModel.find({ sem, branch });
 
         if (!allStudents || allStudents.length === 0) {
             console.log("Data not found");
@@ -310,5 +336,5 @@ const submitAttendance = async (req, res) => {
 
 module.exports = {
     RegisterStudent, LoginStudent, getLoggedStudentData, getStudentAttendeceById,
-    submitAttendance, getAllAttendence, getAttendenceModelForHOD, getAllStudentData, changeStudentAvatar
+    submitClassAttendance, getStudentsForAttendance, getStudentsAttendanceHistoryByTeacher, getStudentsAttendanceHistoryByHod, getAllStudentData, changeStudentAvatar
 }

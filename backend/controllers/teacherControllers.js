@@ -1,7 +1,8 @@
-const { TeacherModel } = require("../models/TeacherModel");
-const { generateToken } = require('../context/generateAuthToken');
-const { allAttedenceModel } = require("../models/AllAttendenceModel");
+const  TeacherModel  = require("../models/Teacher.model");
+const  generateToken  = require('../context/generateAuthToken');
+const  AllAttendanceModel  = require("../models/AllAttendance.model");
 
+// Create account of Teacher
 const registerTeacher = async (req, res) => {
     try {
         const { name, email, specilization, pic, password } = req.body;
@@ -47,7 +48,7 @@ const registerTeacher = async (req, res) => {
     }
 }
 
-// login teacher
+// login teacher account
 const loginTeacher = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -87,7 +88,7 @@ const loginTeacher = async (req, res) => {
     }
 }
 
-// get only logged teacher data by teacher
+// get logged teacher data by teacher
 const getLoggedTeacherData = async (req, res) => {
     try {
         const teacherRes = req.teacher;
@@ -102,7 +103,7 @@ const getLoggedTeacherData = async (req, res) => {
     }
 }
 
-// taking attendence saved then store students
+// Hod can access all teachers details
 const getAllTeachers = async (req, res) => {
     try {
         const teachers = await TeacherModel.find();
@@ -116,9 +117,7 @@ const getAllTeachers = async (req, res) => {
     }
 }
 
-
-
-// set subject of teacher which have they accessed
+// HOD assign subjects to each teacher
 const setAssignSubject = async (req, res) => {
     try {
         // get object form of sem and branch which teacher teach
@@ -155,19 +154,18 @@ const setAssignSubject = async (req, res) => {
     }
 }
 
-
-// after student attendence saved that details in hod access db
-const saveHodAccessAttendence = async (req, res) => {
+// after class attendance done by teacher saved in db accessed by hod only
+const saveClassWiseAttendanceForHod = async (req, res) => {
     try {
-        const { date, day, sem, branch, total } = req.body;
+        const { date, day, sem, branch, total, subject } = req.body;
 
-        if (!date || !day || !sem || !branch || !total) {
+        if (!date || !day || !sem || !branch || !total || !subject) {
             return res.status(400).json({ message: "Please fill all fields" });
         }
 
         console.log("hod get date : " + date)
 
-        const attendance = await allAttedenceModel.create({ date, day, sem, branch, total });
+        const attendance = await AllAttendanceModel.create({ date, day, sem, branch, total, subject });
 
         res.status(201).json(attendance);
         console.log("Successfully created in hod access");
@@ -183,16 +181,16 @@ const reverseModel = async (req, res) => {
     try {
 
         // Fetch all documents
-        const allDocuments = await allAttedenceModel.find();
+        const allDocuments = await AllAttendanceModel.find();
 
         // Reverse the order of documents
         const reversedDocuments = allDocuments.reverse();
 
         // Clear existing documents
-        await allAttedenceModel.deleteMany();
+        await AllAttendanceModel.deleteMany();
 
         // Save the reversed documents
-        await allAttedenceModel.insertMany(reversedDocuments);
+        await AllAttendanceModel.insertMany(reversedDocuments);
 
         res.json({ success: true, message: 'Documents reversed and saved successfully.' });
 
@@ -203,4 +201,4 @@ const reverseModel = async (req, res) => {
 }
 
 
-module.exports = { registerTeacher, loginTeacher, reverseModel, getLoggedTeacherData, saveHodAccessAttendence, getAllTeachers, setAssignSubject }
+module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getAllTeachers, setAssignSubject }

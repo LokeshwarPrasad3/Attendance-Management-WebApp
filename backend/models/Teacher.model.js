@@ -44,4 +44,4 @@ teacherSchema.methods.matchPassword = function (enteredPassword) {
 
 const TeacherModel = new mongoose.model("TeacherModel", teacherSchema);
 
-module.exports = { TeacherModel };
+module.exports =  TeacherModel ;

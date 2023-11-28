@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const attendenceSchema = new mongoose.Schema({
+const attendanceSchema = new mongoose.Schema({
     studentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'studentModel'
@@ -33,6 +33,6 @@ const attendenceSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const AttendenceModel = new mongoose.model("AttendenceModel", attendenceSchema)
+const AttendanceModel = new mongoose.model("AttendanceModel", attendanceSchema)
 
-module.exports = { AttendenceModel }
+module.exports = AttendanceModel;

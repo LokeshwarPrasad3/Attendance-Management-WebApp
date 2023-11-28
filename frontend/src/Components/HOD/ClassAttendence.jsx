@@ -52,7 +52,7 @@ const ClassAttendence = (props) => {
           },
         };
         const { data } = await axios.post(
-          `${host}/hod/hod-access`,
+          `${host}/hod/class-wise-attendance`,
           { sem: searchSem, branch: searchBranch },
           config
         );
@@ -229,6 +229,9 @@ const ClassAttendence = (props) => {
                 <thead>
                   <tr className="text-xl h-12">
                     <th className="border-[2px] font-signika border-gray-900  text-center px-2">
+                      Subject
+                    </th>
+                    <th className="border-[2px] font-signika border-gray-900  text-center px-2">
                       Total
                     </th>
                     <th className="border-[2px] font-signika border-gray-900  text-center px-2">
@@ -243,6 +246,9 @@ const ClassAttendence = (props) => {
                     searchedStudentAttendence.map((attedence, index) => {
                       return (
                         <tr key={index} className="text-lg h-10">
+                          <td className="font-signika border-[2px] border-gray-900 text-xl min-w-fit text-center">
+                            {attedence.subject?attedence.subject:'null'}
+                          </td>
                           <td className="font-signika border-[2px] border-gray-900 text-xl min-w-fit text-center">
                             {attedence.total}
                           </td>

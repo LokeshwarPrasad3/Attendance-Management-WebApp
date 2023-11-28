@@ -1,16 +1,30 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+
 // initialized secret variables file .env
-require('dotenv').config();
+// .env variables for localhost
+require('dotenv').config({ path: '.env.local' });
+// .env variables for production
+// require('dotenv').config({ path: '.env.production' });
+
 // access json data from frontend
 app.use(express.json());
+
+// Parse URL-encoded data
+app.use(express.urlencoded({ extended: true }))
+
 // connection established
 require('./db/conn');
+
 // getting PORT no from secret .env file
 const PORT = process.env.PORT || 5000;
+
 // cors used for access requested url
-app.use(cors());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+}));
 
 // There are three main users Routes are below
 const studentRoutes = require('./routes/studentRoutes');

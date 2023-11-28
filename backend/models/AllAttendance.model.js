@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-const allAttedenceSchema = new mongoose.Schema({
+const allAttendanceSchema = new mongoose.Schema({
     date: {
         type: String,
         require: true,
@@ -30,6 +30,6 @@ const allAttedenceSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const allAttedenceModel = new mongoose.model("allAttendenceModel", allAttedenceSchema);
+const AllAttendanceModel = new mongoose.model("AllAttendanceModel", allAttendanceSchema);
 
-module.exports = { allAttedenceModel };
+module.exports = AllAttendanceModel ;

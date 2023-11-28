@@ -45,7 +45,7 @@ const HodProfilePage = () => {
 
     const promises = branchWiseData.map(async (cls, index) => {
       const { data } = await axios.post(
-        `${host}/hod/hod-access`,
+        `${host}/hod/class-wise-attendance`,
         { sem: cls.sem, branch: cls.branch, date: newDateFormat }, // Fix: Use cls.branch instead of cls.sem for branch
         config
       );
@@ -123,7 +123,7 @@ const HodProfilePage = () => {
                 to="/data"
                 className="home_set_leave cursor-pointer min-w-fit font-normal px-2 py-1 text-lg text-slate-900 leading-none bg-blue-400 hover:bg-blue-200 custom-transition font-signika rounded-md text-center"
               >
-                HOME
+                HISTORY
               </Link>
             </h1>
 

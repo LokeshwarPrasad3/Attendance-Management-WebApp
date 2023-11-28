@@ -68,6 +68,6 @@ studentSchema.methods.matchPassword = async function (enteredPassword) {
 
 
 // Create a Mongoose model for 'Student'.
-const studentModel = new mongoose.model("studentModel", studentSchema);
+const StudentModel = new mongoose.model("StudentModel", studentSchema);
 
-module.exports = { studentModel };
+module.exports = StudentModel ;

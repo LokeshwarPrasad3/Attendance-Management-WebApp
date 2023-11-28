@@ -7,10 +7,12 @@ import axios from "axios";
 import { Box, CircularProgress } from "@mui/material";
 // import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SearchIcon from "@mui/icons-material/Search";
+import { subjectsMap } from "../../Utils/SubjectList";
 
 const HistoryAttendence = () => {
   const [searchSem, setSearchSem] = useState("");
   const [searchBranch, setSearchBranch] = useState("");
+  const [searchSubject, setSearchSubject] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [allSearchedStudents, setAllSearchedStudents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,10 +40,10 @@ const HistoryAttendence = () => {
     async (event) => {
       event.preventDefault();
       try {
-        console.log(searchSem, searchBranch, searchDate);
+        console.log(searchSem, searchBranch, searchDate, searchSubject);
 
         setLoading(true);
-        if (!searchSem || !searchBranch || !searchDate) {
+        if (!searchSem || !searchBranch || !searchDate || !searchSubject) {
           toast.warn("Please Fill Inputs", { autoClose: 1000 });
           setLoading(false);
           return;
@@ -56,7 +58,7 @@ const HistoryAttendence = () => {
           "/" +
           formattedDate[0];
 
-        console.log(searchSem, searchBranch, formattedDate);
+        console.log(searchSem, searchBranch, formattedDate, searchSubject);
 
         // Post requrest to get students
         const token = Cookies.get("_secure_user_");
@@ -68,17 +70,18 @@ const HistoryAttendence = () => {
         };
         console.log("till done");
         const { data } = await axios.post(
-          `${host}/student/attendence-model`,
+          `${host}/student/get-attendance-by-teacher`,
           {
             sem: Number(searchSem),
             branch: searchBranch,
             date: formattedDate,
+            subject: searchSubject,
           },
           config
         );
         if (data.length === 0) {
-          console.log("Student Empty");
-          toast.warn("Students not found !", {
+          console.log("Attedance Empty");
+          toast.warn("Attendance not found !!", {
             autoClose: 2000,
             position: "top-center",
           });
@@ -116,7 +119,7 @@ const HistoryAttendence = () => {
                 onChange={(e) => setSearchSem(e.target.value)}
                 className="bg-slate-200 rounded px-1 py-1 text-[1rem]"
               >
-                <option value="">_*Sem</option>
+                <option value="">Sem</option>
                 <option value="1">1st</option>
                 <option value="3">3rd</option>
                 <option value="5">5th</option>
@@ -128,29 +131,42 @@ const HistoryAttendence = () => {
                 onChange={(e) => setSearchBranch(e.target.value)}
                 className="bg-slate-200 rounded px-1 py-1 text-[1rem]"
               >
-                <option value="">_*Branch</option>
+                <option value="">Branch</option>
                 <option value="CSE">CSE</option>
                 <option value="AIML">AIML</option>
+              </select>
+            </div>
+            <div className="input_sub">
+              <select
+                onChange={(e) => setSearchSubject(e.target.value)}
+                className="bg-slate-200 w-14 rounded px-1 py-1 text-[1rem]"
+              >
+                <option value="">Sub</option>
+                {subjectsMap[`${searchBranch}${searchSem}`]?.map(
+                  (subject, index) => (
+                    <React.Fragment key={index}>
+                      <option value={subject}>{subject}</option>
+                    </React.Fragment>
+                  )
+                )}
               </select>
             </div>
             <div className="input_date flex md:w-full bg-slate-200 px-2 justify-center md:gap-1 items-center">
               <div className="custom-date">
                 <label
                   htmlFor="history_date"
-                  className="rounded text-[1rem] md:w-44 w-24"
+                  className="rounded text-[1rem] flex justify-center items-center"
                 >
-                  Choose Date :
+                  Choose Date &nbsp;
+                  <input
+                    onChange={(e) => setSearchDate(e.target.value)}
+                    id="history_date"
+                    type="date"
+                    className="text-[1rem] bg-slate-200 md:w-5 w-4 focus:outline-none"
+                    value={searchDate}
+                  />
                 </label>
-                {/* <CalendarTodayIcon className="" style={{fontSize:'1rem', display:'none'}}/> */}
               </div>
-              <input
-                onChange={(e) => setSearchDate(e.target.value)}
-                id="history_date"
-                type="date"
-                className="bg-slate-200 text-[1rem] md:w-fit w-0 focus:outline-none"
-                placeholder="Date"
-                value={searchDate}
-              />
             </div>
           </div>
           <button

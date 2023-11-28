@@ -166,7 +166,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         };
         // Post requrest
         const { data } = await axios.post(
-          `${host}/student`,
+          `${host}/student/submit-class-attendance`,
           {
             sem: takeSem,
             branch: takeBranch,
@@ -187,7 +187,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
 
         // POST IN HOD - ALL DB
         const { HodData } = await axios.post(
-          `${host}/teacher/hod-saved`,
+          `${host}/teacher/save-class-attendance`,
           {
             date: getTodayFormattedDate(),
             day: customGetDay(new Date().getDay()),
@@ -210,8 +210,8 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         setTodayTotalAttedenceCount(count);
 
         // RESET all data
-        // setIsPresent({});
-        // setPresentStudentsIds([]);
+        setIsPresent({});
+        setPresentStudentsIds([]);
       } catch (error) {
         console.log("Student data not saved", error);
         toast.error("Student Not Found", { autoClose: 2000 });
@@ -285,7 +285,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       };
       // get student use takeSem takeBranch props
       const { data } = await axios.post(
-        `${host}/student/all-attedence`,
+        `${host}/student/get-students-for-attendance`,
         { sem: takeSem, branch: takeBranch },
         config
       );

@@ -34,7 +34,7 @@ const StudentAttendence = (props) => {
       console.log(showSem, showBranch, showDate);
       // get student use takeSem takeBranch props
       const { data } = await axios.post(
-        `${host}/student/attendence-model`,
+        `${host}/student/get-attendance-by-hod`,
         { sem: showSem, branch: showBranch, date: showDate },
         config
       );

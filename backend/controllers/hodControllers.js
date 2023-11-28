@@ -1,8 +1,8 @@
-const { generateToken } = require('../context/generateAuthToken');
-const { allAttedenceModel } = require('../models/AllAttendenceModel');
-const HodModel = require('../models/HodModel');
+const  generateToken  = require('../context/generateAuthToken');
+const AllAttendanceModel = require('../models/AllAttendance.model');
+const HodModel = require('../models/Hod.model');
 
-
+// Create Hod Account
 const registerHOD = async (req, res) => {
 
     try {
@@ -44,6 +44,7 @@ const registerHOD = async (req, res) => {
     }
 }
 
+// Login Hod Account
 const loginHOD = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -83,6 +84,7 @@ const loginHOD = async (req, res) => {
     }
 }
 
+// controller is giving logged hod data
 const getLoggedHodData = async (req, res) => {
     try {
         const hodRes = req.hod;
@@ -97,8 +99,8 @@ const getLoggedHodData = async (req, res) => {
     }
 }
 
-// HOd can access via sem branch form
-const getClassDetails = async (req, res) => {
+// HOD have access class wise attendance of assign branch
+const getClassWiseAttendance = async (req, res) => {
     try {
         const { sem, branch, date } = req.body;
         if (!sem || !branch) {
@@ -107,9 +109,9 @@ const getClassDetails = async (req, res) => {
         }
         let attendence
         if (date) {
-            attendence = await allAttedenceModel.find({ sem, branch, date });
+            attendence = await AllAttendanceModel.find({ sem, branch, date });
         } else {
-            attendence = await allAttedenceModel.find({ sem, branch });
+            attendence = await AllAttendanceModel.find({ sem, branch });
         }
         res.status(201).json(attendence);
     } catch (error) {
@@ -120,4 +122,4 @@ const getClassDetails = async (req, res) => {
 }
 
 
-module.exports = { registerHOD, loginHOD, getLoggedHodData, getClassDetails }
+module.exports = { registerHOD, loginHOD, getLoggedHodData, getClassWiseAttendance }

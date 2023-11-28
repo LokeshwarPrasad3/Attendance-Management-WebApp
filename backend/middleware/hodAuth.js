@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const HodModel = require('../models/HodModel');
+const HodModel = require('../models/Hod.model');
 
 const hodProtect = async (req, res, next) => {
     let token;
@@ -27,4 +27,4 @@ const hodProtect = async (req, res, next) => {
     }
 }
 
-module.exports = { hodProtect }
+module.exports = hodProtect 

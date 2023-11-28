@@ -1,4 +1,4 @@
-const { studentModel } = require("../models/studentModel");
+const StudentModel = require("../models/Student.model");
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -15,7 +15,7 @@ const studentProtect = async (req, res, next) => {
             console.log("decoded .id" + decoded.id);  //it give .id not ._id
 
             // getting res to req.student
-            req.student = await studentModel.findById(decoded.id).select("-password");
+            req.student = await StudentModel.findById(decoded.id).select("-password");
             next();
 
         } catch (error) {
@@ -31,4 +31,4 @@ const studentProtect = async (req, res, next) => {
     }
 }
 
-module.exports = { studentProtect };
+module.exports = studentProtect ;

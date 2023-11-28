@@ -43,9 +43,11 @@ const StudentPage = () => {
           "Content-Type": "application/json",
         },
       };
-      const _id = currentUser._id;
+      const _id = currentUser?._id;
+      console.log(_id)
+
       const { data } = await axios.post(
-        `${host}/student/my-attendence`,
+        `${host}/student/logged-student-attendance`,
         { _id },
         config
       );
@@ -69,7 +71,8 @@ const StudentPage = () => {
         (presentDay / studentAttendence?.all_attendence?.length) * 100
       );
     } catch (error) {
-      console.log("Error during fetching attendence react");
+      console.log("Error during fetching attendence react",error);
+      return;
     }
   }, [currentUser, studentAttendence?.all_attendence?.length, presentDay]);
 

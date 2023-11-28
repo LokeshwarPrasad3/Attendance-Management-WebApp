@@ -3,32 +3,38 @@ const express = require('express');
 const router = express.Router();
 // required all controllers related to Student
 const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,
-    getAttendenceModelForHOD, getAllAttendence, submitAttendance, getAllStudentData, changeStudentAvatar } = require('../controllers/studentControllers');
+    getStudentsAttendanceHistoryByTeacher, getStudentsAttendanceHistoryByHod, getStudentsForAttendance, submitClassAttendance, getAllStudentData, changeStudentAvatar } = require('../controllers/studentControllers');
 // middlewares manages layer security
-const { studentProtect } = require('../middleware/studentAuth');
-const { teacherProtect } = require('../middleware/teacherAuth');
-const { hodProtect } = require('../middleware/hodAuth');
+const  studentProtect  = require('../middleware/studentAuth');
+const  teacherProtect  = require('../middleware/teacherAuth');
+const  hodProtect  = require('../middleware/hodAuth');
 
 router.route('/register').post(RegisterStudent)
 router.route('/login').post(LoginStudent);
+
 // student can see own details
 router.route('/').get(studentProtect, getLoggedStudentData);
-router.route('/my-attendence').post(studentProtect, getStudentAttendeceById);
+router.route('/logged-student-attendance').post(studentProtect, getStudentAttendeceById);
+
 // change profile picture by user
 router.route('/change-avatar').put(studentProtect, changeStudentAvatar);
 
-// NEED OPTIMIZATION THAT TEACHER IS ONLY SEE NEEDED DETAILS NOT ALL
+// NEED OPTIMIZATION THAT TEACHER IS ONLY SEE NEEDED DETAILS NOT ALL like password
 // future feature : use populate method for that
 
-// accept atttendence when done by teacher
-router.route('/').post(teacherProtect, submitAttendance);
-router.route('/all-attedence').post(teacherProtect, getAllAttendence);
-// all student attendence gett
+// Submit daily class Attendance 
+router.route('/submit-class-attendance').post(teacherProtect, submitClassAttendance);
+
+// give student list before attendance
+router.route('/get-students-for-attendance').post(teacherProtect, getStudentsForAttendance);
+
+// (not used) giving list of students details by sem, branch 
 router.route('/get-all-student').post(teacherProtect, getAllStudentData);
-// Get all attedenceModel
-router.route('/attendence-model').post(teacherProtect, getAttendenceModelForHOD);
-// Get all attedenceModel for hod also
-router.route('/attendence-model').post(hodProtect, getAttendenceModelForHOD);
+
+// get students daily attendance history with date by teacher
+router.route('/get-attendance-by-teacher').post(teacherProtect, getStudentsAttendanceHistoryByTeacher);
+// same as teacher (after access classwise attendance hod can also access particular day of class student attendance)
+router.route('/get-attendance-by-hod').post(hodProtect, getStudentsAttendanceHistoryByHod);
 
 
 module.exports = router;
