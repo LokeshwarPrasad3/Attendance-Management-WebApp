@@ -61,13 +61,14 @@ const Navbar = ({ currentUser }) => {
       // Update the loggedUser state and execute further actions in the callback
       // setLoggedUser(null); // must make null
       // Code to execute after state update
-      console.log("Logout successfully");
+      console.log(getUser?.name, "Logout successfully");
       setTimeout(() => {
         toggleMenu();
         navigate("/");
       }, 500);
     } catch (error) {
-      console.log("Getting eeror to logut");
+      console.log("Getting eeror when logout", error);
+      return;
       // setLoggedUser(null); // must make null
     }
   };

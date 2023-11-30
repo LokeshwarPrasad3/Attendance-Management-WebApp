@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { subjectsMap } from "../../Utils/SubjectList";
 import MenuBar from "../../Components/MenuBar";
 import { Box, CircularProgress } from "@mui/material";
+import { greetMessage } from "../../Utils/GreetingMessage";
 
 const StudentPage = () => {
   // Context-ApI data
@@ -44,7 +45,6 @@ const StudentPage = () => {
         },
       };
       const _id = currentUser?._id;
-      console.log(_id)
 
       const { data } = await axios.post(
         `${host}/student/logged-student-attendance`,
@@ -54,7 +54,8 @@ const StudentPage = () => {
 
       // check data is right
       if (!data) {
-        return console.log("Getting error to get attendence DAta");
+        console.log("Student Attendance is not found!!");
+        return;
       }
 
       // if data is successfully getted then set in state
@@ -71,7 +72,7 @@ const StudentPage = () => {
         (presentDay / studentAttendence?.all_attendence?.length) * 100
       );
     } catch (error) {
-      console.log("Error during fetching attendence react",error);
+      console.log("Error during fetching attendence react", error);
       return;
     }
   }, [currentUser, studentAttendence?.all_attendence?.length, presentDay]);
@@ -96,8 +97,8 @@ const StudentPage = () => {
   return (
     <>
       <Navbar currentUser={"student"} />
-
-      <div className="student_page_container font-overpass flex 2xl:gap-9 xl:gap-9 lg:gap-9 md:gap-9 gap-4 items-center mx-auto w-full 2xl:w-min xl:w-min lg:w-min md:px-9 md:py-10 p-5">
+      <h2 className="text-xl font-semibold text-center py-2 "> {greetMessage()} {currentUser?.name} </h2>
+      <div className="student_page_container font-overpass flex 2xl:gap-9 xl:gap-9 lg:gap-9 md:gap-9 gap-4 items-center mx-auto w-full 2xl:w-min xl:w-min lg:w-min md:px-9 md:py-4 p-5">
         <div className="left_part md:px-5 2xl:min-w-[16rem] xl:min-w-[16rem] lg:min-w-[16rem] w-full bg-[#f2f2f2] flex flex-col md:py-10 py-5 md:min-h-[45rem]">
           {/* profile picture and name */}
           <div className="profile flex flex-col gap-3 items-center">
@@ -129,7 +130,11 @@ const StudentPage = () => {
             </h1>
           </div>
           {/* Menu Bar Navigator component */}
-          <MenuBar currentUser={currentUser} setCurrentUser={setCurrentUser} setPicLoading={setPicLoading} />
+          <MenuBar
+            currentUser={currentUser}
+            setCurrentUser={setCurrentUser}
+            setPicLoading={setPicLoading}
+          />
         </div>
 
         <div className="right_part 2xl:min-w-[60vw] xl:min-w-[60vw] lg:min-w-[60vw] md:min-w-[60vw] w-full bg-[#f2f2f2] min-h-[45rem] 2xl:px-9 xl:px-9 md:px-9 md:py-9 p-5">

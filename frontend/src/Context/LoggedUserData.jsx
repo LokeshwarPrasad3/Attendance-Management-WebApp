@@ -29,14 +29,13 @@ const LoggedUserData = ({ children }) => {
             },
           };
           const { data } = await axios.get(`${host}/${type}`, config);
-          console.log("getted context API data", data);
+          // console.log("User Context API data", data);
           setLoggedUser(data);
           if (type === "student") navigate(`/${type}`);
           if (
             (type === "hod" || type === "teacher") &&
             window.location.pathname === "/"
           ) {
-            console.log("yes ", type);
             navigate(`/${type}`);
           }
         } catch (error) {
@@ -47,7 +46,7 @@ const LoggedUserData = ({ children }) => {
 
       getLoggedUserData(token, _id, type); // Call the function with correct arguments
     } else {
-      console.log("Cookies not found");
+      console.log("You are not Logged-in!!");
       navigate("/"); // Redirect to the home page if cookies are missing
     }
   }, [navigate]);

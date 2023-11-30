@@ -36,20 +36,18 @@ const HodProfilePage = () => {
 
     // Get token from cookie
     const token = Cookies.get("_secure_user_");
-    console.log("Here is the teacher access token: " + token);
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
 
-    const promises = branchWiseData.map(async (cls, index) => {
+    const promises = branchWiseData.map(async (cls) => {
       const { data } = await axios.post(
         `${host}/hod/class-wise-attendance`,
         { sem: cls.sem, branch: cls.branch, date: newDateFormat }, // Fix: Use cls.branch instead of cls.sem for branch
         config
       );
-      console.log(index + " data ", data);
       cls.total = data[0]?.total === undefined ? "null" : data[0].total;
       return cls;
     });
@@ -62,14 +60,14 @@ const HodProfilePage = () => {
       })
       .catch((error) => {
         // Handle errors, if any
-        console.error("Error updating branchWiseData:", error);
+        console.error("Error during Fetchibng ClassWiseData:", error);
+        return;
       });
   };
 
   const getAllTeachers = useCallback(async () => {
     // get token from cookie
     const token = Cookies.get("_secure_user_");
-    console.log("here is alltecher access token " + token);
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -80,7 +78,6 @@ const HodProfilePage = () => {
       config
     );
     if (!data) {
-      console.log("Not get all teachers");
       toast.warn("Teacher not fetched!");
       return;
     }
@@ -91,7 +88,6 @@ const HodProfilePage = () => {
   useEffect(() => {
     setCurrentUser(loggedUser);
     getAllTeachers();
-    console.log(currentUser);
   }, [loggedUser, currentUser, getAllTeachers]);
 
   return (

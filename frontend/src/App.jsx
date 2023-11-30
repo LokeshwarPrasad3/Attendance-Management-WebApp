@@ -9,6 +9,7 @@ import ManageTeacher from "./Pages/HOD/ManageTeacher";
 import ManageStudent from "./Pages/HOD/ManageStudent";
 import HodPage from "./Pages/HOD/HodPage";
 import HodProfilePage from "./Pages/HOD/HodProfilePage";
+// eslint-disable-next-line
 import ErrorPage from "./Pages/Error/ErrorPage";
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
         <Route path="/manage-student" element={<ManageStudent />} />
 
         {/* Error Page show when not exist page */}
-        <Route path="/*" element={<ErrorPage />} />
+        {/* <Route path="/*" element={<Authentication />} /> */}
       </Routes>
     </>
   );

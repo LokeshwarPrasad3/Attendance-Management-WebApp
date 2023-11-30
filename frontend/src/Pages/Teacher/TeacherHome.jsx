@@ -135,88 +135,92 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         setChangeButtonIcon(false);
       }, 4000);
     } else {
-      console.error("Left or right table not found.");
+      console.error("Error during download exel file!");
+      return;
     }
   }, [takeBranch, takeSem, takeSubject]);
 
   // save attendence to db when clicked to save changes
   const saveAllStudentAttendence = useCallback(
     async (e) => {
-      if (presentStudentsIds.length == 0) {
-        toast.warn("Oops! Please take Attedence", { autoClose: 2000 });
-        console.log("Empty presentStudentIds ", presentStudentsIds);
-        return;
-      }
-      downloadTablesAsXLSX();
+      // Last confirm
+      const takeAttendance = confirm("Confirm Save Attendance?");
+      if (takeAttendance) {
+        if (presentStudentsIds.length == 0) {
+          toast.warn("Oops! Please take Attedence", { autoClose: 2000 });
+          return;
+        }
+        downloadTablesAsXLSX();
 
-      e.preventDefault();
-      setLoading(true);
+        e.preventDefault();
+        setLoading(true);
 
+        try {
+          // get token from cookie
+          const token = Cookies.get("_secure_user_");
+          const config = {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          };
+          // Post requrest
+          const { data } = await axios.post(
+            `${host}/student/submit-class-attendance`,
+            {
+              sem: takeSem,
+              branch: takeBranch,
+              presentStudentsIds: presentStudentsIds,
+              subject: takeSubject,
+              date: getTodayFormattedDate(),
+              day: customGetDay(new Date().getDay()),
+            },
+            config
+          );
+          // If data is not gettd
+          if (!data) {
+            toast.warn("submit attendance data is not found!", { autoClose: 2000 });
+            setLoading(false);
+            return;
+          }
 
+          // POST IN HOD - ALL DB
+          const { HodData } = await axios.post(
+            `${host}/teacher/save-class-attendance`,
+            {
+              date: getTodayFormattedDate(),
+              day: customGetDay(new Date().getDay()),
+              sem: takeSem,
+              branch: takeBranch,
+              total: presentStudentsIds.length,
+              subject: takeSubject,
+            },
+            config
+          );
+          if (!HodData) {
+            console.log("HOD Access class Attendance not saved!");
+            toast.warn("ClassWise Data not saved!",{autoClose: 1000});
+            return;
+          }
 
-      try {
-        // get token from cookie
-        const token = Cookies.get("_secure_user_");
-        console.log("here is alltecher access token " + token);
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        };
-        // Post requrest
-        const { data } = await axios.post(
-          `${host}/student/submit-class-attendance`,
-          {
-            sem: takeSem,
-            branch: takeBranch,
-            presentStudentsIds: presentStudentsIds,
-            subject: takeSubject,
-            date: getTodayFormattedDate(),
-            day: customGetDay(new Date().getDay()),
-          },
-          config
-        );
-        // If data is not gettd
-        if (!data) {
-          console.log("Not data");
-          toast.warn("Not get data", { autoClose: 2000 });
+          // If successful then saved in hod database
+
+          toast.success("Successfully Saved!", { autoClose: 2000 });
+          setLoading(false);
+          setShowDownloadButton(true);
+
+          let count = todayTotalAttedenceCount + 1;
+          setTodayTotalAttedenceCount(count);
+
+          // RESET all data
+          setIsPresent({});
+          setPresentStudentsIds([]);
+        } catch (error) {
+          console.log("Error during saved Attendance ", error);
+          toast.error("Student Not Found", { autoClose: 2000 });
           setLoading(false);
           return;
         }
-
-        // POST IN HOD - ALL DB
-        const { HodData } = await axios.post(
-          `${host}/teacher/save-class-attendance`,
-          {
-            date: getTodayFormattedDate(),
-            day: customGetDay(new Date().getDay()),
-            sem: takeSem,
-            branch: takeBranch,
-            total: presentStudentsIds.length,
-            subject: takeSubject,
-          },
-          config
-        );
-        console.log("HOd db saved", HodData);
-
-        // If successful then saved in hod database
-
-        toast.success("Successfully Saved!", { autoClose: 2000 });
-        setLoading(false);
-        setShowDownloadButton(true);
-
-        let count = todayTotalAttedenceCount + 1;
-        setTodayTotalAttedenceCount(count);
-
-        // RESET all data
-        setIsPresent({});
-        setPresentStudentsIds([]);
-      } catch (error) {
-        console.log("Student data not saved", error);
-        toast.error("Student Not Found", { autoClose: 2000 });
-        setLoading(false);
-        return;
       }
     },
     [
@@ -258,15 +262,12 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       formatYesterday[0] +
       "/" +
       formatYesterday[2];
-    console.log(actualYesterday);
 
     // Get attedence of that date
     let yesterdayCount = 0;
     user.all_attendence.forEach((att) => {
       if (actualYesterday === att.date && att.subject === takeSubject) {
         yesterdayCount++;
-        console.log(yesterdayCount);
-        console.log("geted");
       }
     });
     return yesterdayCount;
@@ -290,7 +291,6 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         config
       );
       if (data.status === 400) {
-        console.log("Data not getted");
         toast.error("Students Not getted!", { autoClose: 2000 });
         setLoading(false);
         return;
@@ -300,17 +300,13 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
       // Set total Attedence for all students
       let todayTotalAttedenceCount = 0;
       data[0].all_attendence.some((att) => {
-        console.log(att.date)
-        console.log("get " + getTodayFormattedDate())
         if (getTodayFormattedDate() !== att.date) {
           return true; // Exit the loop if the date doesn't match
         }
         todayTotalAttedenceCount++;
         return false;
       });
-      console.log(todayTotalAttedenceCount)
       setTodayTotalAttedenceCount(todayTotalAttedenceCount);
-      console.log(todayTotalAttedenceCount);
 
       // Get yesterday attedence for all students
 
@@ -327,7 +323,6 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   }, [takeSem, takeBranch]);
 
   // Method gives today how many attendance already taken
-
 
   // When page is Opened then render all students
   useEffect(() => {

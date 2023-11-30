@@ -31,7 +31,6 @@ const StudentAttendence = (props) => {
           Authorization: `Bearer ${token}`,
         },
       };
-      console.log(showSem, showBranch, showDate);
       // get student use takeSem takeBranch props
       const { data } = await axios.post(
         `${host}/student/get-attendance-by-hod`,
@@ -39,12 +38,10 @@ const StudentAttendence = (props) => {
         config
       );
       if (data.status === 400) {
-        console.log("Data not getted");
         toast.error("Students Not getted!", { autoClose: 1000 });
         setLoading(false);
         return;
       }
-      console.log("Admin date", data);
       // If data is successfully fouond then store in state
       setAllStudents(data);
       setLoading(false);

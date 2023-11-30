@@ -28,7 +28,6 @@ const AssignTeacher = () => {
   const getAllTeachers = useCallback(async () => {
     // get token from cookie
     const token = Cookies.get("_secure_user_");
-    console.log("here is alltecher access token " + token);
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -39,7 +38,6 @@ const AssignTeacher = () => {
       config
     );
     if (!data) {
-      console.log("Not get all teachers");
       toast.warn("Teacher not fetched!");
       return;
     }
@@ -74,7 +72,6 @@ const AssignTeacher = () => {
     setSubject("");
     setBranch("");
 
-    console.log(sem, branch, subject);
   };
 
   // delete shedule assign by hod
@@ -90,15 +87,13 @@ const AssignTeacher = () => {
     try {
       // check teacher id and classesslist not empty
       if (!teacherId || !classessList) {
-        console.log("Input filled not empty");
-        toast.warn("Input filled is empty", { autoClose: 1000 });
+        toast.warn("Must Provide Fields!", { autoClose: 1000 });
         return;
       }
 
       setLoading(true);
       // get token from cookie
       const token = Cookies.get("_secure_user_");
-      console.log("here is alltecher access token " + token);
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -111,8 +106,7 @@ const AssignTeacher = () => {
         config
       );
       if (!data) {
-        console.log("teacher Subject Not Assigned");
-        toast.warn("Subject Not Assigned!", { autoClose: 1000 });
+        toast.warn("Teachers data not found!", { autoClose: 1000 });
         setLoading(false);
         return;
       }
@@ -120,7 +114,7 @@ const AssignTeacher = () => {
       setClassessList(null);
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log("Error during Assign Subject ", error);
       setLoading(false);
       return;
     }

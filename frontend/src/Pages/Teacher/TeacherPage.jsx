@@ -37,7 +37,6 @@ const TeacherPage = () => {
       navigate("/");
     } else {
       setCurrentUser(loggedUser);
-      console.log(currentUser);
     }
   }, [loggedUser, currentUser, navigate]);
 

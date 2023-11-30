@@ -40,7 +40,6 @@ const HistoryAttendence = () => {
     async (event) => {
       event.preventDefault();
       try {
-        console.log(searchSem, searchBranch, searchDate, searchSubject);
 
         setLoading(true);
         if (!searchSem || !searchBranch || !searchDate || !searchSubject) {
@@ -58,7 +57,6 @@ const HistoryAttendence = () => {
           "/" +
           formattedDate[0];
 
-        console.log(searchSem, searchBranch, formattedDate, searchSubject);
 
         // Post requrest to get students
         const token = Cookies.get("_secure_user_");
@@ -68,7 +66,6 @@ const HistoryAttendence = () => {
             "Content-Type": "application/json",
           },
         };
-        console.log("till done");
         const { data } = await axios.post(
           `${host}/student/get-attendance-by-teacher`,
           {
@@ -80,8 +77,7 @@ const HistoryAttendence = () => {
           config
         );
         if (data.length === 0) {
-          console.log("Attedance Empty");
-          toast.warn("Attendance not found !!", {
+          toast.warn("Attendance is Empty!!", {
             autoClose: 2000,
             position: "top-center",
           });
@@ -91,11 +87,11 @@ const HistoryAttendence = () => {
         }
         // Set in state
         setAllSearchedStudents(data);
-        console.log(data);
         setLoading(false);
       } catch (error) {
         console.log("Getting error to fetch data", error);
         toast.error("Unable to fetch data!", { autoClose: 1000 });
+        return;
       }
     },
     [searchSem, searchBranch, searchDate, searchSubject]

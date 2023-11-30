@@ -36,7 +36,7 @@ const MenuBar = ({ currentUser, setPicLoading }) => {
       // Status is true mean not get any error by cloudinary
       if (status !== true) {
         toast.warn("Something went wrong!!", { autoClose: 1000 });
-        console.log("picture cloudinary Status is not true");
+        console.log("Error during Change Avatar!");
         setLoading(false);
         return;
       }
@@ -61,12 +61,6 @@ const MenuBar = ({ currentUser, setPicLoading }) => {
         },
         config
       );
-      // if (data.status !== 201) {
-      //   toast.warn("Avatar not updated!", { autoClose: 1000 });
-      //   return;
-      // }
-      console.log(data);
-      console.log(data.pic);
       setPicLoading(true); // if any reason getting late to load image
       setLoggedUser(data);
       setPicLoading(false);

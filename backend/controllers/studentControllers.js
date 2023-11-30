@@ -8,7 +8,7 @@ const RegisterStudent = async (req, res) => {
         const { name, email, pic, course, sem, branch, password } = req.body;
         // check value is not empty
         if (!name || !email || !course || !sem || !branch || !password) {
-            console.log("Please fill all fields");
+            console.log("Some Student details Empty");
             res.status(400).json({ message: "Please fill all filds" });
             return;
         }
@@ -16,7 +16,7 @@ const RegisterStudent = async (req, res) => {
         // if user is already exist 
         const existUser = await StudentModel.findOne({ email });
         if (existUser) {
-            console.log("User already exist");
+            console.log(name, " Student Already Exist");
             res.status(400).json({ message: "User already exist" });
             return;
         }
@@ -29,7 +29,7 @@ const RegisterStudent = async (req, res) => {
             student = await StudentModel.create({ name, email, course, pic, sem, branch, password });
         }
         if (!student) {
-            console.log("failed to store data");
+            console.log("Failed to Create Student Account");
             res.status(500).json({ message: "Failed to store Data" });
             return;
         }
@@ -47,18 +47,16 @@ const RegisterStudent = async (req, res) => {
             console.log("Empty Attendence is not created");
             return;
         }
-        console.log("Successfullyt Empty attendence created " + createAttendence);
+        console.log("Successfullyt Empty attendence created ");
 
         const token = generateToken(student._id)
         student.token = token;
         const data = student;
         console.log(data);
+        console.log(name, " Account Successfully created!");
         res.status(201).json(data);
     } catch (error) {
-        console.log(error.response)
-        console.log(error.response.data.message)
-        // toast.error(error.response.data);
-        console.log(`Getting Error Catch Block ${error}`);
+        console.log(`Server Error during register Student ${error}`);
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -69,7 +67,7 @@ const LoginStudent = async (req, res) => {
         const { email, password } = req.body;
         // check that not be empty
         if (!email || !password) {
-            console.log("Fill all fields");
+            console.log("Student Login Input is empty");
             res.status(400).json({ message: "Fill all fields" });
             return;
         }
@@ -77,8 +75,8 @@ const LoginStudent = async (req, res) => {
         // if filled then check if user exist or not
         const studentExist = await StudentModel.findOne({ email });
         if (!studentExist) {
-            console.log("User not exist");
-            res.status(404).json({ message: "User not exist" });
+            console.log(email, " Student not exist");
+            res.status(404).json({ message: "Student not exist" });
             return;
         }
         // check password is right or not
@@ -87,15 +85,16 @@ const LoginStudent = async (req, res) => {
             studentExist.token = token;
             let data = studentExist;
             console.log(data);
+            console.log(data.name, " Successfully Login!")
             res.status(200).json(data);
         } else {
-            console.log("Password not matched");
+            console.log("Student Password not matched");
             res.status(401).json({ message: "Unauthorized user" });
             return;
         }
 
     } catch (error) {
-        console.log(`Getting Error ${error}`)
+        console.log(`Server Error during Student Login ${error}`)
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
@@ -104,13 +103,14 @@ const getLoggedStudentData = async (req, res) => {
     try {
         const studentRes = req.student;
         if (!studentRes) {
-            console.log("Invalid token getstudentdata");
+            console.log("Invalid Student Details Found!");
             return res.status(401).json({ message: "Unauthorized user invalid token" });
         }
-        console.log(studentRes);
+        // console.log(studentRes);
+        console.log(studentRes.name, " Student Data Fetched!");
         res.status(200).json(studentRes);
     } catch (error) {
-        console.log("catch error get student", error);
+        console.log("Server Error during Fetch Student Data", error);
         return;
     }
 }
@@ -119,10 +119,10 @@ const getLoggedStudentData = async (req, res) => {
 const getStudentAttendeceById = async (req, res) => {
     try {
         const { _id } = req.body;
-        console.log(_id)
+        // console.log(_id)
         // check _id is not empty
         if (!_id) {
-            console.log("Id is required");
+            console.log("Student Id is required");
             return res.status(401).json({ message: "Id is required" });
         }
         // Search that student attendece by Id
@@ -132,7 +132,7 @@ const getStudentAttendeceById = async (req, res) => {
             console.log("Student Attendence is not found : ", student);
             return res.status(401).json({ message: "Student does not exist!" });
         }
-        console.log("Student Attendence Found");
+        console.log(_id, " Attendence Found");
         res.status(200).json(student);
     } catch (error) {
         console.log("Error during fetching attendence of student", error);
@@ -146,17 +146,17 @@ const getAllStudentData = async (req, res) => {
         const { sem, branch } = req.body;
         // Check if the 'sem' parameter is provided
         if (!sem || !branch) {
-            console.log("Semester required");
+            console.log("Semester required to get Class Students");
             return res.status(400).json({ message: "Semester, Branch required" });
         }
         // Query the database for students in the specified semester
         const students = await StudentModel.find({ sem: sem, branch: branch });
         // Log the retrieved students (for debugging purposes)
-        console.log("getted all students " + students);
+        console.log(`You get ${sem} ${branch} Students Data`);
         // Return the retrieved students as a JSON response
         return res.status(201).json(students);
     } catch (error) {
-        console.log("Error getting students", error);
+        console.log("Error During Get Sem Branch Students data", error);
         return res.status(500).json({ message: "Error getting students" });
     }
 }
@@ -166,7 +166,7 @@ const changeStudentAvatar = async (req, res) => {
     try {
         const { _id, type, avatarURL } = req.body;
         if (!_id || !type || !avatarURL) {
-            console.log("Some fillled is empty", _id, type, avatarURL);
+            console.log("Some Filled Empty ", _id, type, avatarURL);
             res.status(400).json({ message: "Empty filled found" });
             return;
         }
@@ -176,12 +176,12 @@ const changeStudentAvatar = async (req, res) => {
             console.log("Student not found");
             return res.status(404).json({ message: "Student not found" });
         }
-        console.log("Student avatar updated successfully");
-        console.log(updatedStudent);
+        console.log(`${updatedStudent.name} avatar updated successfully`);
+        // console.log(updatedStudent);
         res.status(201).json(updatedStudent);
 
     } catch (error) {
-        console.log("Error during set new avtar picture", error);
+        console.log("Error during set new avtar ", error);
         res.status(500).json({ "message": "Internal Server Error" });
         return;
     }
@@ -192,25 +192,23 @@ const getStudentsForAttendance = async (req, res) => {
     try {
         // Get sem and branch
         const { sem, branch } = req.body;
-        console.log("sem branch geeted", sem, branch);
         // Query the database for students in the specified semester branch
         const attendence = await AttendanceModel.find({ sem, branch });
         if (!attendence) {
-            console.log("Empty attendence");
+            console.log("Attendance is Empty!");
             return res.status(500).json({ message: "empty data" });
         }
         // Log the retrieved attendence (for debugging purposes)
-        console.log("getted all attendence " + attendence);
+        // console.log("Found All Attendance " + attendence);
         // Return the retrieved attendence as a JSON response
-        console.log("Done all");
+        console.log("Student Details Found by Teacher")
         return res.status(201).json(attendence);
     } catch (error) {
-        console.log("Error getting attendence", error);
-        console.log("Error all");
+        console.log("Error During Get Students for attendence", error);
         return res.status(500).json({ message: "Error getting attendence" });
-        // Teacher access all attendence
     }
 }
+
 // Teacher/HOD can access student attedance of each class
 const getStudentsAttendanceHistoryByTeacher = async (req, res) => {
     try {
@@ -223,20 +221,22 @@ const getStudentsAttendanceHistoryByTeacher = async (req, res) => {
 
         let attendence = await AttendanceModel.find({ sem: sem, branch: branch });
         attendence = attendence.reduce((acc, curr) => {
-            const filtered = curr.all_attendence.filter(a => (a.date === date && a.subject === subject ));
+            const filtered = curr.all_attendence.filter(a => (a.date === date && a.subject === subject));
             if (filtered.length > 0) {
                 acc.push({ ...curr._doc, all_attendence: filtered });
             }
             return acc;
         }, []);
 
-        console.log("Retrieved attendance for the date: ", attendence);
+        // console.log("Retrieved attendance for the date: ", attendence);
+        console.log("Student History Attendance Get by Teacher")
         return res.status(200).json(attendence);
     } catch (error) {
         console.log("Error getting attendance: ", error);
         return res.status(500).json({ message: "Error getting attendance" });
     }
 };
+
 // Teacher/HOD can access student attedance of each class
 const getStudentsAttendanceHistoryByHod = async (req, res) => {
     try {
@@ -258,7 +258,8 @@ const getStudentsAttendanceHistoryByHod = async (req, res) => {
             }, []);
         }
 
-        console.log("Retrieved attendance for the date: ", attendence);
+        // console.log("Retrieved attendance for the date: ", attendence);
+        console.log("Student History Attendance Get by Teacher")
         return res.status(200).json(attendence);
     } catch (error) {
         console.log("Error getting attendance: ", error);
@@ -272,7 +273,7 @@ const submitClassAttendance = async (req, res) => {
         const { sem, branch, subject, presentStudentsIds, date, day } = req.body;
 
         if (!sem || !branch, !subject || !presentStudentsIds || !date || !day) {
-            console.log("Missing required data");
+            console.log("Missing required data for submit attendance");
             res.status(400).json({ message: "Semester, students, date, or day not provided." });
             return;
         }
@@ -294,7 +295,7 @@ const submitClassAttendance = async (req, res) => {
         const allStudents = await AttendanceModel.find({ sem, branch });
 
         if (!allStudents || allStudents.length === 0) {
-            console.log("Data not found");
+            console.log("Students Not found to submit attendance");
             return res.status(404).json({ message: "Data not found" });
         }
 
@@ -322,7 +323,7 @@ const submitClassAttendance = async (req, res) => {
         await Promise.all(updatedAttendances);
 
 
-
+        console.log("Attendance recorded Successfully");
         // Return a response when all updates are completed
         return res.status(200).json({ message: "Attendance records updated successfully" });
 

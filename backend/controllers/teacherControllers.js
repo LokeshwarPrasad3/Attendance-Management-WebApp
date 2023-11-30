@@ -7,7 +7,7 @@ const registerTeacher = async (req, res) => {
     try {
         const { name, email, specilization, pic, password } = req.body;
         if (!name || !email || !specilization || !password) {
-            console.log("Fill all fields");
+            console.log("Missing Required Filled for register Teacher");
             res.status(400).json({ message: "Fill all field" });
             return;
         }
@@ -15,7 +15,7 @@ const registerTeacher = async (req, res) => {
         //check if data is exist in db 
         const teacherExist = await TeacherModel.findOne({ email });
         if (teacherExist) {
-            console.log("User already exist");
+            console.log(name, " Teacher already exist");
             res.status(400).json({ message: "User already exist" });
             return;
         }
@@ -29,7 +29,7 @@ const registerTeacher = async (req, res) => {
         }
         // successfully not created
         if (!teacher) {
-            console.log("Teacher accounot not created");
+            console.log(name, " Error during Creation account of Teacher");
             res.status(500).json({ message: "Server Bad Req" });
             return;
         }
@@ -37,12 +37,12 @@ const registerTeacher = async (req, res) => {
         const token = generateToken(teacher._id);
         teacher.token = token;
         const data = teacher;
-        console.log("Account teacher successfully created");
+        console.log(name, " teacher accounot successfully created");
         console.log(data);
         res.status(201).json(data);
 
     } catch (error) {
-        console.log("Catch error ", error);
+        console.log("Server Error during creation Teacher Account ", error);
         res.status(500).json({ message: "Server bad req" });
         return;
     }
@@ -54,7 +54,7 @@ const loginTeacher = async (req, res) => {
         const { email, password } = req.body;
         // check not empty
         if (!email || !password) {
-            console.log("Fill all fields");
+            console.log("Missing Required Fieleds");
             res.status(400).json({ message: "Fill all fields" });
             return;
         }
@@ -62,7 +62,7 @@ const loginTeacher = async (req, res) => {
         // check user email registered
         const teacherExist = await TeacherModel.findOne({ email });
         if (!teacherExist) {
-            console.log("Teacher email not exist");
+            console.log(email , " Teacher not exist");
             res.status(404).json({ message: "email not exist" });
             return;
         }
@@ -72,17 +72,17 @@ const loginTeacher = async (req, res) => {
             const token = generateToken(teacherExist._id);
             teacherExist.token = token;
             const data = teacherExist;
-            console.log("tacher login successfully");
+            console.log(teacherExist.name + " login successfully");
             console.log(data);
             res.status(200).json(data);
             return;
         } else {
-            console.log("passowrd not matched");
+            console.log("teacher passowrd not matched");
             res.status(401).json({ message: "Invalid password" });
             return;
         }
     } catch (error) {
-        console.log("catch block login ", error);
+        console.log("Server Error during teacher login ", error);
         res.status(500).json({ message: "server failed" });
         return;
     }
@@ -93,13 +93,14 @@ const getLoggedTeacherData = async (req, res) => {
     try {
         const teacherRes = req.teacher;
         if (!teacherRes) {
-            console.log("Invalid token get teacher data");
+            console.log("Invalid Teacher Details Token");
             return res.status(401).json({ message: "Unauthorized teacher invalid token" });
         }
-        console.log(teacherRes);
+        // console.log(teacherRes);
+        console.log(teacherRes.name + " Data successfully found")
         res.status(200).json(teacherRes);
     } catch (error) {
-        console.log("catch error get teacher", error);
+        console.log("server error to get teacher data", error);
     }
 }
 
@@ -107,12 +108,12 @@ const getLoggedTeacherData = async (req, res) => {
 const getAllTeachers = async (req, res) => {
     try {
         const teachers = await TeacherModel.find();
-        console.log(teachers);
+        console.log("All Teachers Data Found");
         res.status(200).json(teachers);
     }
     catch (error) {
-        console.log("Failed to get teachers");
-        res.status(500).json({ message: "Failed to get teachers" });
+        console.log("Failed to get all teachers");
+        res.status(500).json({ message: "Failed to get all teachers" });
         return;
     }
 }
@@ -123,11 +124,9 @@ const setAssignSubject = async (req, res) => {
         // get object form of sem and branch which teacher teach
         const { teacherId, teacherTeachClassesData } = req.body;
 
-        console.log("TEacher details " + teacherId);
-        console.log("TEacher details " + teacherTeachClassesData);
         // check cannot empty
         if (!teacherId || !teacherTeachClassesData) {
-            console.log("Teacher assign data empty:");
+            console.log("Assign Subject for teacher Missing Required Filleds");
             res.status(400).json({ message: "Fill assign class for teacher" })
             return;
         }
@@ -136,19 +135,18 @@ const setAssignSubject = async (req, res) => {
         const teacherExist = await TeacherModel.findOne({ _id: teacherId });
         // if not exist then return
         if (!teacherExist) {
-            console.log("TEacher not exist");
+            console.log("Teacher does not exist");
             return res.status(404).json({ message: "Teacher not exist" });
         }
-        console.log("teacher exist");
         // if teacher exist
         // teacherExist.updateById(teacherId, { $set: { teach: [teacherTeachClassesData] } });
         teacherExist.teach = teacherTeachClassesData;
         await teacherExist.save();
-        console.log("classess assinged : ", teacherExist.teach);
+        console.log(teacherExist.name + " teacher classess assinged : ", teacherExist.teach);
         res.status(201).json(teacherExist);
 
     } catch (error) {
-        console.log("Cannot assign class", error);
+        console.log("Cannot assign class for teacher", error);
         res.status(500).json({ message: "Cannot assign class to teacher" });
         return;
     }
@@ -163,14 +161,12 @@ const saveClassWiseAttendanceForHod = async (req, res) => {
             return res.status(400).json({ message: "Please fill all fields" });
         }
 
-        console.log("hod get date : " + date)
-
         const attendance = await AllAttendanceModel.create({ date, day, sem, branch, total, subject });
 
         res.status(201).json(attendance);
-        console.log("Successfully created in hod access");
+        console.log(`${sem}-${branch}-${date} Attendance Done !!`);
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error during saved ClassWiseAttendance !!", error);
         res.status(500).json({ message: "Error occurred", error: error.message });
     }
 }

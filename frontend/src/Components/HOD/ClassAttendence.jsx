@@ -26,7 +26,6 @@ const ClassAttendence = (props) => {
   const [loading, setLoading] = useState(false);
 
   const gotoStudentAttedence = (date, sem, branch) => {
-    console.log(sem, branch, date);
     setShowDate(date);
     setShowSem(sem);
     setShowBranch(branch);
@@ -57,13 +56,11 @@ const ClassAttendence = (props) => {
           config
         );
         if (data.length === 0) {
-          console.log("Student Empty");
           setSearchedStudentAttedence([]);
           toast.warn("Attedendence Empty!", { autoClose: 1000 });
           setLoading(false);
           return;
         }
-        console.log(data);
         const reversedData = data.reverse();
         setSearchedStudentAttedence(reversedData);
         setLoading(false);

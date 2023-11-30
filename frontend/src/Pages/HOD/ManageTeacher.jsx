@@ -8,8 +8,6 @@ import Navbar from "../../Components/Navbar";
 import AssignTeacher from "../../Components/HOD/AssignTeacher";
 import CreateTeacher from "../../Components/HOD/CreateTeacher";
 // My pages or componenets
-// import Login from "../Components/Login";
-// import Signup from "../Components/SignUp";
 import "../../CSS/Style.css";
 import { useNavigate } from "react-router-dom";
 import { GetLoggedUser } from "../../Context/LoggedUserData";

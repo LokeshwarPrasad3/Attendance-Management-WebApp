@@ -2,7 +2,6 @@ import axios from "axios";
 
 const getAvatarURL = async (filePic) => {
     try {
-console.log("filepic from change avatar first", filePic)
         // we need data to send on cloudinary api using formData
         const picData = new FormData();
 
@@ -16,17 +15,14 @@ console.log("filepic from change avatar first", filePic)
         picData.append("api_secret", "cWM3uWmnthOo0WXWk5-Ajz4cfVQ");
 
 
-        console.log("Dataform ", picData);
         const { data } = await axios.post('https://api.cloudinary.com/v1_1/mernchatappcloud/image/upload', picData);
-        console.log(data);
         let avatarURL = data.url.toString();
-        console.log("url is : ", avatarURL);
+        console.log("Your updated Pic URL is : ", avatarURL);
         // if url starts with http then replace to  https
         if (avatarURL.startsWith("http://")) {
             avatarURL = avatarURL.replace(/^http:\/\//i, "https://");
         }
         // return avatarURL
-        console.log("Status is : ", true);
         const picObj = { status: true, avatarURL: avatarURL };
         return picObj;
     }

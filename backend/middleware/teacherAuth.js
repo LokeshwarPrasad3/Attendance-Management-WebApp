@@ -6,20 +6,20 @@ const teacherProtect = async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(" ")[1];
-            console.log("token " , token);
+            // console.log("Teacher Header Found token " , token);
+            console.log("Teacher is Authorized !!");
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            console.log("deconded : ", decoded);
 
             req.teacher = await TeacherModel.findById(decoded.id).select("-password");
-            console.log(req.teacher);
+            // console.log(req.teacher);ff
             next();
         } catch (error) {
-            console.log("unauthorized user");
+            console.log("Error during verify token of teacher");
             res.status(401).json({ message: "Unauthorized User" });
             return;
         }
     } if (!token) {
-        console.log("token not found");
+        console.log("teacher - token not found");
         res.status(401).json({ message: req.headers.authorization });
     }
 }

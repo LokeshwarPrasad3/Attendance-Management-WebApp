@@ -36,11 +36,10 @@ const SLogin = () => {
 
   useEffect(() => {
     if(loggedUser){
-      console.log("user exist", loggedUser.type)
+      console.log(loggedUser.type, " Already Logged!!")
       navigate(`/${loggedUser.type}`)
     }
 
-    console.log("printed userEffect " + loggedUser);
   }, [loggedUser, setLoggedUser,navigate]);
 
   // handle login when clicked login button
@@ -62,7 +61,6 @@ const SLogin = () => {
       };
       // HANDLE LOGIN WHEN USER : HOD
       if (whoLogged === "hod") {
-        console.log("hode");
         const { data } = await axios.post(
           `${host}/hod/login`,
           { email, password },
@@ -72,7 +70,7 @@ const SLogin = () => {
         Cookie.set("_secure_user_", data.token, { expires: 3 });
         Cookie.set("unique_key", data._id, { expires: 3 });
         Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data);
+        console.log(data.name , " is Loggeed in");
         // do empty inputs now
         setEmail("");
         setPassword("");
@@ -81,7 +79,6 @@ const SLogin = () => {
       }
       // HANDLE LOGIN WHEN USER : TEACHER
       else if (whoLogged === "teacher") {
-        console.log("teacher");
         const { data } = await axios.post(
           `${host}/teacher/login`,
           { email, password },
@@ -91,7 +88,7 @@ const SLogin = () => {
         Cookie.set("_secure_user_", data.token, { expires: 3 });
         Cookie.set("unique_key", data._id, { expires: 3 });
         Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data);
+        console.log(data.name , " is Loggeed in");
 
         // do empty inputs now
         setEmail("");
@@ -101,7 +98,6 @@ const SLogin = () => {
       }
       // HANDLE LOGIN WHEN USER : STUDENT
       else if (whoLogged === "student") {
-        console.log("student");
         const { data } = await axios.post(
           `${host}/student/login`,
           { email, password },
@@ -111,7 +107,7 @@ const SLogin = () => {
         Cookie.set("_secure_user_", data.token, { expires: 3 });
         Cookie.set("unique_key", data._id, { expires: 3 });
         Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data);
+        console.log(data.name , " is Loggeed in");
         // do empty inputs now
         setEmail("");
         setPassword("");

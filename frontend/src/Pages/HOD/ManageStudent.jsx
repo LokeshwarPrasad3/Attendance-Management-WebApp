@@ -68,7 +68,7 @@ const ManageStudent = () => {
           }
 
           setPic(picUrl);
-          console.log("Uploaded Image url : " + data.url.toString());
+          console.log("Your Image URL : " + data.url.toString());
           // console.log(data);
           setLoading(false);
           toast.success("Image Uploaded Successfully!", { autoClose: 1000 });
@@ -117,12 +117,10 @@ const ManageStudent = () => {
       );
 
      if (data.existUser) {
-       console.log("User already exists");
-       toast.error("Student already registed", { autoClose: 1000 });
+       toast.error("Student already Exits!", { autoClose: 1000 });
        return;
      }
       toast.success("Student Successfully Created!", { autoClose: 1000 });
-      console.log(data);
       setLoading(false);
 
       setName("");
