@@ -4,9 +4,9 @@ const app = express();
 
 // initialized secret variables file .env
 // .env variables for localhost
-require('dotenv').config({ path: '.env.local' });
+// require('dotenv').config({ path: '.env.local' });
 // .env variables for production
-// require('dotenv').config({ path: '.env.production' });
+require('dotenv').config({ path: '.env.production' });
 
 // access json data from frontend
 app.use(express.json());
