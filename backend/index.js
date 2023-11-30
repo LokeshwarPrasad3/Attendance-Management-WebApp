@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 5000;
 
 // cors used for access requested url
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: 'https://lokeshwar-attendance.onrender.com',
     credentials: true,
 }));
 

@@ -98,7 +98,7 @@ const HistoryAttendence = () => {
         toast.error("Unable to fetch data!", { autoClose: 1000 });
       }
     },
-    [searchSem, searchBranch, searchDate]
+    [searchSem, searchBranch, searchDate, searchSubject]
   );
 
   return (
