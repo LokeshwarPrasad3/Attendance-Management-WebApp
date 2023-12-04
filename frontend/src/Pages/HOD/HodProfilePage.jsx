@@ -110,7 +110,7 @@ const HodProfilePage = () => {
           </h1>
         </div>
 
-        <div className="right_part 2xl:min-w-[60vw] xl:min-w-[60vw] lg:min-w-[60vw] md:min-w-[60vw] w-full bg-[#f2f2f2] min-h-[45rem] 2xl:px-9 xl:px-9 md:px-9 md:py-9 p-3">
+        <div className="right_part 2xl:min-w-[70vw] xl:min-w-[70vw] lg:min-w-[80vw] md:min-w-[80vw] w-full bg-[#f2f2f2] min-h-[45rem] 2xl:px-9 xl:px-9 md:px-9 md:py-9 p-3">
           {/* teacher basic details show */}
           <div className="teacher_basic_details bg-white md:px-5 px-3 md:py-2 py-3 w-full flex flex-col gap-2">
             <h1 className="font-semibold text-xl pl-1 flex items-center justify-between">
@@ -130,7 +130,7 @@ const HodProfilePage = () => {
             </div>
 
             {/* Main part where table is visible */}
-            <div className="take_attendence_table font-overpass 2xl:w-[70%] lg:w-[80%] md:w-full sm:w-full  max-w-full overflow-x-auto flex justify-center items-center m-auto py-3">
+            <div className="take_attendence_table font-overpass w-full max-w-full overflow-x-auto flex justify-center items-center m-auto py-3">
               {/* Left part of table including sno,name */}
               <table className="border-collapse w-full border-[1px] border-gray-300">
                 {/* Left-Table heading part */}

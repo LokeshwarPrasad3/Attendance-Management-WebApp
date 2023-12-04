@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
 import { GetLoggedUser } from "../../Context/LoggedUserData";
 import TeacherHome from "./TeacherHome";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import PreviousClassData from "../../Components/Teacher/PreviousClassData";
 
 const TeacherPage = () => {
   const navigate = useNavigate();
@@ -66,9 +67,17 @@ const TeacherPage = () => {
             <div className="right_part 2xl:min-w-[60vw] xl:min-w-[60vw] lg:min-w-[60vw] md:min-w-[60vw] w-full bg-[#f2f2f2] min-h-[45rem] 2xl:px-9 xl:px-9 md:px-9 md:py-9 p-5">
               {/* teacher basic details show */}
               <div className="teacher_basic_details bg-white md:px-5 px-3 md:py-2 py-3 w-full flex flex-col gap-2">
-                <h1 className="font-semibold text-xl pl-1">
-                  Class - Assignment
-                </h1>
+                <div className="options-container w-full flex justify-between px-2">
+                  <h1 className="font-semibold text-xl pl-1">
+                    Class - Assignment
+                  </h1>
+                  <Link
+                    to="/history"
+                    className="home_see_history w-28 text-center bg-[#314EB5] hover:bg-blue-700 h-6 custom-transition text-white font-signika rounded-md"
+                  >
+                    SEE HISTORY
+                  </Link>
+                </div>
                 <div className="class_assign_table w-full py-2">
                   <table className="w-full">
                     <thead>
@@ -130,8 +139,7 @@ const TeacherPage = () => {
               </div>
 
               {/* Here teacher can see their attendence */}
-              <div className="teacher_attendence py-5">
-                {/* user can search by subjects */}
+              {/* <div className="teacher_attendence py-5">
                 <div className="search_bar flex justify-center items-center gap-3">
                   <h2 className="font-semibold">SELECT SUBJECT : </h2>
                   <select
@@ -150,11 +158,11 @@ const TeacherPage = () => {
                         );
                       })}
 
-                    {/* <option value="Select_Subject">Maths</option>
-                    <option value="Select_Subject">DAA</option> */}
                   </select>
                 </div>
-              </div>
+              </div> */}
+
+              <PreviousClassData currentUser={currentUser} />
             </div>
           </div>
         </>

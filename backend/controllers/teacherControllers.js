@@ -1,6 +1,6 @@
-const  TeacherModel  = require("../models/Teacher.model");
-const  generateToken  = require('../context/generateAuthToken');
-const  AllAttendanceModel  = require("../models/AllAttendance.model");
+const TeacherModel = require("../models/Teacher.model");
+const generateToken = require('../context/generateAuthToken');
+const AllAttendanceModel = require("../models/AllAttendance.model");
 
 // Create account of Teacher
 const registerTeacher = async (req, res) => {
@@ -62,7 +62,7 @@ const loginTeacher = async (req, res) => {
         // check user email registered
         const teacherExist = await TeacherModel.findOne({ email });
         if (!teacherExist) {
-            console.log(email , " Teacher not exist");
+            console.log(email, " Teacher not exist");
             res.status(404).json({ message: "email not exist" });
             return;
         }
@@ -171,6 +171,35 @@ const saveClassWiseAttendanceForHod = async (req, res) => {
     }
 }
 
+// get class wise attendance for teacher subject wise details
+const getEachSubjectAttendance = async (req, res) => {
+    try {
+        const { subjectArray } = req.body;
+        console.log(subjectArray)
+        if (!Array.isArray(subjectArray) ) {
+            console.log("Fill all fields");
+            return;
+        }
+        const resForAllSubject = [];
+        for(const subjectDetail of subjectArray){
+            let subjectAttendence = await AllAttendanceModel.find({ subject:subjectDetail?.sem, branch:subjectDetail?.branch, subject:subjectDetail?.subject });
+            const newSubject = {
+                subject: subjectDetail?.subject,
+                totalClassess: subjectAttendence?.length || 0,
+            }
+            console.log(newSubject)
+            resForAllSubject.push(newSubject);
+        }
+       
+        console.log("SubjectWise Data Found by Teacher");
+        res.status(201).json({resForAllSubject});
+    } catch (error) {
+        console.log("Error during fetch ClassWiseStudentAttendance", error);
+        return;
+    }
+
+}
+
 
 // -------------- Testing Purpose Controller ---------
 const reverseModel = async (req, res) => {
@@ -197,4 +226,4 @@ const reverseModel = async (req, res) => {
 }
 
 
-module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getAllTeachers, setAssignSubject }
+module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getEachSubjectAttendance, getAllTeachers, setAssignSubject }

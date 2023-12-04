@@ -243,7 +243,7 @@ const ClassAttendence = (props) => {
                     searchedStudentAttendence.map((attedence, index) => {
                       return (
                         <tr key={index} className="text-lg h-10">
-                          <td className="font-signika border-[2px] border-gray-900 text-xl min-w-fit text-center">
+                          <td className="font-signika border-[2px] min-w-[11rem] border-gray-900 text-xl text-center">
                             {attedence.subject?attedence.subject:'null'}
                           </td>
                           <td className="font-signika border-[2px] border-gray-900 text-xl min-w-fit text-center">
