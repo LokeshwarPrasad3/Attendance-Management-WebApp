@@ -1,45 +1,31 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+
+import { app } from './app.js'
 
 // initialized secret variables file .env
+import dotenv from "dotenv"
+
 // .env variables for localhost
-// require('dotenv').config({ path: '.env.local' });
+// dotenv.config({ path: '.env.local' });
+
 // .env variables for production
-require('dotenv').config({ path: '.env.production' });
-
-// access json data from frontend
-app.use(express.json());
-
-// Parse URL-encoded data
-app.use(express.urlencoded({ extended: true }))
-
-// connection established
-require('./db/conn');
+dotenv.config({ path: ".env.production" });
 
 // getting PORT no from secret .env file
 const PORT = process.env.PORT || 5000;
 
-// cors used for access requested url
-app.use(cors({
-    origin: 'https://lokeshwar-attendance.onrender.com',
-    credentials: true,
-}));
+// connection established
+import connectToDB from "./db/conn.js";
 
-// There are three main users Routes are below
-const studentRoutes = require('./routes/studentRoutes');
-const teacherRoutes = require('./routes/teacherRoutes');
-const hodRoutes = require('./routes/hodRoutes');
-
-// Making EndPoint For all three users
-// for student 
-app.use('/api/student', studentRoutes);
-// for teacher
-app.use('/api/teacher', teacherRoutes);
-// for HOD
-app.use('/api/hod', hodRoutes);
-
-
-app.listen(PORT, () => {
-    console.log(`Listen at ${PORT}`);
-})
+connectToDB().
+    then(() => {
+        app.on("error", () => {
+            console.log("Error on app", error)
+            throw error;
+        })
+        app.listen(PORT, () => {
+            console.log(`Server is running at PORT ${PORT}`)
+        })
+    })
+    .catch((error) => {
+        console.log(`Mongodb connection failed ${error}`)
+    })

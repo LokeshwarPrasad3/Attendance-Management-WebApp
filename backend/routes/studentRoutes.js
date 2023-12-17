@@ -1,13 +1,17 @@
-const express = require('express');
+import express from "express";
+
 // getting router for better customization
 const router = express.Router();
 // required all controllers related to Student
-const { LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,
-    getStudentsAttendanceHistoryByTeacher, getStudentsAttendanceHistoryByHod, getStudentsForAttendance, submitClassAttendance, getAllStudentData, changeStudentAvatar } = require('../controllers/studentControllers');
+import {
+    LoginStudent, RegisterStudent, getLoggedStudentData, getStudentAttendeceById,
+    getStudentsAttendanceHistoryByTeacher, getStudentsAttendanceHistoryByHod, getStudentsForAttendance,
+    submitClassAttendance, getAllStudentData, changeStudentAvatar
+} from "../controllers/studentControllers.js";
 // middlewares manages layer security
-const  studentProtect  = require('../middleware/studentAuth');
-const  teacherProtect  = require('../middleware/teacherAuth');
-const  hodProtect  = require('../middleware/hodAuth');
+import studentProtect from "../middleware/studentAuth.js";
+import teacherProtect from "../middleware/teacherAuth.js";
+import hodProtect from "../middleware/hodAuth.js";
 
 router.route('/register').post(RegisterStudent)
 router.route('/login').post(LoginStudent);
@@ -37,4 +41,4 @@ router.route('/get-attendance-by-teacher').post(teacherProtect, getStudentsAtten
 router.route('/get-attendance-by-hod').post(hodProtect, getStudentsAttendanceHistoryByHod);
 
 
-module.exports = router;
+export default router;

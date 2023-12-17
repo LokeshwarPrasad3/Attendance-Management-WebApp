@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require("bcrypt");
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const hodSchema = new mongoose.Schema({
     name: {
@@ -35,4 +35,4 @@ hodSchema.methods.matchPassword = function (enteredPassword) {
 
 const HodModel = mongoose.model("HodModel", hodSchema);
 
-module.exports = HodModel;
+export default HodModel;

@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const HodModel = require('../models/Hod.model');
+import jwt from "jsonwebtoken";
+import HodModel from "../models/Hod.model.js";
 
 const hodProtect = async (req, res, next) => {
     let token;
@@ -25,4 +25,4 @@ const hodProtect = async (req, res, next) => {
     }
 }
 
-module.exports = hodProtect 
+export default hodProtect;

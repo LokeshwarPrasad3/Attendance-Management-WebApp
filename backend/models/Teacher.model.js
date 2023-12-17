@@ -1,6 +1,6 @@
 
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const teacherSchema = new mongoose.Schema({
     name: {
@@ -44,4 +44,4 @@ teacherSchema.methods.matchPassword = function (enteredPassword) {
 
 const TeacherModel = new mongoose.model("TeacherModel", teacherSchema);
 
-module.exports =  TeacherModel ;
+export default TeacherModel;

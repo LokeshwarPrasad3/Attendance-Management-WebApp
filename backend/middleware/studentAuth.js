@@ -1,7 +1,6 @@
-const StudentModel = require("../models/Student.model");
-const jwt = require('jsonwebtoken');
+import StudentModel from "../models/Student.model.js";
+import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET;
 
 const studentProtect = async (req, res, next) => {
     let token;
@@ -12,7 +11,7 @@ const studentProtect = async (req, res, next) => {
             // console.log("Student Header Found token ", token);
             console.log("Student is Authorized !!")
             // verify token from secret key
-            const decoded = await jwt.verify(token, JWT_SECRET);
+            const decoded = await jwt.verify(token, process.env.JWT_SECRET);
             // console.log("decoded .id" + decoded.id);  //it give .id not ._id
 
             // getting res to req.student
@@ -32,4 +31,5 @@ const studentProtect = async (req, res, next) => {
     }
 }
 
-module.exports = studentProtect ;
+
+export default studentProtect;

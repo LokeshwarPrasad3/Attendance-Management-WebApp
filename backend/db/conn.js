@@ -1,18 +1,14 @@
 // Database Connection Setup
-const mongoose = require('mongoose');
-const DB_URL = process.env.DB_URL;
+import mongoose from "mongoose";
 
 const connectToDB = async () => {
     try {
-        await mongoose.connect(DB_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-        console.log("Connected to the MongoDB database.");
+        const connectionInstance = await mongoose.connect(process.env.DB_URL);
+        console.log(`MongoDB connected at Host ${connectionInstance.connection.host}`);
     } catch (error) {
-        console.log(`Failed to connect to the database: ${error}`);
+        console.log(`MongoDB connection failed : ${error}`);
+        process.exit(1);
     }
 }
 
-connectToDB();
-module.exports = { connectToDB };
+export default connectToDB ;

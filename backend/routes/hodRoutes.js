@@ -1,6 +1,6 @@
-const express = require('express');
-const { registerHOD, loginHOD, getLoggedHodData, getClassWiseAttendance } = require('../controllers/hodControllers');
-const  hodProtect  = require('../middleware/hodAuth');
+import express from "express";
+import { registerHOD, loginHOD, getLoggedHodData, getClassWiseAttendance } from "../controllers/hodControllers.js";
+import hodProtect from "../middleware/hodAuth.js";
 const router = express.Router();
 
 router.route('/register').post(registerHOD);
@@ -12,4 +12,4 @@ router.route('/').get(hodProtect, getLoggedHodData);
 // only hod can get class wise attendence of assign branch
 router.route('/class-wise-attendance').post(hodProtect, getClassWiseAttendance)
 
-module.exports = router;
+export default router;

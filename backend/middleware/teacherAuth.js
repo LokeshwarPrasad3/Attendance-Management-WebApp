@@ -1,5 +1,5 @@
-const TeacherModel = require('../models/Teacher.model');
-const jwt = require('jsonwebtoken');
+import TeacherModel from "../models/Teacher.model.js";
+import jwt from "jsonwebtoken";
 
 const teacherProtect = async (req, res, next) => {
     let token;
@@ -24,4 +24,4 @@ const teacherProtect = async (req, res, next) => {
     }
 }
 
-module.exports =  teacherProtect ;
+export default teacherProtect ;

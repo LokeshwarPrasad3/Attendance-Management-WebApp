@@ -1,5 +1,5 @@
 
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const allAttendanceSchema = new mongoose.Schema({
     date: {
@@ -32,4 +32,4 @@ const allAttendanceSchema = new mongoose.Schema({
 
 const AllAttendanceModel = new mongoose.model("AllAttendanceModel", allAttendanceSchema);
 
-module.exports = AllAttendanceModel ;
+export default AllAttendanceModel ;

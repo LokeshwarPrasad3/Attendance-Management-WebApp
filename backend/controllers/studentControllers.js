@@ -1,6 +1,6 @@
-const generateToken = require('../context/generateAuthToken');
-const StudentModel = require('../models/Student.model');
-const AttendanceModel = require('../models/Attendance.model');
+import generateToken from "../context/generateAuthToken.js";
+import StudentModel from "../models/Student.model.js"
+import AttendanceModel from "../models/Attendance.model.js";
 
 // route method for registration of student
 const RegisterStudent = async (req, res) => {
@@ -335,7 +335,8 @@ const submitClassAttendance = async (req, res) => {
 
 
 
-module.exports = {
+export {
     RegisterStudent, LoginStudent, getLoggedStudentData, getStudentAttendeceById,
     submitClassAttendance, getStudentsForAttendance, getStudentsAttendanceHistoryByTeacher, getStudentsAttendanceHistoryByHod, getAllStudentData, changeStudentAvatar
 }
+

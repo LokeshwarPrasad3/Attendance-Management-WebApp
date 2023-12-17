@@ -1,11 +1,16 @@
 
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET;
+import jwt from "jsonwebtoken";
 
 const generateToken = (id) => {
-    const token = jwt.sign({id}, SECRET_KEY, {expiresIn: '5d'});
-    console.log("JWT Token successfully Generated !" , token);
-    return token;
+    try {
+        console.log("Token value ........", process.env.JWT_SECRET)
+        const token = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '5d' });
+        console.log("JWT Token successfully Generated !", token);
+        return token;
+    } catch (error) {
+        console.log("Error in method", error)
+        return;
+    }
 }
 
-module.exports = generateToken;
+export default generateToken;

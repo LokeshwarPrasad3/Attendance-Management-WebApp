@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const attendanceSchema = new mongoose.Schema({
     studentId: {
@@ -13,15 +13,15 @@ const attendanceSchema = new mongoose.Schema({
         {
             subject: {
                 type: String,
-                require:true,
+                require: true,
             },
             date: {
                 type: String,
-                require:true,
+                require: true,
             },
             day: {
                 type: String,
-                require:true,
+                require: true,
             },
             status: {
                 type: Boolean,
@@ -35,4 +35,4 @@ const attendanceSchema = new mongoose.Schema({
 
 const AttendanceModel = new mongoose.model("AttendanceModel", attendanceSchema)
 
-module.exports = AttendanceModel;
+export default AttendanceModel;

@@ -1,7 +1,10 @@
-const express = require('express');
-const { registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getEachSubjectAttendance, getAllTeachers, setAssignSubject } = require('../controllers/teacherControllers');
-const hodProtect = require('../middleware/hodAuth');
-const teacherProtect = require('../middleware/teacherAuth');
+import express from "express"
+import {
+    registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getEachSubjectAttendance, getAllTeachers,
+    setAssignSubject
+} from "../controllers/teacherControllers.js"
+import hodProtect from "../middleware/hodAuth.js"
+import teacherProtect from "../middleware/teacherAuth.js"
 const router = express.Router();
 
 router.route('/register').post(registerTeacher);
@@ -19,5 +22,4 @@ router.route('/get-each-subject-attendance').post(teacherProtect, getEachSubject
 // Hod have need to access teachers data when class assigned
 router.route('/get-all-teachers').get(hodProtect, getAllTeachers).post(hodProtect, setAssignSubject);
 
-
-module.exports = router;
+export default router;

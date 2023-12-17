@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 // Define a schema for the 'Student' collection.
 const studentSchema = new mongoose.Schema({
@@ -70,4 +70,4 @@ studentSchema.methods.matchPassword = async function (enteredPassword) {
 // Create a Mongoose model for 'Student'.
 const StudentModel = new mongoose.model("StudentModel", studentSchema);
 
-module.exports = StudentModel ;
+export default StudentModel ;

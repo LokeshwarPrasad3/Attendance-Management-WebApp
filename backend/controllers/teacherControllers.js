@@ -1,6 +1,6 @@
-const TeacherModel = require("../models/Teacher.model");
-const generateToken = require('../context/generateAuthToken');
-const AllAttendanceModel = require("../models/AllAttendance.model");
+import TeacherModel from "../models/Teacher.model.js";
+import generateToken from "../context/generateAuthToken.js";
+import AllAttendanceModel from "../models/AllAttendance.model.js";
 
 // Create account of Teacher
 const registerTeacher = async (req, res) => {
@@ -226,4 +226,4 @@ const reverseModel = async (req, res) => {
 }
 
 
-module.exports = { registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getEachSubjectAttendance, getAllTeachers, setAssignSubject }
+export { registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getEachSubjectAttendance, getAllTeachers, setAssignSubject }

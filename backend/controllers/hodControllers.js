@@ -1,6 +1,6 @@
-const  generateToken  = require('../context/generateAuthToken');
-const AllAttendanceModel = require('../models/AllAttendance.model');
-const HodModel = require('../models/Hod.model');
+import  generateToken  from "../context/generateAuthToken.js";
+import AllAttendanceModel from "../models/AllAttendance.model.js";
+import HodModel from "../models/Hod.model.js";
 
 // Create Hod Account
 const registerHOD = async (req, res) => {
@@ -124,4 +124,4 @@ const getClassWiseAttendance = async (req, res) => {
 }
 
 
-module.exports = { registerHOD, loginHOD, getLoggedHodData, getClassWiseAttendance }
+export { registerHOD, loginHOD, getLoggedHodData, getClassWiseAttendance }
