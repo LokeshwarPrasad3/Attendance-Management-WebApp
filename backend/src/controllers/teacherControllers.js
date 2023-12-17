@@ -1,6 +1,7 @@
 import TeacherModel from "../models/Teacher.model.js";
 import generateToken from "../context/generateAuthToken.js";
 import AllAttendanceModel from "../models/AllAttendance.model.js";
+import { defaultUserImage } from "../constant.js";
 
 // Create account of Teacher
 const registerTeacher = async (req, res) => {
@@ -12,7 +13,7 @@ const registerTeacher = async (req, res) => {
             return;
         }
 
-        //check if data is exist in db 
+        // check if user already exist
         const teacherExist = await TeacherModel.findOne({ email });
         if (teacherExist) {
             console.log(name, " Teacher already exist");
@@ -21,25 +22,25 @@ const registerTeacher = async (req, res) => {
         }
 
         // user not exist then create new teacher 
-        let teacher;
-        if (pic) {
-            teacher = await TeacherModel.create({ name, email, specilization, pic, password });
-        } else {
-            teacher = await TeacherModel.create({ name, email, specilization, password });
-        }
+        const teacher = await TeacherModel.create({
+            name,
+            email,
+            specilization,
+            pic: pic || defaultUserImage,
+            password
+        });
         // successfully not created
         if (!teacher) {
-            console.log(name, " Error during Creation account of Teacher");
-            res.status(500).json({ message: "Server Bad Req" });
+            console.log(name, "Error during creationg of teacher");
+            res.status(500).json({ message: "Error not created teacher account" });
             return;
         }
-        // successfully created
-        const token = generateToken(teacher._id);
-        teacher.token = token;
-        const data = teacher;
-        console.log(name, " teacher accounot successfully created");
-        console.log(data);
-        res.status(201).json(data);
+
+        // We dont want to add password in response
+        const createdTeacher = await TeacherModel.findById(teacher._id).select("-password");
+        console.log(createdTeacher);
+        console.log(`${createdTeacher.name} - ${createdTeacher.id} teacher account successfully created!!`);
+        res.status(201).json(createdTeacher);
 
     } catch (error) {
         console.log("Server Error during creation Teacher Account ", error);
@@ -71,10 +72,14 @@ const loginTeacher = async (req, res) => {
             // means user is valid so generate token and send response
             const token = generateToken(teacherExist._id);
             teacherExist.token = token;
-            const data = teacherExist;
-            console.log(teacherExist.name + " login successfully");
-            console.log(data);
-            res.status(200).json(data);
+            teacherExist.save({ validateBeforeSave: false });
+            
+            // we dont want to get password
+            const teacher = await TeacherModel.findById(teacherExist._id).select("-password");
+
+            console.log(teacher);
+            console.log(`${teacher.name} - ${teacher._id} - Teacher login successfully`);
+            res.status(200).json(teacher);
             return;
         } else {
             console.log("teacher passowrd not matched");
@@ -97,7 +102,7 @@ const getLoggedTeacherData = async (req, res) => {
             return res.status(401).json({ message: "Unauthorized teacher invalid token" });
         }
         // console.log(teacherRes);
-        console.log(teacherRes.name + " Data successfully found")
+        console.log(`${teacherRes.name} Data successfully found`)
         res.status(200).json(teacherRes);
     } catch (error) {
         console.log("server error to get teacher data", error);
@@ -176,13 +181,13 @@ const getEachSubjectAttendance = async (req, res) => {
     try {
         const { subjectArray } = req.body;
         console.log(subjectArray)
-        if (!Array.isArray(subjectArray) ) {
+        if (!Array.isArray(subjectArray)) {
             console.log("Fill all fields");
             return;
         }
         const resForAllSubject = [];
-        for(const subjectDetail of subjectArray){
-            let subjectAttendence = await AllAttendanceModel.find({ subject:subjectDetail?.sem, branch:subjectDetail?.branch, subject:subjectDetail?.subject });
+        for (const subjectDetail of subjectArray) {
+            let subjectAttendence = await AllAttendanceModel.find({ subject: subjectDetail?.sem, branch: subjectDetail?.branch, subject: subjectDetail?.subject });
             const newSubject = {
                 subject: subjectDetail?.subject,
                 totalClassess: subjectAttendence?.length || 0,
@@ -190,9 +195,9 @@ const getEachSubjectAttendance = async (req, res) => {
             console.log(newSubject)
             resForAllSubject.push(newSubject);
         }
-       
+
         console.log("SubjectWise Data Found by Teacher");
-        res.status(201).json({resForAllSubject});
+        res.status(201).json({ resForAllSubject });
     } catch (error) {
         console.log("Error during fetch ClassWiseStudentAttendance", error);
         return;
@@ -200,30 +205,6 @@ const getEachSubjectAttendance = async (req, res) => {
 
 }
 
-
-// -------------- Testing Purpose Controller ---------
-const reverseModel = async (req, res) => {
-    try {
-
-        // Fetch all documents
-        const allDocuments = await AllAttendanceModel.find();
-
-        // Reverse the order of documents
-        const reversedDocuments = allDocuments.reverse();
-
-        // Clear existing documents
-        await AllAttendanceModel.deleteMany();
-
-        // Save the reversed documents
-        await AllAttendanceModel.insertMany(reversedDocuments);
-
-        res.json({ success: true, message: 'Documents reversed and saved successfully.' });
-
-    } catch (error) {
-        console.log("Error", error);
-        res.status(500).json({ message: "Error occured ", error })
-    }
-}
 
 
 export { registerTeacher, loginTeacher, getLoggedTeacherData, saveClassWiseAttendanceForHod, getEachSubjectAttendance, getAllTeachers, setAssignSubject }

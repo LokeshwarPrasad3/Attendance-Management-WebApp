@@ -1,19 +1,20 @@
 import generateToken from "../context/generateAuthToken.js";
 import StudentModel from "../models/Student.model.js"
 import AttendanceModel from "../models/Attendance.model.js";
+import { defaultUserImage } from "../constant.js";
 
 // route method for registration of student
 const RegisterStudent = async (req, res) => {
     try {
         const { name, email, pic, course, sem, branch, password } = req.body;
-        // check value is not empty
+
         if (!name || !email || !course || !sem || !branch || !password) {
             console.log("Some Student details Empty");
             res.status(400).json({ message: "Please fill all filds" });
             return;
         }
 
-        // if user is already exist 
+        // check if user already exist 
         const existUser = await StudentModel.findOne({ email });
         if (existUser) {
             console.log(name, " Student Already Exist");
@@ -21,20 +22,24 @@ const RegisterStudent = async (req, res) => {
             return;
         }
 
-        // save to db
-        let student;
-        if (!pic) {
-            student = await StudentModel.create({ name, email, course, sem, branch, password });
-        } else {
-            student = await StudentModel.create({ name, email, course, pic, sem, branch, password });
-        }
+        // User not exist ( create new user )
+        const student = await StudentModel.create({
+            name,
+            email,
+            course,
+            pic: pic || defaultUserImage,
+            sem,
+            branch,
+            password
+        });
+
         if (!student) {
             console.log("Failed to Create Student Account");
             res.status(500).json({ message: "Failed to store Data" });
             return;
         }
 
-        // Create Empty attendence in AttendanceModel
+        // Create Empty attendence for store Attendance in AttendanceModel
         const createAttendence = await AttendanceModel.create({
             studentId: student._id,
             studentName: student.name,
@@ -47,14 +52,18 @@ const RegisterStudent = async (req, res) => {
             console.log("Empty Attendence is not created");
             return;
         }
+
         console.log("Successfullyt Empty attendence created ");
 
         const token = generateToken(student._id)
         student.token = token;
-        const data = student;
-        console.log(data);
-        console.log(name, " Account Successfully created!");
-        res.status(201).json(data);
+        await student.save({ validateBeforeSave: false })
+
+        const createdStudent = await StudentModel.findById(student._id).select("-password");
+
+        console.log(createdStudent);
+        console.log(`${createdStudent.name} - ${createdStudent._id} - Account Successfully created!`);
+        res.status(201).json(createdStudent);
     } catch (error) {
         console.log(`Server Error during register Student ${error}`);
         res.status(500).json({ message: "Internal server error" });
@@ -83,10 +92,14 @@ const LoginStudent = async (req, res) => {
         if (studentExist && await studentExist.matchPassword(password)) {
             const token = generateToken(studentExist._id);
             studentExist.token = token;
-            let data = studentExist;
-            console.log(data);
-            console.log(data.name, " Successfully Login!")
-            res.status(200).json(data);
+            studentExist.save({validateBeforeSave: false});
+
+            // we dont need password 
+            const student = await StudentModel.findById(studentExist._id).select("-password");
+
+            console.log(student);
+            console.log(`${student.name} - ${student._id} - Successfully Login!`)
+            res.status(200).json(student);
         } else {
             console.log("Student Password not matched");
             res.status(401).json({ message: "Unauthorized user" });

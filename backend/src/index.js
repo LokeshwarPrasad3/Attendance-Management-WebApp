@@ -5,10 +5,10 @@ import { app } from './app.js'
 import dotenv from "dotenv"
 
 // .env variables for localhost
-// dotenv.config({ path: '.env.local' });
+// dotenv.config({ path: './.env.local' });
 
 // .env variables for production
-dotenv.config({ path: ".env.production" });
+dotenv.config({ path: './.env.production' });
 
 // getting PORT no from secret .env file
 const PORT = process.env.PORT || 5000;

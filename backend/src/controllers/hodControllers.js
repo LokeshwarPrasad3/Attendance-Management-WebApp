@@ -1,4 +1,5 @@
-import  generateToken  from "../context/generateAuthToken.js";
+import { defaultUserImage } from "../constant.js";
+import generateToken from "../context/generateAuthToken.js";
 import AllAttendanceModel from "../models/AllAttendance.model.js";
 import HodModel from "../models/Hod.model.js";
 
@@ -7,13 +8,13 @@ const registerHOD = async (req, res) => {
 
     try {
         const { name, email, branch, pic, password } = req.body;
-        if (!name || !email || !branch || !pic || !password) {
+        if (!name || !email || !branch || !password) {
             console.log("Empty Filled to register HOD");
             res.status(400).json({ message: "Fill all field" });
             return;
         }
 
-        //check if data is exist in db 
+        // check if user already exist
         const hodExist = await HodModel.findOne({ email });
         if (hodExist) {
             console.log(`${name} Accouont already exist`);
@@ -22,20 +23,23 @@ const registerHOD = async (req, res) => {
         }
 
         // user not exist then create new hod 
-        const hod = await HodModel.create({ name, email, branch, pic, password });
+        const createHOD = await HodModel.create({
+            name,
+            email,
+            branch,
+            pic: pic || defaultUserImage,
+            password
+        });
         // successfully not created
-        if (!hod) {
+        if (!createHOD) {
             console.log("HOD accounot not created");
             res.status(500).json({ message: "Server Bad Req" });
             return;
         }
         // successfully created
-        const token = generateToken(hod._id);
-        hod.token = token;
-        const data = hod;
-        console.log(`${name} HOD Account successfully created`);
-        console.log(data);
-        res.status(201).json(data);
+        console.log(`${createHOD.name} - ${createHOD._id} HOD Account successfully created`);
+        console.log(createHOD);
+        res.status(201).json(createHOD);
 
     } catch (error) {
         console.log("Server Error HOD Account not created!", error);
@@ -67,10 +71,13 @@ const loginHOD = async (req, res) => {
             // means user is valid so generate token and send response
             const token = generateToken(hodExist._id);
             hodExist.token = token;
-            const data = hodExist;
-            console.log(hodExist.name , " HOD login successfully");
-            console.log(data);
-            res.status(200).json(data);
+            hodExist.save({ validateBeforeSave: false });
+
+            // We dont send password inside response
+            const hod = await HodModel.findById(hodExist._id).select("-password");
+            console.log(`${hod.name} - ${hod._id}  HOD login successfully`);
+            console.log(hod);
+            res.status(200).json(hod);
             return;
         } else {
             console.log(email, " HOD password not matched");
@@ -92,7 +99,7 @@ const getLoggedHodData = async (req, res) => {
             console.log("Invalid token of HOD data");
             return res.status(401).json({ message: "Unauthorized hod invalid token" });
         }
-        console.log(hodRes);
+        // console.log(hodRes);
         res.status(200).json(hodRes);
     } catch (error) {
         console.log("Server Error LoggedHOD data not found", error);
@@ -108,12 +115,12 @@ const getClassWiseAttendance = async (req, res) => {
             console.log("Fill all fields");
             return;
         }
-        let attendence
+        const query = { sem, branch };
         if (date) {
-            attendence = await AllAttendanceModel.find({ sem, branch, date });
-        } else {
-            attendence = await AllAttendanceModel.find({ sem, branch });
+            query.date = date;
         }
+        const attendence = await AllAttendanceModel.find(query);
+
         console.log("ClassWiseStudentAttendance Found by HOD");
         res.status(201).json(attendence);
     } catch (error) {

@@ -6,6 +6,8 @@ import cors from "cors"
 // Parse URL-encoded data
 app.use(express.urlencoded({ extended: true }))
 
+app.use(express.static("public"))
+
 // access json data from frontend
 app.use(express.json());
 
@@ -31,4 +33,4 @@ app.use('/api/hod', hodRoutes);
 
 
 
-export {app};
+export { app };

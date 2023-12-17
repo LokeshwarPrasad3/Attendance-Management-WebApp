@@ -8,18 +8,15 @@ const studentProtect = async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(" ")[1];
-            // console.log("Student Header Found token ", token);
-            console.log("Student is Authorized !!")
             // verify token from secret key
-            const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-            // console.log("decoded .id" + decoded.id);  //it give .id not ._id
-
-            // getting res to req.student
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // give middleware to access user
             req.student = await StudentModel.findById(decoded.id).select("-password");
+            console.log(`${req.student.name} - ${req.student._id} Student is Authorized !!`)
             next();
 
         } catch (error) {
-            console.log("Error during verify token of Student");
+            console.log("Error during verify token of Student ", error);
             res.status(401).json({ message: "UnAuthorized User" });
             return;
         }

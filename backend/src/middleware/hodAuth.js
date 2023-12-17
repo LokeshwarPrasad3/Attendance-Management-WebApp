@@ -5,17 +5,15 @@ const hodProtect = async (req, res, next) => {
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
-            // check tooken from headers
+            // check token from headers (Bearer token)
             token = req.headers.authorization.split(" ")[1];
-            // console.log("HOD Header Found token ", token);
-            console.log("HOD is Authorized !!");
             // check verify from secret_key
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             req.hod = await HodModel.findById(decoded.id).select("-password");
-            // console.log(req.hod);
+            console.log(`${req.hod.name} - ${req.hod._id} HOD is Authorized !!`);
             next();
         } catch (error) {
-            console.log("Error during verify token of hod");
+            console.log("Error during verify token of hod", error);
             res.status(401).json({ message: "Unanuthorized User" });
             return;
         }
