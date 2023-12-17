@@ -12,57 +12,61 @@ const HodProfilePage = () => {
   const { loggedUser } = GetLoggedUser();
 
   // set user for that component
-  const [currentUser, setCurrentUser] = useState();
+  const [currentHodUser, setCurrentHodUser] = useState();
 
   // Store all teachers for assign
   const [allTeachers, setAllTeachers] = useState([]);
   const [allClassAttedence, setAllClassAttedence] = useState([]);
 
   const getAllClassAttendance = async () => {
-    const branchWiseData = [
-      { sem: 1, branch: "CSE" },
-      { sem: 3, branch: "CSE" },
-      { sem: 5, branch: "CSE" },
-      { sem: 5, branch: "AIML" },
-    ];
-
-    const date = new Date().toLocaleDateString();
-    // Split the date string by '/'
-    let parts = date.split("/");
-    // Rearrange the date parts in the desired format (dd/mm/yyyy)
-    let newDateFormat = parts[1] + "/" + parts[0] + "/" + parts[2];
-
-    // const date = "29/10/2023";
-
-    // Get token from cookie
-    const token = Cookies.get("_secure_user_");
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    const promises = branchWiseData.map(async (cls) => {
-      const { data } = await axios.post(
-        `${host}/hod/class-wise-attendance`,
-        { sem: cls.sem, branch: cls.branch, date: newDateFormat }, // Fix: Use cls.branch instead of cls.sem for branch
-        config
-      );
-      cls.total = data[0]?.total === undefined ? "null" : data[0].total;
-      return cls;
-    });
-
-    // Use Promise.all to wait for all promises to resolve
-    Promise.all(promises)
-      .then((updatedData) => {
-        // 'updatedData' will contain the updated branchWiseData
-        setAllClassAttedence(updatedData);
-      })
-      .catch((error) => {
-        // Handle errors, if any
-        console.error("Error during Fetchibng ClassWiseData:", error);
-        return;
+    try {
+      const branchWiseData = [
+        { sem: 1, branch: "CSE" },
+        { sem: 3, branch: "CSE" },
+        { sem: 5, branch: "CSE" },
+        { sem: 5, branch: "AIML" },
+      ];
+  
+      const date = new Date().toLocaleDateString();
+      // Split the date string by '/'
+      let parts = date.split("/");
+      // Rearrange the date parts in the desired format (dd/mm/yyyy)
+      let newDateFormat = parts[1] + "/" + parts[0] + "/" + parts[2];
+  
+      // const date = "29/10/2023";
+  
+      // Get token from cookie
+      const token = Cookies.get("_secure_user_");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+  
+      const promises = branchWiseData.map(async (cls) => {
+        const { data } = await axios.post(
+          `${host}/hod/class-wise-attendance`,
+          { sem: cls.sem, branch: cls.branch, date: newDateFormat }, // Fix: Use cls.branch instead of cls.sem for branch
+          config
+        );
+        cls.total = data[0]?.total === undefined ? "null" : data[0].total;
+        return cls;
       });
+  
+      // Use Promise.all to wait for all promises to resolve
+      Promise.all(promises)
+        .then((updatedData) => {
+          // 'updatedData' will contain the updated branchWiseData
+          setAllClassAttedence(updatedData);
+        })
+        .catch((error) => {
+          // Handle errors, if any
+          console.error("Error during Fetchibng ClassWiseData:", error);
+          return;
+        });
+    } catch (error) {
+      console.log("Error Fetching HOD Profile Page", error)
+    }
   };
 
   const getAllTeachers = useCallback(async () => {
@@ -86,13 +90,13 @@ const HodProfilePage = () => {
   }, []);
 
   useEffect(() => {
-    setCurrentUser(loggedUser);
+    setCurrentHodUser(loggedUser);
     getAllTeachers();
-  }, [loggedUser, currentUser, getAllTeachers]);
+  }, [loggedUser, currentHodUser, getAllTeachers]);
 
   return (
     <>
-      <Navbar currentUser={"teacher"} />
+      <Navbar currentHodUser={"teacher"} />
       <div className="teacher_page_container font-overpass flex flex-col 2xl:gap-6 xl:gap-6 lg:gap-6 md:gap-6 gap-4 items-center mx-auto w-full 2xl:w-min xl:w-min lg:w-min md:p-7 p-3">
         {/* upper part of page */}
         <div className="upper_part w-full bg-[#f2f2f2] flex justify-center items-center gap-5 py-2">
@@ -101,12 +105,12 @@ const HodProfilePage = () => {
             className="h-10 w-10 rounded-full"
             // src="./Images/teacher.png"
             src={`${
-              !currentUser ? currentUser?.pic : "./Images/default_user.jpg"
+              !currentHodUser ? currentHodUser?.pic : "./Images/default_user.jpg"
             }`}
             alt=""
           />
           <h1 className="text-xl font-semibold text-center">
-            {currentUser?.name}
+            {currentHodUser?.name}
           </h1>
         </div>
 
@@ -114,7 +118,7 @@ const HodProfilePage = () => {
           {/* teacher basic details show */}
           <div className="teacher_basic_details bg-white md:px-5 px-3 md:py-2 py-3 w-full flex flex-col gap-2">
             <h1 className="font-semibold text-xl pl-1 flex items-center justify-between">
-              {currentUser?.branch === "CSE" ? "DEPARTEMENT OF CSE" : ""}
+              {currentHodUser?.branch === "CSE" ? "DEPARTEMENT OF CSE" : ""}
               <Link
                 to="/data"
                 className="home_set_leave cursor-pointer min-w-fit font-normal px-2 py-1 text-lg text-slate-900 leading-none bg-blue-400 hover:bg-blue-200 custom-transition font-signika rounded-md text-center"

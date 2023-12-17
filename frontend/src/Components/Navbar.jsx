@@ -21,6 +21,7 @@ const Navbar = ({ currentUser }) => {
   const { loggedUser } = GetLoggedUser();
 
   const navigate = useNavigate();
+  const [currentRoute, setCurrentRoute] = useState("");
 
   // HERE NEED LOGIC FOR if teacher navbar then what visible and student what visible , HOD what visible
 
@@ -49,6 +50,15 @@ const Navbar = ({ currentUser }) => {
       window.removeEventListener("resize", handleResize);
     };
   }, [loggedUser]);
+
+  // useEffect used to find which routes then color to nav-link
+  useEffect(() => {
+    const fullRoute = window.location.href;
+    const currentRoute = fullRoute.split("/")[3];
+    console.log("final routes is ", currentRoute);
+    setCurrentRoute(currentRoute);
+    // eslint-disable-next-line
+  }, [navigate, window.location.href]);
 
   const handleLogout = async () => {
     try {
@@ -98,7 +108,7 @@ const Navbar = ({ currentUser }) => {
         {/* right part */}
         <ul
           style={{ left: showMenu ? "0%" : "100%" }}
-          className="menu_links flex lg:justify-center lg:items-center gap-1 font-overpass"
+          className="menu_links xl:justify-center xl:items-center flex gap-1 font-overpass"
         >
           {/* if current user is admin then only show */}
           {getUser?.type === "hod" && (
@@ -106,7 +116,9 @@ const Navbar = ({ currentUser }) => {
               <li>
                 <Link
                   to="/manage-teacher"
-                  className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  className={`menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl 
+                  ${currentRoute === "manage-teacher" ? "bg-blue-200" : ""} 
+                  `}
                 >
                   Manage-Teacher
                 </Link>
@@ -114,7 +126,9 @@ const Navbar = ({ currentUser }) => {
               <li>
                 <Link
                   to="/manage-student"
-                  className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  className={`menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl 
+                  ${currentRoute === "manage-student" ? "bg-blue-200" : ""} 
+                  `}
                 >
                   Manage-Student
                 </Link>
@@ -129,7 +143,10 @@ const Navbar = ({ currentUser }) => {
               <li>
                 <Link
                   to="/history"
-                  className="menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl "
+                  className={`menu_link flex font-medium text-lg items-center justify-center hover:bg-blue-200 
+                  ${
+                    currentRoute === "history" ? "bg-blue-200" : ""
+                  } px-3 py-1 custom-transition rounded-2xl `}
                 >
                   See-History
                 </Link>
@@ -140,12 +157,6 @@ const Navbar = ({ currentUser }) => {
           {/* if user is student then only show */}
           {getUser?.type === "student" && <></>}
 
-          <li onClick={handleLogout}>
-            <h2 className="menu_link w-fit flex selection:bg-none font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl ">
-              Logout
-            </h2>
-          </li>
-
           {/* menu button which is visible when mobile screen */}
           <li onClick={() => setShowMenu(!showMenu)}>
             <Link
@@ -153,7 +164,9 @@ const Navbar = ({ currentUser }) => {
               // className={`menu_bar rounded-md flex custom-transtion relative left-1`}
               className={`menu_link flex font-semibold ml-1 cursor-pointer text-lg items-center justify-center ${
                 !isMobile ? "p-1" : "px-3 py-1"
-              } hover:bg-blue-200 custom-transition rounded-2xl `}
+              } hover:bg-blue-200
+                ${currentRoute === getUser?.type ? "bg-blue-200" : ""} 
+               custom-transition rounded-2xl `}
             >
               {!isMobile ? (
                 <img
@@ -161,13 +174,21 @@ const Navbar = ({ currentUser }) => {
                     getUser ? getUser?.pic : "./Images/default_user.jpg"
                   }`}
                   alt="user"
-                  className="w-9 h-9 rounded-full border-[1px] border-gray-400"
+                  className={`w-9 h-9 rounded-full border-[1px] border-gray-400
+                  ${currentRoute === getUser?.type ? "bg-blue-200" : ""} 
+                  `}
                   srcSet=""
                 />
               ) : (
                 "Profile"
               )}
             </Link>
+          </li>
+
+          <li onClick={handleLogout}>
+            <h2 className="menu_link w-fit flex selection:bg-none font-semibold ml-1 cursor-pointer text-lg items-center justify-start hover:bg-blue-200 px-3 py-1 custom-transition rounded-2xl ">
+              Logout
+            </h2>
           </li>
         </ul>
         {/* when mobile size then show menu button which show menus */}

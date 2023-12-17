@@ -185,7 +185,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
           }
 
           // POST IN HOD - ALL DB
-          const { HodData } = await axios.post(
+          const  HodData  = await axios.post(
             `${host}/teacher/save-class-attendance`,
             {
               date: getTodayFormattedDate(),
@@ -197,9 +197,11 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
             },
             config
           );
+          console.log(HodData)
           if (!HodData) {
             console.log("HOD Access class Attendance not saved!");
             toast.warn("ClassWise Data not saved!",{autoClose: 1000});
+            setLoading(false);
             return;
           }
 
