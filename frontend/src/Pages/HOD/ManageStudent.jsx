@@ -142,6 +142,7 @@ const ManageStudent = () => {
     if(loggedUser?.type!=='hod'){
       navigate("/");
     }
+    document.title = `Create New • Student    `;
   },[navigate, loggedUser])
 
   return (

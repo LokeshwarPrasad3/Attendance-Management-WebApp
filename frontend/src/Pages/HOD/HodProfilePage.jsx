@@ -92,6 +92,7 @@ const HodProfilePage = () => {
   useEffect(() => {
     setCurrentHodUser(loggedUser);
     getAllTeachers();
+    document.title = `${currentHodUser?.name} • Monitor Today Attendance  `;
   }, [loggedUser, currentHodUser, getAllTeachers]);
 
   return (

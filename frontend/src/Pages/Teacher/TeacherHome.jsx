@@ -179,13 +179,15 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
           );
           // If data is not gettd
           if (!data) {
-            toast.warn("submit attendance data is not found!", { autoClose: 2000 });
+            toast.warn("submit attendance data is not found!", {
+              autoClose: 2000,
+            });
             setLoading(false);
             return;
           }
 
           // POST IN HOD - ALL DB
-          const  HodData  = await axios.post(
+          const HodData = await axios.post(
             `${host}/teacher/save-class-attendance`,
             {
               date: getTodayFormattedDate(),
@@ -197,10 +199,10 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
             },
             config
           );
-          console.log(HodData)
+          console.log(HodData);
           if (!HodData) {
             console.log("HOD Access class Attendance not saved!");
-            toast.warn("ClassWise Data not saved!",{autoClose: 1000});
+            toast.warn("ClassWise Data not saved!", { autoClose: 1000 });
             setLoading(false);
             return;
           }
@@ -293,7 +295,7 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
         config
       );
       if (data.status === 400) {
-        toast.error("Students Not getted!", { autoClose: 2000 });
+        // toast.error("Students Not getted!", { autoClose: 2000 });
         setLoading(false);
         return;
       }
@@ -329,7 +331,8 @@ const TeacherHome = ({ setShowHomePage, takeSem, takeBranch, takeSubject }) => {
   // When page is Opened then render all students
   useEffect(() => {
     getAllStudents();
-  }, [getAllStudents]);
+    document.title = `${formattedDate} • ${takeSem} ${takeBranch} Attendance  `;
+  }, [getAllStudents, formattedDate, takeSem, takeBranch]);
 
   return (
     <>

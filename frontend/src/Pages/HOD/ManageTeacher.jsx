@@ -28,6 +28,7 @@ const ManageTeacher = () => {
     if (loggedUser?.type !== "hod") {
       navigate("/");
     }
+    document.title = `Manage Teacher • Accounts    `;
   }, [navigate, loggedUser]);
 
   return (

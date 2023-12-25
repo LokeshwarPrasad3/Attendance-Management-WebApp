@@ -30,12 +30,7 @@ const HistoryAttendence = () => {
     return count;
   }, [allSearchedStudents]);
 
-  useEffect(() => {
-    // Update the present count state with the calculated value
-    setPresentCount(calculatePresentCount());
-  }, [allSearchedStudents, calculatePresentCount]);
-
-  // Search student attendence basis of inputs
+   // Search student attendence basis of inputs
   const searchStudentAttendence = useCallback(
     async (event) => {
       event.preventDefault();
@@ -96,6 +91,13 @@ const HistoryAttendence = () => {
     },
     [searchSem, searchBranch, searchDate, searchSubject]
   );
+
+   useEffect(() => {
+     // Update the present count state with the calculated value
+     setPresentCount(calculatePresentCount());
+     document.title = `Attendance • History `;
+   }, [allSearchedStudents, calculatePresentCount]);
+
 
   return (
     <>

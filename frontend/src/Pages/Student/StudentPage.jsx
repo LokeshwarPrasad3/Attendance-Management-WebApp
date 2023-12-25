@@ -79,13 +79,14 @@ const StudentPage = () => {
 
   useEffect(() => {
     setCurrentUser(loggedUser);
-
+    
     // Load student all attendence
     if (currentUser?.type === "student") {
       loadStudentAllAttendence();
     }
     // Get present Day
     getPresentDays();
+    document.title = `${currentUser?.name} • Attendance Page `;
   }, [
     loggedUser,
     currentUser,

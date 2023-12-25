@@ -58,7 +58,8 @@ const StudentAttendence = (props) => {
   // When page is Opened then render all students
   useEffect(() => {
     getAllStudents();
-  }, [getAllStudents]);
+    document.title = `${showDate} • ${showSem} ${showBranch} - Attendance`;
+  }, [getAllStudents, showDate, showBranch, showSem]);
 
   return (
     <>

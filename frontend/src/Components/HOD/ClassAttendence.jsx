@@ -76,7 +76,9 @@ const ClassAttendence = (props) => {
     [searchBranch, searchSem]
   );
 
-  useEffect(() => {}, [loggedUser]);
+  useEffect(() => {
+    document.title = `Attendance Monitor • ClassWise Attendance`;
+  }, [loggedUser]);
 
   return (
     <>

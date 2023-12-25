@@ -35,12 +35,12 @@ const SLogin = () => {
   const { loggedUser, setLoggedUser } = GetLoggedUser;
 
   useEffect(() => {
-    if(loggedUser){
-      console.log(loggedUser.type, " Already Logged!!")
-      navigate(`/${loggedUser.type}`)
+    if (loggedUser) {
+      console.log(loggedUser.type, " Already Logged!!");
+      navigate(`/${loggedUser.type}`);
     }
-
-  }, [loggedUser, setLoggedUser,navigate]);
+    document.title = "Login • Attendance Management System";
+  }, [loggedUser, setLoggedUser, navigate]);
 
   // handle login when clicked login button
   const handleLogin = async (event) => {
@@ -70,7 +70,7 @@ const SLogin = () => {
         Cookie.set("_secure_user_", data.token, { expires: 3 });
         Cookie.set("unique_key", data._id, { expires: 3 });
         Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data.name , " is Loggeed in");
+        console.log(data.name, " is Loggeed in");
         // do empty inputs now
         setEmail("");
         setPassword("");
@@ -84,11 +84,16 @@ const SLogin = () => {
           { email, password },
           config
         );
+        if (!data) {
+          toast.error("Refresh Your Page!!", { autoClose: 1000 })
+          console.log("data not found Refresh Your Page!!");
+          return;
+        }
         toast.success(`${whoLogged} Successfully Login!`, { autoClose: 1000 });
         Cookie.set("_secure_user_", data.token, { expires: 3 });
         Cookie.set("unique_key", data._id, { expires: 3 });
         Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data.name , " is Loggeed in");
+        console.log(data.name, " is Loggeed in");
 
         // do empty inputs now
         setEmail("");
@@ -107,7 +112,7 @@ const SLogin = () => {
         Cookie.set("_secure_user_", data.token, { expires: 3 });
         Cookie.set("unique_key", data._id, { expires: 3 });
         Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data.name , " is Loggeed in");
+        console.log(data.name, " is Loggeed in");
         // do empty inputs now
         setEmail("");
         setPassword("");

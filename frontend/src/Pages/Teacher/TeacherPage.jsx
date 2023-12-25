@@ -30,6 +30,8 @@ const TeacherPage = () => {
     setShowHomePage(true);
   };
 
+
+
   useEffect(() => {
     const token = Cookies.get("_secure_user_");
     const _id = Cookies.get("unique_key");
@@ -39,7 +41,8 @@ const TeacherPage = () => {
     } else {
       setCurrentUser(loggedUser);
     }
-  }, [loggedUser, currentUser, navigate]);
+    document.title = `${currentUser?.name} • Profile Page  `;
+  }, [loggedUser, currentUser, navigate, showHomePage]);
 
   return (
     <>
@@ -137,30 +140,6 @@ const TeacherPage = () => {
                   </table>
                 </div>
               </div>
-
-              {/* Here teacher can see their attendence */}
-              {/* <div className="teacher_attendence py-5">
-                <div className="search_bar flex justify-center items-center gap-3">
-                  <h2 className="font-semibold">SELECT SUBJECT : </h2>
-                  <select
-                    name=""
-                    id=""
-                    className="cursor-pointer px-1 font-semibold bg-white"
-                  >
-                    <option value="Select_Subject">Select_Subject</option>
-                    {currentUser &&
-                      currentUser.teach &&
-                      currentUser.teach.map((cls, index) => {
-                        return (
-                          <React.Fragment key={index}>
-                            <option value={cls.subject}>{cls.subject}</option>
-                          </React.Fragment>
-                        );
-                      })}
-
-                  </select>
-                </div>
-              </div> */}
 
               <PreviousClassData currentUser={currentUser} />
             </div>
