@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // we need component and css
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
@@ -13,6 +13,8 @@ import Cookie from "js-cookie";
 import { GetLoggedUser } from "../Context/LoggedUserData";
 
 const SLogin = () => {
+  const [user, setUser] = useState(null);
+
   // used for navigation page
   const navigate = useNavigate();
 
@@ -31,18 +33,36 @@ const SLogin = () => {
     setShowPass(!showPass);
   };
 
-  // GETTING CONTEXT-API TO SET LoggedUser
-  const { loggedUser, setLoggedUser } = GetLoggedUser;
-
   useEffect(() => {
-    if (loggedUser) {
-      console.log(loggedUser?.type, " Already Logged!!");
-      navigate(`/${loggedUser?.type}`);
+    const token = Cookie.get("_secure_user_");
+    const _id = Cookie.get("unique_key");
+    const type = Cookie.get("user_type");
+
+    if (token && _id && type) {
+      // Method to get current user data
+      const getLoggedUserData = async (token, _id, type) => {
+        try {
+          const config = {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          };
+          const { data } = await axios.get(`${host}/${type}`, config);
+          // console.log("User Context API data", data);
+          const { type: currentUserType } = data;
+          navigate(`/${currentUserType}`);
+        } catch (error) {
+          console.log(`Error getting context API data: ${error}`);
+          navigate("/");
+        }
+      };
+
+      getLoggedUserData(token, _id, type); // Call the function with correct arguments
     } else {
-      navigate("/");
-      document.title = "Login • Attendance Management System";
+      console.log("You are not Logged-in!!");
+      navigate("/"); // Redirect to the home page if cookies are missing
     }
-  }, [loggedUser, setLoggedUser, navigate]);
+  }, [navigate]);
 
   // handle login when clicked login button
   const handleLogin = async (event) => {
@@ -61,39 +81,39 @@ const SLogin = () => {
           "Content-Type": "application/json",
         },
       };
-     let data;
-     // HANDLE LOGIN WHEN USER : HOD
-     if (currentLoggedUser === "hod") {
-       const response = await axios.post(
-         `${host}/hod/login`,
-         { email, password },
-         config
-       );
-       data = response.data; // Assuming the data you want is under the 'data' property of the response
-       navigate("/hod");
-     }
-
-     // HANDLE LOGIN WHEN USER : TEACHER
-     else if (currentLoggedUser === "teacher") {
-       const response = await axios.post(
-         `${host}/teacher/login`,
-         { email, password },
-         config
-       );
-       data = response.data;
-       navigate("/teacher");
-     }
-     // HANDLE LOGIN WHEN USER : STUDENT
-     else if (currentLoggedUser === "student") {
-       const response = await axios.post(
-         `${host}/student/login`,
-         { email, password },
-         config
-       );
-       data = response.data;
-       navigate("/student");
+      let data;
+      // HANDLE LOGIN WHEN USER : HOD
+      if (currentLoggedUser === "hod") {
+        const response = await axios.post(
+          `${host}/hod/login`,
+          { email, password },
+          config
+        );
+        data = response.data; // Assuming the data you want is under the 'data' property of the response
+        navigate("/hod");
       }
-      
+
+      // HANDLE LOGIN WHEN USER : TEACHER
+      else if (currentLoggedUser === "teacher") {
+        const response = await axios.post(
+          `${host}/teacher/login`,
+          { email, password },
+          config
+        );
+        data = response.data;
+        navigate("/teacher");
+      }
+      // HANDLE LOGIN WHEN USER : STUDENT
+      else if (currentLoggedUser === "student") {
+        const response = await axios.post(
+          `${host}/student/login`,
+          { email, password },
+          config
+        );
+        data = response.data;
+        navigate("/student");
+      }
+
       // get details from data
       const { token, _id, type, name } = data;
       toast.success(`${type} Successfully Login!`, {
