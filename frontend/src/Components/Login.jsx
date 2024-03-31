@@ -19,7 +19,7 @@ const SLogin = () => {
   // GETTING LOGIN DETAILS INPUTS
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [whoLogged, setWhoLogged] = useState(""); //store who is user
+  const [currentLoggedUser, setCurrentLoggedUer] = useState(""); //store who is user
 
   // new state for loading circle visible
   const [loading, setLoading] = useState(false);
@@ -36,10 +36,12 @@ const SLogin = () => {
 
   useEffect(() => {
     if (loggedUser) {
-      console.log(loggedUser.type, " Already Logged!!");
-      navigate(`/${loggedUser.type}`);
+      console.log(loggedUser?.type, " Already Logged!!");
+      navigate(`/${loggedUser?.type}`);
+    } else {
+      navigate("/");
+      document.title = "Login • Attendance Management System";
     }
-    document.title = "Login • Attendance Management System";
   }, [loggedUser, setLoggedUser, navigate]);
 
   // handle login when clicked login button
@@ -47,7 +49,7 @@ const SLogin = () => {
     event.preventDefault();
     setLoading(true);
     // check values cannot have empty
-    if (!email || !password || !whoLogged) {
+    if (!email || !password || !currentLoggedUser) {
       toast.warn("Please fill All Inputs", { autoClose: 1000 });
       setLoading(false);
       return;
@@ -59,66 +61,52 @@ const SLogin = () => {
           "Content-Type": "application/json",
         },
       };
-      // HANDLE LOGIN WHEN USER : HOD
-      if (whoLogged === "hod") {
-        const { data } = await axios.post(
-          `${host}/hod/login`,
-          { email, password },
-          config
-        );
-        toast.success(`${whoLogged} Successfully Login!`, { autoClose: 1000 });
-        Cookie.set("_secure_user_", data.token, { expires: 3 });
-        Cookie.set("unique_key", data._id, { expires: 3 });
-        Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data.name, " is Loggeed in");
-        // do empty inputs now
-        setEmail("");
-        setPassword("");
-        navigate("/hod");
-        setLoading(false);
-      }
-      // HANDLE LOGIN WHEN USER : TEACHER
-      else if (whoLogged === "teacher") {
-        const { data } = await axios.post(
-          `${host}/teacher/login`,
-          { email, password },
-          config
-        );
-        if (!data) {
-          toast.error("Refresh Your Page!!", { autoClose: 1000 })
-          console.log("data not found Refresh Your Page!!");
-          return;
-        }
-        toast.success(`${whoLogged} Successfully Login!`, { autoClose: 1000 });
-        Cookie.set("_secure_user_", data.token, { expires: 3 });
-        Cookie.set("unique_key", data._id, { expires: 3 });
-        Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data.name, " is Loggeed in");
+     let data;
+     // HANDLE LOGIN WHEN USER : HOD
+     if (currentLoggedUser === "hod") {
+       const response = await axios.post(
+         `${host}/hod/login`,
+         { email, password },
+         config
+       );
+       data = response.data; // Assuming the data you want is under the 'data' property of the response
+       navigate("/hod");
+     }
 
-        // do empty inputs now
-        setEmail("");
-        setPassword("");
-        navigate("/teacher");
-        setLoading(false);
+     // HANDLE LOGIN WHEN USER : TEACHER
+     else if (currentLoggedUser === "teacher") {
+       const response = await axios.post(
+         `${host}/teacher/login`,
+         { email, password },
+         config
+       );
+       data = response.data;
+       navigate("/teacher");
+     }
+     // HANDLE LOGIN WHEN USER : STUDENT
+     else if (currentLoggedUser === "student") {
+       const response = await axios.post(
+         `${host}/student/login`,
+         { email, password },
+         config
+       );
+       data = response.data;
+       navigate("/student");
       }
-      // HANDLE LOGIN WHEN USER : STUDENT
-      else if (whoLogged === "student") {
-        const { data } = await axios.post(
-          `${host}/student/login`,
-          { email, password },
-          config
-        );
-        toast.success(`${whoLogged} Successfully Login!`, { autoClose: 1000 });
-        Cookie.set("_secure_user_", data.token, { expires: 3 });
-        Cookie.set("unique_key", data._id, { expires: 3 });
-        Cookie.set("user_type", data.type, { expires: 3 });
-        console.log(data.name, " is Loggeed in");
-        // do empty inputs now
-        setEmail("");
-        setPassword("");
-        navigate("/student");
-        setLoading(false);
-      }
+      
+      // get details from data
+      const { token, _id, type, name } = data;
+      toast.success(`${type} Successfully Login!`, {
+        autoClose: 1000,
+      });
+      Cookie.set("_secure_user_", token, { expires: 2 });
+      Cookie.set("unique_key", _id, { expires: 2 });
+      Cookie.set("user_type", type, { expires: 2 });
+      console.log(name, " is successfully Loggeed in");
+      // do empty inputs now
+      setEmail("");
+      setPassword("");
+      setLoading(false);
     } catch (error) {
       toast.error("Invalid User", { autoClose: 1000 });
       setLoading(false);
@@ -191,12 +179,12 @@ const SLogin = () => {
                 className="relative top-[-2px]"
                 id="is_student_checkbox"
                 name="who_is"
-                value={whoLogged}
+                value={currentLoggedUser}
               />
               <label
                 htmlFor="is_student_checkbox"
                 className="text-[1rem] selection:bg-white font-[600] opacity-70 cursor-pointer"
-                onClick={() => setWhoLogged("student")}
+                onClick={() => setCurrentLoggedUer("student")}
               >
                 Student
               </label>
@@ -208,12 +196,12 @@ const SLogin = () => {
                 className="relative top-[-2px]"
                 id="is_teacher_checkbox"
                 name="who_is"
-                value={whoLogged}
+                value={currentLoggedUser}
               />
               <label
                 htmlFor="is_teacher_checkbox"
                 className="text-[1rem] selection:bg-white font-[600] opacity-70 cursor-pointer"
-                onClick={() => setWhoLogged("teacher")}
+                onClick={() => setCurrentLoggedUer("teacher")}
               >
                 Teacher
               </label>
@@ -225,12 +213,12 @@ const SLogin = () => {
                 className="relative top-[-2px]"
                 id="is_hod_checkbox"
                 name="who_is"
-                value={whoLogged}
+                value={currentLoggedUser}
               />
               <label
                 htmlFor="is_hod_checkbox"
                 className="text-[1rem] selection:bg-white font-[600] opacity-70 cursor-pointer"
-                onClick={() => setWhoLogged("hod")}
+                onClick={() => setCurrentLoggedUer("hod")}
               >
                 HOD
               </label>

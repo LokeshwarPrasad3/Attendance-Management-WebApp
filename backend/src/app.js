@@ -14,7 +14,7 @@ app.use(express.json());
 // cors used for access requested url
 app.use(cors({
     // origin: "*",
-    origin: "https://lokeshwar-attendance.onrender.com",
+    origin: ["https://lokeshwar-attendance.onrender.com", "https://lokeshwar-attendance.netlify.app"],
     credentials: true,
 }));
 

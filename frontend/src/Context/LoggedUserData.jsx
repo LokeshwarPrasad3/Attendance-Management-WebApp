@@ -31,16 +31,12 @@ const LoggedUserData = ({ children }) => {
           const { data } = await axios.get(`${host}/${type}`, config);
           // console.log("User Context API data", data);
           setLoggedUser(data);
-          if (type === "student") navigate(`/${type}`);
-          if (
-            (type === "hod" || type === "teacher") &&
-            window.location.pathname === "/"
-          ) {
-            navigate(`/${type}`);
-          }
+          const { type: currentUserType } = data;
+          navigate(`/${currentUserType}`);
         } catch (error) {
           setLoggedUser(null);
           console.log(`Error getting context API data: ${error}`);
+          navigate("/");
         }
       };
 
