@@ -8,7 +8,7 @@ import dotenv from "dotenv"
 // dotenv.config({ path: './.env.local' });
 
 // .env variables for production
-dotenv.config({ path: './.env.production' });
+dotenv.config({ path: '.env' });
 
 // getting PORT no from secret .env file
 const PORT = process.env.PORT || 5000;

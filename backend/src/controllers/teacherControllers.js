@@ -38,7 +38,7 @@ const registerTeacher = async (req, res) => {
 
         // We dont want to add password in response
         const createdTeacher = await TeacherModel.findById(teacher._id).select("-password");
-        console.log(createdTeacher);
+        // console.log(createdTeacher);
         console.log(`${createdTeacher.name} - ${createdTeacher.id} teacher account successfully created!!`);
         res.status(201).json(createdTeacher);
 
@@ -77,7 +77,7 @@ const loginTeacher = async (req, res) => {
             // we dont want to get password
             const teacher = await TeacherModel.findById(teacherExist._id).select("-password");
 
-            console.log(teacher);
+            // console.log(teacher);
             console.log(`${teacher.name} - ${teacher._id} - Teacher login successfully`);
             res.status(200).json(teacher);
             return;
@@ -192,7 +192,7 @@ const getEachSubjectAttendance = async (req, res) => {
                 subject: subjectDetail?.subject,
                 totalClassess: subjectAttendence?.length || 0,
             }
-            console.log(newSubject)
+            // console.log(newSubject)
             resForAllSubject.push(newSubject);
         }
 

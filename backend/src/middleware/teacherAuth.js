@@ -6,6 +6,7 @@ const teacherProtect = async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(" ")[1];
+            console.log("token found fom headers", token);
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             req.teacher = await TeacherModel.findById(decoded.id).select("-password");
             console.log(`${req.teacher.name} - ${req.teacher._id} - Teacher is Authorized !!`);

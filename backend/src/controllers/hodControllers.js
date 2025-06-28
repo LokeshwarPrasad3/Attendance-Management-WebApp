@@ -38,7 +38,7 @@ const registerHOD = async (req, res) => {
         }
         // successfully created
         console.log(`${createHOD.name} - ${createHOD._id} HOD Account successfully created`);
-        console.log(createHOD);
+        // console.log(createHOD);
         res.status(201).json(createHOD);
 
     } catch (error) {
@@ -76,7 +76,7 @@ const loginHOD = async (req, res) => {
             // We dont send password inside response
             const hod = await HodModel.findById(hodExist._id).select("-password");
             console.log(`${hod.name} - ${hod._id}  HOD login successfully`);
-            console.log(hod);
+            // console.log(hod);
             res.status(200).json(hod);
             return;
         } else {

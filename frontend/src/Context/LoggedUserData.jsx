@@ -12,40 +12,45 @@ const UserContext = createContext();
 const LoggedUserData = ({ children }) => {
   const navigate = useNavigate(); // Navigator for redirection
   const [loggedUser, setLoggedUser] = useState(null); // User data state
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   // Fetch user data from cookies and the API
   useEffect(() => {
-    const token = Cookie.get("_secure_user_");
-    const _id = Cookie.get("unique_key");
-    const type = Cookie.get("user_type");
+    const getLoggedUserData = async () => {
+      const token = Cookie.get("_secure_user_");
+      const _id = Cookie.get("unique_key");
+      const type = Cookie.get("user_type");
 
-    if (token && _id && type) {
-      // Method to get current user data
-      const getLoggedUserData = async (token, _id, type) => {
-        try {
-          const config = {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          };
-          const { data } = await axios.get(`${host}/${type}`, config);
-          // console.log("User Context API data", data);
-          setLoggedUser(data);
-          // const { type: currentUserType } = data;
-          // navigate(`/${currentUserType}`);
-        } catch (error) {
-          setLoggedUser(null);
-          console.log(`Error getting context API data: ${error}`);
-          navigate("/");
-        }
-      };
+      if (!token || !_id || !type) {
+        // console.log("You are not Logged-in!!");
+        setIsLoading(false);
+        navigate("/");
+        return;
+      }
 
-      getLoggedUserData(token, _id, type); // Call the function with correct arguments
-    } else {
-      console.log("You are not Logged-in!!");
-      navigate("/"); // Redirect to the home page if cookies are missing
-    }
+      try {
+        const config = {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        };
+        const { data } = await axios.get(`${host}/${type}`, config);
+        setLoggedUser(data);
+      } catch (error) {
+        console.error("Error getting context API data:", error);
+        setLoggedUser(null);
+        navigate("/");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getLoggedUserData();
   }, [navigate]);
+
+  if (isLoading) {
+    return null; // Or return a loading spinner component
+  }
 
   return (
     <UserContext.Provider value={{ loggedUser, setLoggedUser }}>
@@ -59,9 +64,13 @@ LoggedUserData.propTypes = {
   children: PropTypes.node.isRequired, // Ensure children is a valid React node
 };
 
-// Function to retrieve user data from the context
+// Custom hook to retrieve user data from the context
 const GetLoggedUser = () => {
-  return useContext(UserContext);
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("GetLoggedUser must be used within a LoggedUserData provider");
+  }
+  return context;
 };
 
 export default LoggedUserData;

@@ -7,10 +7,11 @@ const hodProtect = async (req, res, next) => {
         try {
             // check token from headers (Bearer token)
             token = req.headers.authorization.split(" ")[1];
-            console.log("hod token ", token)
+            console.log("token found fom headers", token);
+            // console.log("hod token ", token)
             // check verify from secret_key
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            console.log("decoded ", decoded.id)
+            // console.log("decoded ", decoded.id)
             req.hod = await HodModel.findById(decoded.id).select("-password");
             console.log(`${req.hod.name} - ${req.hod._id} HOD is Authorized !!`);
             next();
