@@ -14,7 +14,7 @@ app.use(express.json());
 // cors used for access requested url
 app.use(cors({
     // origin: "*",
-    origin: ["https://lokeshwar-attendance.onrender.com", "https://lokeshwar-attendance.netlify.app"],
+    origin: [process.env.FRONTED_URL, "http://localhost:5173"],
     credentials: true,
 }));
 

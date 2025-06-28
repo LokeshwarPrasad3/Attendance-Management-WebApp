@@ -68,6 +68,7 @@ const SLogin = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
+    console.log(email, password, currentLoggedUser);
     // check values cannot have empty
     if (!email || !password || !currentLoggedUser) {
       toast.warn("Please fill All Inputs", { autoClose: 1000 });
@@ -112,6 +113,12 @@ const SLogin = () => {
         );
         data = response.data;
         navigate("/student");
+      }
+
+      if(!data) {
+        toast.error("Invalid User", { autoClose: 1000 });
+        setLoading(false);
+        return;
       }
 
       // get details from data

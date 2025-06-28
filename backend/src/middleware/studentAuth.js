@@ -9,6 +9,7 @@ const studentProtect = async (req, res, next) => {
         try {
             token = req.headers.authorization.split(" ")[1];
             // verify token from secret key
+            console.log("token found fom headers", token);
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             // give middleware to access user
             req.student = await StudentModel.findById(decoded.id).select("-password");

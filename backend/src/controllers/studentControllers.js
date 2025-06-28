@@ -61,7 +61,7 @@ const RegisterStudent = async (req, res) => {
 
         const createdStudent = await StudentModel.findById(student._id).select("-password");
 
-        console.log(createdStudent);
+        // console.log(createdStudent);
         console.log(`${createdStudent.name} - ${createdStudent._id} - Account Successfully created!`);
         res.status(201).json(createdStudent);
     } catch (error) {
@@ -97,7 +97,7 @@ const LoginStudent = async (req, res) => {
             // we dont need password 
             const student = await StudentModel.findById(studentExist._id).select("-password");
 
-            console.log(student);
+            // console.log(student);
             console.log(`${student.name} - ${student._id} - Successfully Login!`)
             res.status(200).json(student);
         } else {
