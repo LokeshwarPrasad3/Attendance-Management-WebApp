@@ -23,6 +23,11 @@ import studentRoutes from "./routes/studentRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import hodRoutes from "./routes/hodRoutes.js";
 
+// Welcome route
+app.get('/', (req, res) => {
+    res.json({ message: 'Welcome to API' });
+});
+
 // Making EndPoint For all three users
 // for student 
 app.use('/api/student', studentRoutes);
